@@ -54,7 +54,7 @@ En el heatmap, en E25, E35 y E40 la franja con más siniestros es la noche (233,
 
 ## 4. Análisis
 
-1. **La zona rural es el doble de grave** (14.0 % vs 7.1 %) aunque tiene menos siniestros que la urbana. Lo mismo ocurre con la red vial estatal frente al resto.
+1. **La zona rural es el doble de grave** (14.0 % vs 7.1 %) aunque tiene menos siniestros que la urbana. La red vial estatal también es más grave que el resto (13.7 % frente a 7.5 %), pero no es una evidencia independiente: el 69 % de sus siniestros son rurales (dentro de la red, rural 14.7 % y urbana 11.6 %; fuera de ella, 12.8 % y 6.2 %).
 2. **La madrugada es la franja más letal en ambas zonas** y en la rural llega a 1 de cada 5 siniestros (20.2 %), pese a tener el menor volumen de eventos. El patrón es en forma de "U": baja en la mañana y la tarde y sube en la noche y la madrugada. En la pregunta 6 se ve que de madrugada pesan más la velocidad, el alcohol y la fatiga, lo que es coherente con este resultado.
 3. **La jerarquía vial no discrimina** (arterial 13.9 % vs colectora 13.5 %): lo que cambia el riesgo es el corredor, no la categoría.
 4. **Volumen y gravedad no coinciden en los corredores.** E40 es el de más siniestros pero con letalidad moderada (10.5 %); E25, E20 y E482 tienen menos eventos pero una proporción mucho mayor de fallecidos, así que son los candidatos a intervención prioritaria.
@@ -62,6 +62,7 @@ En el heatmap, en E25, E35 y E40 la franja con más siniestros es la noche (233,
 ## 5. Limitaciones y advertencias
 
 - Solo hay datos de vía para un tercio de los siniestros (red estatal), así que los corredores no describen la red municipal ni urbana.
+- Otros corredores también superan el promedio de la red estatal (13.7 %), como E45 (17.2 %, 198 siniestros) y E48 (15.0 %, 253); aparecen en el gráfico de burbujas. Se destacan E25, E20 y E482 por combinar más letalidad con volumen relevante (E25 es el corredor con más fallecidos: 125).
 - Algunos corredores tienen pocos casos (E482: 107, E20: 210); sus porcentajes son más variables.
 
 ## 6. Archivos generados
