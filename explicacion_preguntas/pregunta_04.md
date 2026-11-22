@@ -3,20 +3,20 @@
 > **Pregunta:** ¿Dónde están los puntos críticos (zonas pequeñas con muchos siniestros) en el país y en las ciudades con más eventos, y coinciden con los lugares donde ocurren las muertes?
 
 **Script:** `pregunta_04.py`
-**Técnicas:** cuadrícula de ~2 km (agrupar por coordenadas), concentración en pocas celdas, ranking de celdas, mapa de severidad y mapas de densidad (hexbin) facetados por cantón.
+**Técnicas:** cuadrícula de ~2 km (agrupar por coordenadas), concentración en pocas celdas, ranking de celdas, mapa de severidad y mapas de celdas facetados por cantón. Los mapas se hacen con Folium.
 **Feature nueva usada:** celda de cuadrícula (Anderson, 2009; Xie y Yan, 2008).
 
 ## 1. Qué hace el código
 
 **Bloque 1: concentración nacional.** Agrupa los siniestros por `celda_lat` y `celda_lon`, columnas que creó `limpieza_datos.py` redondeando cada coordenada al múltiplo de 0.02° más cercano (unos 2.2 km en el Ecuador). Por celda cuenta siniestros y fallecidos y toma el cantón más frecuente. Luego calcula el acumulado y responde: ¿cuánto concentra el 1 %, el 5 % y el 10 % de las celdas más activas, tanto de siniestros como de fallecidos? Guarda las 50 principales en `p04_top50_celdas.csv`.
 
-**Bloque 2: mapas de densidad facetados.** Toma los tres cantones con más siniestros (Guayaquil, Quito, Santo Domingo). Para cada uno elimina las coordenadas extremas (por debajo del percentil 0.3 y por encima del 99.7) para que un punto lejano no estire el mapa, dibuja un `hexbin` de densidad y encima marca con puntos naranja los siniestros con fallecidos. También mide qué porcentaje de los siniestros del cantón cae en sus 5 celdas principales.
+**Bloque 2: mapas de celdas facetados (Folium).** Toma los tres cantones con más siniestros (Guayaquil, Quito, Santo Domingo). Para cada uno elimina las coordenadas extremas (por debajo del percentil 0.3 y por encima del 99.7) para que un punto lejano no estire el mapa, pinta cada celda de 2 km con un azul más oscuro mientras más siniestros tiene, y encima marca con puntos naranja los siniestros con fallecidos. Las tres facetas se unen en una sola página. También mide qué porcentaje de los siniestros del cantón cae en sus 5 celdas principales.
 
-**Bloque 3: mapa nacional por severidad.** Dibuja todos los siniestros en latitud y longitud, con tres capas (sin víctimas, con lesionados, fatales), donde los fatales son más grandes y opacos.
+**Bloque 3: mapa nacional por severidad (Folium).** Dibuja todos los siniestros en latitud y longitud, con tres capas que se pueden activar o apagar (sin víctimas, con lesionados, fatales), donde los fatales son más grandes y opacos.
 
 ## 2. Para la exposición (máx. 40 s)
 
-> Dividimos el país en cuadrículas de unos dos kilómetros. El 5 % de las celdas concentra casi la mitad de los siniestros: esos son los puntos críticos. En los mapas de densidad de las tres ciudades principales, lo más oscuro marca el núcleo; Santo Domingo está muy concentrado y Quito, disperso. Los puntos naranja son siniestros con fallecidos y aparecen también fuera de los núcleos. Respuesta: los puntos críticos existen y son claros, pero concentran cantidad, no letalidad, porque los fallecidos están más repartidos.
+> Dividimos el país en cuadrículas de unos dos kilómetros. El 5 % de las celdas concentra casi la mitad de los siniestros: esos son los puntos críticos. En los mapas de las tres ciudades principales, las celdas más oscuras marcan el núcleo; Santo Domingo está muy concentrado y Quito, disperso. Los puntos naranja son siniestros con fallecidos y aparecen también fuera de los núcleos. Respuesta: los puntos críticos existen y son claros, pero concentran cantidad, no letalidad, porque los fallecidos están más repartidos.
 
 *Figura a mostrar:* `p04_densidad_facetado.png` (apoyo: `p04_mapa_nacional_severidad.png`). 84 palabras, unos 34 s a ritmo normal.
 
@@ -27,11 +27,11 @@
 - Esas mismas celdas concentran menos fallecidos: **8.7 %** (1 %), **27.4 %** (5 %) y **38.7 %** (10 %). Es la evidencia más directa de que los fallecidos están más repartidos que los siniestros.
 - Top 10 de celdas: 7 en Guayaquil, 2 en Santo Domingo y 1 en Quito. La mayor está en Guayaquil (lat -2.20, lon -79.90) con **269 siniestros y 12 fallecidos**.
 
-| Cantón | Siniestros (tras recorte) | Celdas con eventos | % en sus 5 celdas principales |
-|---|---|---|---|
-| Guayaquil | 3 438 | 106 | 24.8 % |
-| Quito | 3 019 | 162 | 17.4 % |
-| Santo Domingo | 984 | 107 | **48.2 %** |
+| Cantón | Siniestros (tras recorte) | Celdas con eventos | Celda máxima | % en sus 5 celdas principales |
+|---|---|---|---|---|
+| Guayaquil | 3 438 | 106 | 269 | 24.8 % |
+| Quito | 3 019 | 162 | 149 | 17.4 % |
+| Santo Domingo | 984 | 107 | 133 | **48.2 %** |
 
 ## 4. Análisis
 
@@ -41,7 +41,8 @@
 
 ## 5. Limitaciones y advertencias
 
-- La escala de color del hexbin es distinta en cada faceta (llega a ~420 en Guayaquil, ~70 en Quito, ~120 en Santo Domingo); sirve para ver la forma de cada ciudad, no para comparar intensidades entre ellas.
+- La escala de color es distinta en cada faceta (llega a 269 siniestros por celda en Guayaquil, 149 en Quito y 133 en Santo Domingo); sirve para ver la forma de cada ciudad, no para comparar intensidades entre ellas.
+- Los mapas de Folium necesitan internet para cargar el mapa base. El PNG se genera con una captura automática de Edge o Chrome; si no hay ninguno, se abre el HTML y se toma la captura a mano.
 - La cuadrícula depende del tamaño de celda elegido (0.02°); con otro tamaño los números exactos cambiarían, aunque no la idea.
 - Las celdas críticas son urbanas, y la zona urbana ya es menos letal que la rural (7.1 % frente a 14.0 %, pregunta 5); parte de la menor letalidad de los puntos críticos se debe a eso, no solo a la concentración.
 - En el mapa de Guayaquil los puntos con fallecidos se acumulan en el núcleo; "también fuera de los núcleos" se aprecia sobre todo en Quito y Santo Domingo.
@@ -50,4 +51,5 @@
 ## 6. Archivos generados
 
 - Tablas: `p04_top50_celdas.csv`, `p04_concentracion_por_canton.csv`
-- Figuras: `p04_densidad_facetado.png`, `p04_mapa_nacional_severidad.png`
+- Figuras (capturas de los mapas): `p04_densidad_facetado.png`, `p04_mapa_nacional_severidad.png`
+- Mapas interactivos de Folium: `p04_densidad_facetado.html`, `p04_mapa_nacional_severidad.html`
