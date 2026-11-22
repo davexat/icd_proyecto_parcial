@@ -21,7 +21,8 @@ celdas["% acumulado"] = 100 * celdas["siniestros"].cumsum() / celdas["siniestros
 print(f"Celdas con al menos un siniestro: {len(celdas)}")
 for pct in [1, 5, 10]:
     k = int(np.ceil(len(celdas) * pct / 100))
-    print(f"El {pct}% de las celdas con más eventos ({k}) concentra {celdas['% acumulado'].iloc[k - 1]:.1f}% de los siniestros")
+    print(f"El {pct}% de las celdas con más eventos ({k}) concentra {celdas['% acumulado'].iloc[k - 1]:.1f}% de los siniestros "
+          f"y {100 * celdas['fallecidos'].iloc[:k].sum() / celdas['fallecidos'].sum():.1f}% de los fallecidos")
 print("\nTop 10 celdas nacionales:")
 mostrar(celdas.head(10))
 guardar_tabla(celdas.head(50), "p04_top50_celdas")
