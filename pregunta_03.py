@@ -45,7 +45,8 @@ for a, medida, c in zip(ax, ["siniestros", "fallecidos"], PALETA):
     a.axhline(80, color=PALETA[3], ls="--", lw=1)
     a.set_ylim(0, 105)
     a.set_xticks(range(len(abc)))
-    a.set_xticklabels([i.title()[:12] for i in abc.index], rotation=60, ha="right")
+    a.set_xticklabels([("Santo Domingo" if i.startswith("SANTO DOMINGO") else i.title()[:14]) for i in abc.index],
+                      rotation=60, ha="right")
     a.set_ylabel(f"% del total de {medida} (barras) y acumulado (línea)")
     a.set_title(f"Pareto de provincias: {medida}")
 guardar_fig(fig, "p03_pareto_provincias")
@@ -55,9 +56,13 @@ cont, prov_c = sin[sin["lon"] > -85], prov[prov["lon"] > -85]     # continente; 
 ax.scatter(cont["lon"], cont["lat"], s=1, color="#d9d8d3")
 sc = ax.scatter(prov_c["lon"], prov_c["lat"], s=prov_c["siniestros"] / 8, c=prov_c["% fatales"], cmap=CMAP_SEC,
                 edgecolor="white", linewidth=1, alpha=0.9)
-OFF = {"GUAYAS": (-8, -40), "SANTA ELENA": (-10, -26), "PICHINCHA": (10, 18), "SANTO DOMINGO DE LOS TSACHILAS": (-90, 16)}
-for n, r in prov_c.nlargest(8, "siniestros").iterrows():
-    ax.annotate(n.title()[:14], (r["lon"], r["lat"]), fontsize=8, xytext=OFF.get(n, (6, 6)), textcoords="offset points",
+OFF = {"GUAYAS": (-8, -40), "SANTA ELENA": (-10, -26), "PICHINCHA": (10, 18), "SANTO DOMINGO DE LOS TSACHILAS": (-90, 16),
+       "ZAMORA CHINCHIPE": (8, -14), "CAÑAR": (-48, 8)}
+# Etiquetas: las 8 provincias con más siniestros y las 3 más graves (Esmeraldas, Zamora Chinchipe, Cañar), que cita el guion
+rotular = set(prov_c.nlargest(8, "siniestros").index) | {"ESMERALDAS", "ZAMORA CHINCHIPE", "CAÑAR"}
+for n, r in prov_c.loc[sorted(rotular)].iterrows():
+    ax.annotate("Zamora Chinchipe" if n == "ZAMORA CHINCHIPE" else n.title()[:14], (r["lon"], r["lat"]), fontsize=8,
+                xytext=OFF.get(n, (6, 6)), textcoords="offset points",
                 arrowprops=dict(arrowstyle="-", color="#8a8a85", lw=0.6) if n in OFF else None)
 ax.set_xlabel("Longitud (°)")
 ax.set_ylabel("Latitud (°)")

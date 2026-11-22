@@ -11,7 +11,7 @@
 
 **Bloque 2: volumen frente a gravedad.** Usa `gravedad()` para obtener, por provincia, siniestros, fallecidos y % de siniestros con fallecidos. Añade la latitud y longitud promedio de cada provincia y dos rangos: por volumen y por gravedad. La tabla impresa se limita a provincias con 100 o más siniestros para no destacar porcentajes de muestras pequeñas.
 
-**Bloque 3: gráficos.** (a) Dos Pareto lado a lado, uno para siniestros y otro para fallecidos, con barras de porcentaje y línea de acumulado, más la línea del 80 %. (b) Un mapa de burbujas del continente: puntos grises con todos los siniestros y una burbuja por provincia en su coordenada promedio (tamaño = volumen, color = % con fallecidos). Galápagos queda fuera del mapa (5 siniestros) para no estirar el eje.
+**Bloque 3: gráficos.** (a) Dos Pareto lado a lado, uno para siniestros y otro para fallecidos, con barras de porcentaje y línea de acumulado, más la línea del 80 %. (b) Un mapa de burbujas del continente: puntos grises con todos los siniestros y una burbuja por provincia en su coordenada promedio (tamaño = volumen, color = % con fallecidos). Se rotulan las 8 provincias con más siniestros y las 3 más graves que cita el guion (Esmeraldas, Zamora Chinchipe y Cañar). Galápagos queda fuera del mapa (5 siniestros) para no estirar el eje.
 
 ## 2. Para la exposición (máx. 40 s)
 
