@@ -3,12 +3,15 @@
 # orden de prioridad cambia si se mide por volumen o por gravedad?
 #
 # Técnicas: clasificación Pareto ABC (80-15-5), concentración del Top 5, ranking por volumen y por
-# gravedad, gráfico Pareto facetado y mapa de burbujas con latitud y longitud.
+# gravedad, gráfico Pareto facetado y mapa de burbujas con latitud y longitud (Folium).
+import folium
 import pandas as pd
 import matplotlib.pyplot as plt
+from branca.colormap import LinearColormap
 
 from limpieza_datos import cargar_datos
-from utilidades import CMAP_SEC, PALETA, gravedad, guardar_fig, guardar_tabla, mostrar, pareto_abc, seccion
+from utilidades import (PALETA, etiqueta_mapa, gravedad, guardar_fig, guardar_mapa, guardar_tabla, mapa_base, mostrar,
+                        pareto_abc, seccion)
 
 sin, _ = cargar_datos()
 
@@ -51,22 +54,30 @@ for a, medida, c in zip(ax, ["siniestros", "fallecidos"], PALETA):
     a.set_title(f"Pareto de provincias: {medida}")
 guardar_fig(fig, "p03_pareto_provincias")
 
-fig, ax = plt.subplots(figsize=(7.5, 7.5))
-cont, prov_c = sin[sin["lon"] > -85], prov[prov["lon"] > -85]     # continente; Galápagos (5 siniestros) queda aparte
-ax.scatter(cont["lon"], cont["lat"], s=1, color="#d9d8d3")
-sc = ax.scatter(prov_c["lon"], prov_c["lat"], s=prov_c["siniestros"] / 8, c=prov_c["% fatales"], cmap=CMAP_SEC,
-                edgecolor="white", linewidth=1, alpha=0.9)
-OFF = {"GUAYAS": (-8, -40), "SANTA ELENA": (-10, -26), "PICHINCHA": (10, 18), "SANTO DOMINGO DE LOS TSACHILAS": (-90, 16),
-       "ZAMORA CHINCHIPE": (8, -14), "CAÑAR": (-48, 8)}
-# Etiquetas: las 8 provincias con más siniestros y las 3 más graves (Esmeraldas, Zamora Chinchipe, Cañar), que cita el guion
-rotular = set(prov_c.nlargest(8, "siniestros").index) | {"ESMERALDAS", "ZAMORA CHINCHIPE", "CAÑAR"}
-for n, r in prov_c.loc[sorted(rotular)].iterrows():
-    ax.annotate("Zamora Chinchipe" if n == "ZAMORA CHINCHIPE" else n.title()[:14], (r["lon"], r["lat"]), fontsize=8,
-                xytext=OFF.get(n, (6, 6)), textcoords="offset points",
-                arrowprops=dict(arrowstyle="-", color="#8a8a85", lw=0.6) if n in OFF else None)
-ax.set_xlabel("Longitud (°)")
-ax.set_ylabel("Latitud (°)")
-ax.set_title("Siniestros por provincia (continente)\ntamaño = volumen, color = % con fallecidos")
-fig.colorbar(sc, ax=ax, label="% de siniestros con fallecidos", shrink=0.7, pad=0.03)
-ax.set_aspect("equal")
-guardar_fig(fig, "p03_mapa_burbujas_provincias")
+# Mapa de burbujas con Folium: una burbuja por provincia en su coordenada promedio
+mapa = mapa_base(location=[-1.4, -78.6], zoom_start=7, control_scale=True)
+escala = LinearColormap(["#cde2fb", "#6da7ec", "#256abf", "#0d366b"], vmin=prov["% fatales"].min(),
+                        vmax=prov["% fatales"].max(), caption="% de siniestros con fallecidos")
+# Rótulos permanentes: las 8 provincias con más siniestros y las 3 más graves que cita el guion
+rotular = set(prov.nlargest(8, "siniestros").index) | {"ESMERALDAS", "ZAMORA CHINCHIPE", "CAÑAR"}
+LADO = {"GUAYAS": "bottom", "SANTA ELENA": "left", "SANTO DOMINGO DE LOS TSACHILAS": "left", "PICHINCHA": "right",
+        "CAÑAR": "left", "ZAMORA CHINCHIPE": "bottom", "LOJA": "left", "AZUAY": "right"}
+for n, r in prov.iterrows():
+    nombre = "Santo Domingo" if n.startswith("SANTO DOMINGO") else n.title()
+    radio = max(3.0, r["siniestros"] ** 0.5 / 3.5)
+    marca = folium.CircleMarker([r["lat"], r["lon"]], radius=radio, color="white", weight=1,
+                                fill=True, fill_color=escala(r["% fatales"]), fill_opacity=0.85,
+                                popup=folium.Popup(f"<b>{nombre}</b><br>Siniestros: {int(r['siniestros']):,}<br>"
+                                                   f"Fallecidos: {int(r['fallecidos']):,}<br>"
+                                                   f"% con fallecidos: {r['% fatales']:.1f}", max_width=220))
+    if n in rotular:
+        lado = LADO.get(n, "top")                  # el rótulo se corre un radio para no tapar la burbuja
+        dx, dy = {"right": (radio + 4, 0), "left": (-radio - 4, 0), "top": (0, -radio - 4), "bottom": (0, radio + 4)}[lado]
+        marca.add_child(folium.Tooltip(nombre, permanent=True, direction=lado, offset=(dx, dy),
+                                       style="font-size:11px;padding:1px 4px;"))
+    marca.add_to(mapa)
+escala.add_to(mapa)
+etiqueta_mapa(mapa, "<b>Siniestros por provincia</b><br>tamaño = volumen, color = % con fallecidos", abajo=True)
+cont = sin[sin["lon"] > -85]                       # el encuadre es el continente; Galápagos (5 siniestros) queda fuera de vista
+mapa.fit_bounds([[cont["lat"].min(), cont["lon"].min()], [cont["lat"].max(), cont["lon"].max()]])
+guardar_mapa(mapa, "p03_mapa_burbujas_provincias", ancho=800, alto=900)

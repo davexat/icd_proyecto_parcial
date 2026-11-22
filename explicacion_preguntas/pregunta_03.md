@@ -3,7 +3,7 @@
 > **Pregunta:** ¿Qué provincias y cantones concentran la mayor parte de los siniestros y de las muertes, y el orden de prioridad cambia si se mide por volumen o por gravedad?
 
 **Script:** `pregunta_03.py`
-**Técnicas:** clasificación Pareto ABC (80-15-5), concentración del Top 5, ranking por volumen y por gravedad, gráfico Pareto facetado y mapa de burbujas con latitud y longitud.
+**Técnicas:** clasificación Pareto ABC (80-15-5), concentración del Top 5, ranking por volumen y por gravedad, gráfico Pareto facetado y mapa de burbujas con latitud y longitud, hecho con Folium.
 
 ## 1. Qué hace el código
 
@@ -11,7 +11,7 @@
 
 **Bloque 2: volumen frente a gravedad.** Usa `gravedad()` para obtener, por provincia, siniestros, fallecidos y % de siniestros con fallecidos. Añade la latitud y longitud promedio de cada provincia y dos rangos: por volumen y por gravedad. La tabla impresa se limita a provincias con 100 o más siniestros para no destacar porcentajes de muestras pequeñas.
 
-**Bloque 3: gráficos.** (a) Dos Pareto lado a lado, uno para siniestros y otro para fallecidos, con barras de porcentaje y línea de acumulado, más la línea del 80 %. (b) Un mapa de burbujas del continente: puntos grises con todos los siniestros y una burbuja por provincia en su coordenada promedio (tamaño = volumen, color = % con fallecidos). Se rotulan las 8 provincias con más siniestros y las 3 más graves que cita el guion (Esmeraldas, Zamora Chinchipe y Cañar). Galápagos queda fuera del mapa (5 siniestros) para no estirar el eje.
+**Bloque 3: gráficos.** (a) Dos Pareto lado a lado, uno para siniestros y otro para fallecidos, con barras de porcentaje y línea de acumulado, más la línea del 80 %. (b) Un mapa de burbujas hecho con Folium, sobre un mapa base gris: una burbuja por provincia en su coordenada promedio (tamaño = volumen, color = % con fallecidos). Se rotulan las 8 provincias con más siniestros y las 3 más graves que cita el guion (Esmeraldas, Zamora Chinchipe y Cañar). El encuadre es el continente; Galápagos (5 siniestros) queda fuera de vista. En la versión HTML se puede hacer zoom, y al hacer clic en una burbuja aparecen sus siniestros, fallecidos y porcentaje.
 
 ## 2. Para la exposición (máx. 40 s)
 
@@ -42,9 +42,11 @@ Provincias con más gravedad (100 o más siniestros): **Esmeraldas 25.3 %** (pue
 
 - **Santa Elena.** Sus siniestros pasan de 12 a 15 por mes (enero y febrero) a unos 75 por mes desde marzo, y todos provienen del ente CTE. Parece un cambio de cobertura del registro y puede inflar su posición (7.º en volumen).
 - El porcentaje de fatales de provincias con pocos siniestros es inestable; por eso la tabla filtra a 100 o más.
-- Galápagos (5 siniestros) no aparece en el mapa; si se quiere mostrar, puede ir como recuadro aparte.
+- Galápagos (5 siniestros) no aparece en el encuadre del mapa; se puede ver alejando el zoom en el HTML.
+- Los mapas de Folium necesitan internet para cargar el mapa base. El PNG se genera con una captura automática de Edge o Chrome; si no hay ninguno, se abre el HTML y se toma la captura a mano.
 
 ## 6. Archivos generados
 
 - Tablas: `p03_abc_provincia_siniestros.csv`, `p03_abc_canton_siniestros.csv`, `p03_provincias.csv`
-- Figuras: `p03_pareto_provincias.png`, `p03_mapa_burbujas_provincias.png`
+- Figuras: `p03_pareto_provincias.png`, `p03_mapa_burbujas_provincias.png` (captura del mapa)
+- Mapa interactivo de Folium: `p03_mapa_burbujas_provincias.html`
