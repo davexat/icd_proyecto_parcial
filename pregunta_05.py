@@ -1,74 +1,66 @@
 # PREGUNTA DE NEGOCIO 5
-# ¿Qué causas probables (y qué factores: humano, vehículo o vía) explican la mayor parte de los
-# siniestros, cuáles se asocian a mayor gravedad y cambia su peso según la hora del día?
+# ¿Cómo influyen la zona (urbana o rural), la jerarquía de la vía y los corredores viales en la
+# cantidad y gravedad de los siniestros, y cómo cambia eso a lo largo del día?
 #
-# Técnicas: Pareto de causas, porcentaje por factor, gravedad por grupo de causa, gráfico de
-# burbujas (frecuencia vs gravedad) y heatmaps causa x franja horaria.
-import textwrap
-
-import pandas as pd
+# Técnicas: comparación urbano / rural, ranking de corredores viales, gráfico facetado por zona y
+# franja horaria, gráfico de burbujas y heatmap corredor x franja.
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from limpieza_datos import cargar_datos
-from utilidades import CMAP_SEC, PALETA, gravedad, guardar_fig, guardar_tabla, mostrar, pareto_abc, seccion
+from limpieza_datos import FRANJAS, cargar_datos
+from utilidades import CMAP_SEC, PALETA, gravedad, guardar_fig, guardar_tabla, mostrar, seccion
 
 sin, _ = cargar_datos()
 
-# 1) Pareto de causas probables (26 códigos) y factor contribuyente
-seccion("1) Frecuencia de causas")
-corto = sin.groupby("cod_causa")["causa_probable"].agg(
-    lambda s: textwrap.shorten(s.iloc[0].split("(")[0].strip().rstrip(".").capitalize(), 58, placeholder="…"))
-abc = pareto_abc(sin.groupby("cod_causa").size())
-abc["causa"] = abc.index.map(corto)
-mostrar(abc[["causa", "valor", "%", "% acumulado", "clase"]].round(1), 12)
-print("\nSiniestros por factor causal (modelo humano - vehículo - vía):")
-print((sin["factor_causal"].value_counts(normalize=True) * 100).round(1).to_string())
+# 1) Urbano vs rural
+seccion("1) Zona urbana vs rural")
+z = gravedad(sin, "zona")
+z["hora mediana"] = sin.groupby("zona")["hora_decimal"].median()
+mostrar(z.round(2))
+guardar_tabla(z, "p05_zona")
 
-# 2) Gravedad por grupo de causa
-seccion("2) Gravedad por grupo de causa")
-g = gravedad(sin, "causa_grupo").sort_values("% fatales", ascending=False)
-mostrar(g.round(2), 12)
-guardar_tabla(g, "p05_gravedad_por_grupo_causa")
+# 2) Red vial estatal: jerarquía y corredores (E35, E25, ...)
+seccion("2) Red vial estatal")
+via = sin[sin["via_estatal"]]
+print(f"Siniestros en la red vial estatal: {len(via):,} ({100 * len(via) / len(sin):.1f}%); "
+      f"% fatales {100 * via['fatal'].mean():.1f}% vs {100 * sin.loc[~sin['via_estatal'], 'fatal'].mean():.1f}% fuera de ella")
+mostrar(gravedad(via.dropna(subset=["jerarquia_via"]), "jerarquia_via").round(2))
+corr = gravedad(via, "ubicacion_via", minimo=60).sort_values("siniestros", ascending=False)
+mostrar(corr.round(1), 15)
+guardar_tabla(corr, "p05_corredores")
 
-# 3) Gráficos: Pareto horizontal y burbujas frecuencia vs gravedad
-fig, ax = plt.subplots(1, 2, figsize=(16, 6.5), gridspec_kw={"width_ratios": [1, 1.15]})
-top = abc.head(10).iloc[::-1]
-ax[0].barh(top["causa"], top["%"], color=PALETA[0])
-for y, v_ in enumerate(top["%"]):
-    ax[0].text(v_ + 0.3, y, f"{v_:.1f}%", va="center", fontsize=8)
-ax[0].set_xlabel("% de siniestros")
-ax[0].set_title("Top 10 causas probables")
-col = {"Humano": PALETA[0], "Vehículo": PALETA[2], "Vía y entorno": PALETA[3]}
-fac = sin.groupby("causa_grupo")["factor_causal"].first()
-for gname, r in g.iterrows():
-    ax[1].scatter(r["siniestros"], r["% fatales"], s=r["fallecidos"] * 3 + 20, color=col[fac[gname]], alpha=0.8,
-                  edgecolor="white")
-    ax[1].annotate(gname, (r["siniestros"], r["% fatales"]), fontsize=8, textcoords="offset points",
-                   xytext={"Vehículo / carga": (6, -13), "Distracción al conducir": (-110, 12)}.get(gname, (6, 4)))
-ax[1].axhline(100 * sin["fatal"].mean(), color="#52514e", ls="--", lw=1, label="Promedio nacional")
-ax[1].set_xscale("log")
-ax[1].set_xlabel("Siniestros (escala logarítmica)")
-ax[1].set_ylabel("% de siniestros con fallecidos")
-ax[1].set_title("Frecuencia vs gravedad (tamaño = fallecidos)")
-for k, c in col.items():
-    ax[1].scatter([], [], color=c, label=k)
-ax[1].legend(title="Factor", frameon=False, loc="lower left")
-guardar_fig(fig, "p05_pareto_y_burbujas")
-
-# 4) Heatmaps: peso de cada causa por franja horaria y % fatal (celdas con menos de 30 siniestros omitidas)
-n = pd.crosstab(sin["causa_grupo"], sin["franja"])
-share = n.div(n.sum(axis=0), axis=1) * 100
-fat = sin.pivot_table(index="causa_grupo", columns="franja", values="fatal", aggfunc="mean", observed=False) * 100
-fat = fat.astype(float).where(n >= 30)
-orden = g.index
-fig, ax = plt.subplots(1, 2, figsize=(15, 5.5), sharey=True)
-sns.heatmap(share.loc[orden], annot=True, fmt=".0f", cmap=CMAP_SEC, ax=ax[0], cbar_kws={"label": "% de los siniestros de la franja"})
-ax[0].set_title("Peso de cada causa dentro de la franja horaria")
-sns.heatmap(fat.loc[orden], annot=True, fmt=".0f", cmap=CMAP_SEC, ax=ax[1], cbar_kws={"label": "% de siniestros con fallecidos"})
-ax[1].set_title("Gravedad por causa y franja (n ≥ 30)")
-for a in ax:
+# 3) Facetas: gravedad por franja horaria, separando zona urbana y rural
+seccion("3) Gravedad por franja horaria y zona")
+f = gravedad(sin, ["zona", "franja"]).reset_index()
+mostrar(f.round(1))
+fig, ax = plt.subplots(1, 3, figsize=(16, 4.6), gridspec_kw={"width_ratios": [1, 1, 1.4]})
+for a, zona, c in zip(ax[:2], ["URBANA", "RURAL"], PALETA):
+    d = f[f["zona"] == zona].set_index("franja").reindex(FRANJAS)
+    a.bar(range(4), d["% fatales"], color=c)
+    a.set_xticks(range(4))
+    a.set_xticklabels([x.split(" ")[0] for x in FRANJAS])
+    a.set_ylim(0, 24)
+    a.set_title(f"Zona {zona.lower()} (n = {int(d['siniestros'].sum()):,})")
     a.set_xlabel("Franja horaria")
-    a.set_ylabel("")
-    a.set_xticklabels([t.get_text().split(" ")[0] for t in a.get_xticklabels()], rotation=0)
-guardar_fig(fig, "p05_heatmaps_causa_franja")
+    a.set_ylabel("% de siniestros con fallecidos")
+# Burbujas: corredores viales
+top = corr.head(12)
+ax[2].scatter(top["siniestros"], top["% fatales"], s=top["fallecidos"] * 4, color=PALETA[0], alpha=0.75, edgecolor="white")
+for n_, r in top.iterrows():
+    ax[2].annotate(n_, (r["siniestros"], r["% fatales"]), fontsize=8, xytext=(5, 4), textcoords="offset points")
+ax[2].axhline(100 * via["fatal"].mean(), color="#52514e", ls="--", lw=1, label="Promedio de la red estatal")
+ax[2].legend(frameon=False, loc="upper right")
+ax[2].set_xlabel("Siniestros en el corredor")
+ax[2].set_ylabel("% de siniestros con fallecidos")
+ax[2].set_title("Corredores viales (tamaño = fallecidos)")
+guardar_fig(fig, "p05_zona_franja_corredores")
+
+# 4) Heatmap corredor x franja (siniestros) para los 10 corredores principales
+m = via[via["ubicacion_via"].isin(top.index[:10])].pivot_table(index="ubicacion_via", columns="franja", values="sid",
+                                                              aggfunc="count", observed=False).reindex(top.index[:10])
+fig, ax = plt.subplots(figsize=(8, 5))
+sns.heatmap(m, annot=True, fmt="d", cmap=CMAP_SEC, ax=ax, cbar_kws={"label": "Siniestros"})
+ax.set_xlabel("Franja horaria")
+ax.set_ylabel("Corredor vial (código de la red estatal)")
+ax.set_xticklabels([x.get_text().split(" ")[0] for x in ax.get_xticklabels()], rotation=0)
+guardar_fig(fig, "p05_heatmap_corredor_franja")

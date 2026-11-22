@@ -2,9 +2,9 @@
 
 > **Pregunta:** ¿Dónde están los puntos críticos (zonas pequeñas con muchos siniestros) en el país y en las ciudades con más eventos, y coinciden con los lugares donde ocurren las muertes?
 
+**Script:** `pregunta_04.py`
 **Técnicas:** cuadrícula de ~2 km (agrupar por coordenadas), concentración en pocas celdas, ranking de celdas, mapa de severidad y mapas de densidad (hexbin) facetados por cantón.
 **Feature nueva usada:** celda de cuadrícula (Anderson, 2009; Xie y Yan, 2008).
-**Verificación:** el script corre sin errores y genera 2 tablas y 2 figuras.
 
 ## 1. Qué hace el código
 
@@ -14,7 +14,13 @@
 
 **Bloque 3: mapa nacional por severidad.** Dibuja todos los siniestros en latitud y longitud, con tres capas (sin víctimas, con lesionados, fatales), donde los fatales son más grandes y opacos.
 
-## 2. Resultados
+## 2. Para la exposición (máx. 40 s)
+
+> Dividimos el país en cuadrículas de unos dos kilómetros. El 5 % de las celdas concentra casi la mitad de los siniestros: esos son los puntos críticos. En los mapas de densidad de las tres ciudades principales, lo más oscuro marca el núcleo; Santo Domingo está muy concentrado y Quito, disperso. Los puntos naranja son siniestros con fallecidos y aparecen también fuera de los núcleos. Respuesta: los puntos críticos existen y son claros, pero concentran cantidad, no letalidad, porque los fallecidos están más repartidos.
+
+*Figura a mostrar:* `p04_densidad_facetado.png` (apoyo: `p04_mapa_nacional_severidad.png`). 84 palabras, unos 34 s a ritmo normal.
+
+## 3. Resultados
 
 - Celdas con al menos un siniestro: **2 860**.
 - El **1 %** de las celdas (29) concentra el **18.9 %** de los siniestros; el **5 %** (143), el **48.8 %**; el **10 %** (286), el **62.7 %**.
@@ -26,21 +32,19 @@
 | Quito | 3 019 | 162 | 17.4 % |
 | Santo Domingo | 984 | 107 | **48.2 %** |
 
-## 3. Análisis
+## 4. Análisis
 
 1. **Los puntos críticos existen y son muy marcados.** Con el 5 % de las celdas se explica casi la mitad de los siniestros del país.
 2. **Cada ciudad tiene un patrón distinto.** Santo Domingo es la más concentrada (casi la mitad en 5 celdas); Quito es la más dispersa (forma una franja norte-sur sin un núcleo único); Guayaquil está en el medio, con un núcleo muy denso alrededor de (-79.9, -2.2) y una cola hacia el oeste.
 3. **Volumen y muertes no coinciden del todo.** Las 10 celdas principales suman 1 504 siniestros y 68 fallecidos, es decir, **4.5 fallecidos por cada 100 siniestros**, frente a **10.8** a nivel nacional. Los puntos críticos concentran *cantidad* de eventos, pero no son los más letales: los puntos con fallecidos aparecen también fuera de esos núcleos. Esto responde la segunda parte de la pregunta.
 
-## 4. Limitaciones y advertencias
+## 5. Limitaciones y advertencias
 
 - La escala de color del hexbin es distinta en cada faceta (llega a ~420 en Guayaquil, ~70 en Quito, ~120 en Santo Domingo); sirve para ver la forma de cada ciudad, no para comparar intensidades entre ellas.
 - La cuadrícula depende del tamaño de celda elegido (0.02°); con otro tamaño los números exactos cambiarían, aunque no la idea.
 - El cálculo de 4.5 frente a 10.8 es una razón de fallecidos por siniestro hecha a partir de la tabla del Top 10; si se quiere citar en diapositiva, conviene dejarlo documentado.
 
-## 5. Archivos generados
+## 6. Archivos generados
 
 - Tablas: `p04_top50_celdas.csv`, `p04_concentracion_por_canton.csv`
 - Figuras: `p04_densidad_facetado.png`, `p04_mapa_nacional_severidad.png`
-
-**Cumple de las instrucciones:** datos espaciales (2.4), feature con referencia (punto 4), gráfico facetado (6.2).

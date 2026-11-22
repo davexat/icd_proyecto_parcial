@@ -1,65 +1,78 @@
 # PREGUNTA DE NEGOCIO 9
-# ¿Cómo influyen la zona (urbana o rural), la jerarquía de la vía y los corredores viales en la
-# cantidad y gravedad de los siniestros, y cómo cambia eso a lo largo del día?
+# ¿Cuándo, dónde y por qué causas ocurren los atropellos, y qué peatones tienen mayor probabilidad
+# de morir?
 #
-# Técnicas: comparación urbano / rural, ranking de corredores viales, gráfico facetado por zona y
-# franja horaria, gráfico de burbujas y heatmap corredor x franja.
+# Técnicas: comparación del % de siniestros fatales (atropellos vs resto), heatmaps facetados día x
+# hora por zona, ranking de provincias y causas, y letalidad del peatón por edad, horario y zona.
+import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from limpieza_datos import FRANJAS, cargar_datos
-from utilidades import CMAP_SEC, PALETA, gravedad, guardar_fig, guardar_tabla, mostrar, seccion
+from limpieza_datos import DIAS, GRUPOS_EDAD, cargar_datos
+from utilidades import CMAP_SEC, PALETA, guardar_fig, guardar_tabla, mostrar, seccion
 
-sin, _ = cargar_datos()
+sin, part = cargar_datos()
+es_at = sin["tipo_siniestro"] == "ATROPELLOS"
+at = sin[es_at]
+ped = part[(part["rol"] == "PEATÓN") & part["condicion"].isin(["LESIONADO", "FALLECIDO"])].copy()
+ped["fallecido"] = ped["condicion"].eq("FALLECIDO")
 
-# 1) Urbano vs rural
-seccion("1) Zona urbana vs rural")
-z = gravedad(sin, "zona")
-z["hora mediana"] = sin.groupby("zona")["hora_decimal"].median()
-mostrar(z.round(2))
-guardar_tabla(z, "p09_zona")
+# 1) Dimensión del problema
+seccion("1) Atropellos frente al resto de siniestros")
+print(f"Atropellos: {len(at):,} ({100 * len(at) / len(sin):.1f}% de los siniestros) | {at['fallecidos'].sum()} fallecidos "
+      f"({100 * at['fallecidos'].sum() / sin['fallecidos'].sum():.1f}% de todos los fallecidos)")
+print(f"% de siniestros fatales: atropellos {100 * at['fatal'].mean():.1f}% vs resto {100 * sin.loc[~es_at, 'fatal'].mean():.1f}% "
+      f"-> {at['fatal'].mean() / sin.loc[~es_at, 'fatal'].mean():.1f} veces")
+print(f"Peatones víctimas: {len(ped):,} | letalidad {100 * ped['fallecido'].mean():.1f}%")
 
-# 2) Red vial estatal: jerarquía y corredores (E35, E25, ...)
-seccion("2) Red vial estatal")
-via = sin[sin["via_estatal"]]
-print(f"Siniestros en la red vial estatal: {len(via):,} ({100 * len(via) / len(sin):.1f}%); "
-      f"% fatales {100 * via['fatal'].mean():.1f}% vs {100 * sin.loc[~sin['via_estatal'], 'fatal'].mean():.1f}% fuera de ella")
-mostrar(gravedad(via.dropna(subset=["jerarquia_via"]), "jerarquia_via").round(2))
-corr = gravedad(via, "ubicacion_via", minimo=60).sort_values("siniestros", ascending=False)
-mostrar(corr.round(1), 15)
-guardar_tabla(corr, "p09_corredores")
+# 2) Cuándo y dónde
+seccion("2) Cuándo y dónde")
+print("Peso del atropello entre todos los siniestros, por franja (%):")
+print((100 * es_at.groupby(sin["franja"], observed=True).mean()).round(1).to_string())
+prov = at.groupby("provincia").agg(atropellos=("sid", "size"), fatales=("fatal", "sum"))
+prov["% fatales"] = 100 * prov["fatales"] / prov["atropellos"]
+prov["% de todos los siniestros de la provincia"] = 100 * prov["atropellos"] / sin.groupby("provincia").size().reindex(prov.index)
+prov = prov.sort_values("atropellos", ascending=False)
+mostrar(prov.round(1), 10)
+guardar_tabla(prov, "p09_atropellos_por_provincia")
 
-# 3) Facetas: gravedad por franja horaria, separando zona urbana y rural
-seccion("3) Gravedad por franja horaria y zona")
-f = gravedad(sin, ["zona", "franja"]).reset_index()
-mostrar(f.round(1))
-fig, ax = plt.subplots(1, 3, figsize=(16, 4.6), gridspec_kw={"width_ratios": [1, 1, 1.4]})
-for a, zona, c in zip(ax[:2], ["URBANA", "RURAL"], PALETA):
-    d = f[f["zona"] == zona].set_index("franja").reindex(FRANJAS)
-    a.bar(range(4), d["% fatales"], color=c)
-    a.set_xticks(range(4))
-    a.set_xticklabels([x.split(" ")[0] for x in FRANJAS])
-    a.set_ylim(0, 24)
-    a.set_title(f"Zona {zona.lower()} (n = {int(d['siniestros'].sum()):,})")
-    a.set_xlabel("Franja horaria")
-    a.set_ylabel("% de siniestros con fallecidos")
-# Burbujas: corredores viales
-top = corr.head(12)
-ax[2].scatter(top["siniestros"], top["% fatales"], s=top["fallecidos"] * 4, color=PALETA[0], alpha=0.75, edgecolor="white")
-for n_, r in top.iterrows():
-    ax[2].annotate(n_, (r["siniestros"], r["% fatales"]), fontsize=8, xytext=(5, 4), textcoords="offset points")
-ax[2].axhline(100 * via["fatal"].mean(), color="#52514e", ls="--", lw=1)
-ax[2].set_xlabel("Siniestros en el corredor")
-ax[2].set_ylabel("% de siniestros con fallecidos")
-ax[2].set_title("Corredores viales (tamaño = fallecidos)")
-guardar_fig(fig, "p09_zona_franja_corredores")
+# 3) Causas
+seccion("3) Causas de los atropellos")
+c = at.groupby("causa_probable").agg(n=("sid", "size"), fatales=("fatal", "sum"))
+c["%"] = 100 * c["n"] / c["n"].sum()
+c["% fatales"] = 100 * c["fatales"] / c["n"]
+c = c.sort_values("n", ascending=False).head(6)
+c.index = [i.split("(")[0].strip().rstrip(".").capitalize()[:60] for i in c.index]
+mostrar(c.round(1))
 
-# 4) Heatmap corredor x franja (siniestros) para los 10 corredores principales
-m = via[via["ubicacion_via"].isin(top.index[:10])].pivot_table(index="ubicacion_via", columns="franja", values="sid",
-                                                              aggfunc="count", observed=False).reindex(top.index[:10])
-fig, ax = plt.subplots(figsize=(8, 5))
-sns.heatmap(m, annot=True, fmt="d", cmap=CMAP_SEC, ax=ax, cbar_kws={"label": "Siniestros"})
-ax.set_xlabel("Franja horaria")
-ax.set_ylabel("Corredor vial (código de la red estatal)")
-ax.set_xticklabels([x.get_text().split(" ")[0] for x in ax.get_xticklabels()], rotation=0)
-guardar_fig(fig, "p09_heatmap_corredor_franja")
+# 4) Perfil del peatón: letalidad por edad, horario y zona
+seccion("4) Perfil del peatón víctima")
+pe = ped.dropna(subset=["grupo_edad"]).groupby("grupo_edad", observed=True)["fallecido"].agg(["size", "sum"]).reindex(GRUPOS_EDAD)
+pe["letalidad %"] = 100 * pe["sum"] / pe["size"]
+mostrar(pe.round(1))
+for var, nom in [("nocturno", "Horario (noche = 18-05 h)"), ("zona", "Zona")]:
+    print(f"\nLetalidad del peatón por {nom.lower()}:")
+    print((100 * ped.groupby(var)["fallecido"].mean()).round(1).to_string())
+guardar_tabla(pe, "p09_letalidad_peaton_edad")
+
+# 5) Gráficos: heatmaps facetados por zona + letalidad por edad
+dias_cal = pd.Series(pd.date_range(sin["fecha"].min(), sin["fecha"].max())).dt.day_of_week.add(1).value_counts().sort_index()
+fig, ax = plt.subplots(1, 3, figsize=(19, 4.8), gridspec_kw={"width_ratios": [1.3, 1.3, 0.9]})
+vmax, mats = 0, {}
+for z in ["URBANA", "RURAL"]:
+    m = at[at["zona"] == z].pivot_table(index="dia_semana", columns="hora_num", values="sid", aggfunc="count", fill_value=0)
+    mats[z] = m.reindex(index=range(1, 8), columns=range(24), fill_value=0).div(dias_cal, axis=0)
+    vmax = max(vmax, mats[z].values.max())
+for a, z in zip(ax[:2], mats):
+    sns.heatmap(mats[z], cmap=CMAP_SEC, vmin=0, vmax=vmax, ax=a, yticklabels=[d[:3].title() for d in DIAS],
+                cbar_kws={"label": "Atropellos por día calendario"})
+    a.set_title(f"Atropellos en zona {z.lower()}")
+    a.set_xlabel("Hora (0-23 h)")
+    a.set_ylabel("Día de la semana")
+ax[2].bar(range(len(pe)), pe["letalidad %"], color=PALETA[1])
+ax[2].set_xticks(range(len(pe)))
+ax[2].set_xticklabels(pe.index)
+ax[2].set_xlabel("Grupo de edad del peatón (años)")
+ax[2].set_ylabel("Letalidad entre peatones víctimas (%)")
+ax[2].set_title("Letalidad del peatón por edad")
+guardar_fig(fig, "p09_atropellos_heatmaps_y_edad")

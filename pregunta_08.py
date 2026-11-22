@@ -1,63 +1,73 @@
 # PREGUNTA DE NEGOCIO 8
-# ¿Las personas que usan casco (motociclistas) o cinturón (ocupantes de vehículos cerrados) mueren
-# menos que las que no lo usan, y qué tan confiable es el registro de estas variables?
+# ¿Qué perfil (edad, sexo y rol en la vía) tienen las personas lesionadas y fallecidas, y qué
+# grupos son proporcionalmente más vulnerables?
 #
-# Técnicas: porcentaje de fallecidos con y sin protección (total y por zona), gráfico de barras
-# facetado y comparación del registro entre entes de control.
-# Nota: es un análisis exploratorio, no causal (no hay datos de velocidad ni de gravedad de lesión).
+# Técnicas: tabla de participantes en formato largo, letalidad (fallecidos / víctimas) por perfil,
+# edad mediana, pirámide de población facetada por condición y heatmap rol x grupo de edad.
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 
-from limpieza_datos import cargar_datos
-from utilidades import PALETA, guardar_fig, guardar_tabla, mostrar, seccion
+from limpieza_datos import GRUPOS_EDAD, cargar_datos
+from utilidades import CMAP_SEC, PALETA, guardar_fig, guardar_tabla, mostrar, seccion
 
 _, part = cargar_datos()
-ocupantes = part["rol"].isin(["CONDUCTOR PRESENTE", "PASAJERO"]) & part["condicion"].notna()
-grupos = {
-    "Casco (solo motocicletas)": (part[ocupantes & part["solo_moto"]], "casco"),
-    "Cinturón (solo vehículos cerrados)": (part[ocupantes & part["solo_vehiculos_cerrados"]], "cinturon"),
-}
 
-filas = []
-for nombre, (d, exp) in grupos.items():
-    d = d[d[exp].isin(["SI", "NO"])].copy()
-    d["fallecido"] = d["condicion"].eq("FALLECIDO")
-    seccion(f"{nombre}: {len(d):,} ocupantes con condición y protección registradas")
-    print(f"Uso de protección registrado como 'SI': {100 * (d[exp] == 'SI').mean():.1f}%")
-    for etiqueta, sub in [("Todos", d), ("Zona urbana", d[d["zona"] == "URBANA"]), ("Zona rural", d[d["zona"] == "RURAL"])]:
-        for uso, g in sub.groupby(exp):
-            filas.append({"variable": nombre, "grupo": etiqueta, "protección": "Con" if uso == "SI" else "Sin",
-                          "personas": len(g), "% fallecidos": 100 * g["fallecido"].mean()})
-res = pd.DataFrame(filas)
-mostrar(res.round(2), 30)
-guardar_tabla(res, "p08_fallecidos_con_y_sin_proteccion", indice=False)
-print("\nContraste con la literatura: Liu et al. (2008, Cochrane) estiman que el casco reduce ~42% el riesgo de muerte. "
-      "Si aquí la diferencia es pequeña, sugiere limitaciones del registro (p. ej. 'NO' como valor por defecto, ilesos "
-      "subregistrados), no ausencia de efecto.")
+# 0) Cobertura de datos: cuántas personas tienen edad / sexo / condición válidos
+seccion("0) Cobertura de datos de las personas involucradas")
+print(f"Personas registradas: {len(part):,}")
+for c in ["edad", "sexo", "condicion"]:
+    print(f"  {c}: {100 * part[c].notna().mean():.1f}% con dato válido")
+vic = part[part["condicion"].isin(["LESIONADO", "FALLECIDO"])].copy()       # víctimas
+vic["fallecido"] = vic["condicion"].eq("FALLECIDO")
+print(f"Víctimas (lesionados + fallecidos): {len(vic):,} | con edad: {100 * vic['edad'].notna().mean():.1f}% "
+      f"| con sexo: {100 * vic['sexo'].notna().mean():.1f}%")
 
-# Gráfico facetado: % de fallecidos con y sin protección, por zona
-fig, ax = plt.subplots(1, 2, figsize=(12, 4.5), sharey=True)
-for a, nombre in zip(ax, grupos):
-    r = res[res["variable"] == nombre].pivot(index="grupo", columns="protección", values="% fallecidos").reindex(["Todos", "Zona urbana", "Zona rural"])
-    x = range(len(r))
-    a.bar([i - 0.2 for i in x], r["Con"], 0.4, color=PALETA[0], label="Con protección")
-    a.bar([i + 0.2 for i in x], r["Sin"], 0.4, color=PALETA[1], label="Sin protección")
-    a.set_xticks(list(x))
-    a.set_xticklabels(r.index)
-    a.set_title(nombre)
-    a.set_ylabel("% de ocupantes fallecidos")
-    a.legend(frameon=False)
-guardar_fig(fig, "p08_fallecidos_con_y_sin_proteccion")
+# 1) Letalidad entre víctimas por rol, sexo y grupo de edad
+seccion("1) Letalidad entre víctimas (fallecidos / (fallecidos + lesionados))")
+tablas = {}
+for var in ["rol", "sexo", "grupo_edad"]:
+    d = vic.dropna(subset=[var]).groupby(var, observed=True).agg(victimas=("fallecido", "size"), fallecidos=("fallecido", "sum"))
+    d["letalidad %"] = 100 * d["fallecidos"] / d["victimas"]
+    tablas[var] = d
+    print(f"\nPor {var}:")
+    mostrar(d.round(2))
+guardar_tabla(pd.concat(tablas), "p08_letalidad_por_perfil")
+e = vic.dropna(subset=["edad"])
+print(f"\nEdad mediana: fallecidos {e.loc[e['fallecido'], 'edad'].median():.0f} años | lesionados {e.loc[~e['fallecido'], 'edad'].median():.0f} años")
+con_e, sin_e = vic[vic["edad"].notna()], vic[vic["edad"].isna()]
+print(f"Letalidad entre víctimas con edad registrada: {100 * con_e['fallecido'].mean():.1f}% | sin edad: {100 * sin_e['fallecido'].mean():.1f}%")
+hm = vic[vic["sexo"].isin(["HOMBRE", "MUJER"])]["sexo"].value_counts()
+print(f"Razón hombre : mujer entre víctimas con sexo conocido = {hm['HOMBRE'] / hm['MUJER']:.1f} : 1")
 
-# Auditoría del registro: % de motociclistas con casco 'SI' por ente de control
-seccion("Auditoría del registro de casco por ente de control (motociclistas, n >= 100)")
-m = grupos["Casco (solo motocicletas)"][0]
-aud = m.groupby("ente_control").agg(n=("sid", "size"), con_casco=("casco", lambda s: 100 * (s == "SI").mean())).query("n >= 100")
-aud = aud.sort_values("con_casco")
-mostrar(aud.round(1))
-fig, ax = plt.subplots(figsize=(7, 4.5))
-ax.barh(aud.index, aud["con_casco"], color=PALETA[0])
-ax.set_xlabel("% de ocupantes de motocicleta con casco registrado como 'SI'")
-ax.set_ylabel("Ente de control")
-ax.set_title("Casco registrado como SI, por ente de control")
-guardar_fig(fig, "p08_auditoria_casco_por_ente")
+# 2) Pirámide de población facetada: lesionados | fallecidos
+fig, ax = plt.subplots(1, 2, figsize=(13, 4.8), sharey=True)
+for a, cond in zip(ax, ["LESIONADO", "FALLECIDO"]):
+    d = vic[(vic["condicion"] == cond) & vic["grupo_edad"].notna() & vic["sexo"].isin(["HOMBRE", "MUJER"])]
+    c = pd.crosstab(d["grupo_edad"], d["sexo"]).reindex(GRUPOS_EDAD, fill_value=0)
+    a.barh(range(len(c)), -c["HOMBRE"], color=PALETA[0], label="Hombres")
+    a.barh(range(len(c)), c["MUJER"], color=PALETA[1], label="Mujeres")
+    a.set_yticks(range(len(c)))
+    a.set_yticklabels(c.index)
+    mx = c.values.max() * 1.1
+    a.set_xlim(-mx, mx)
+    a.set_xticks(a.get_xticks())
+    a.set_xticklabels([f"{abs(int(x)):,}" for x in a.get_xticks()])
+    a.set_title(f"{cond.capitalize()}s")
+    a.set_xlabel("Personas (con edad y sexo conocidos)")
+    a.axvline(0, color="#52514e", lw=0.8)
+ax[0].set_ylabel("Grupo de edad (años)")
+ax[0].legend(frameon=False)
+guardar_fig(fig, "p08_piramide_lesionados_fallecidos")
+
+# 3) Heatmap rol x grupo de edad: letalidad entre víctimas (celdas con menos de 30 personas omitidas)
+d = vic.dropna(subset=["grupo_edad"])
+let = d.pivot_table(index="rol", columns="grupo_edad", values="fallecido", aggfunc="mean", observed=False) * 100
+n = d.pivot_table(index="rol", columns="grupo_edad", values="fallecido", aggfunc="size", observed=False)
+let = let.astype(float).where(n >= 30).dropna(how="all")
+fig, ax = plt.subplots(figsize=(8, 4))
+sns.heatmap(let, annot=True, fmt=".0f", cmap=CMAP_SEC, ax=ax, cbar_kws={"label": "Letalidad entre víctimas (%)"})
+ax.set_xlabel("Grupo de edad (años; celdas con n < 30 omitidas)")
+ax.set_ylabel("Rol en el siniestro")
+ax.set_yticklabels([t.get_text().capitalize() for t in ax.get_yticklabels()], rotation=0)
+guardar_fig(fig, "p08_heatmap_rol_edad")

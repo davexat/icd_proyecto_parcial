@@ -51,14 +51,17 @@ for a, medida, c in zip(ax, ["siniestros", "fallecidos"], PALETA):
 guardar_fig(fig, "p03_pareto_provincias")
 
 fig, ax = plt.subplots(figsize=(7.5, 7.5))
-ax.scatter(sin["lon"], sin["lat"], s=1, color="#d9d8d3")
-sc = ax.scatter(prov["lon"], prov["lat"], s=prov["siniestros"] / 8, c=prov["% fatales"], cmap=CMAP_SEC,
+cont, prov_c = sin[sin["lon"] > -85], prov[prov["lon"] > -85]     # continente; Galápagos (5 siniestros) queda aparte
+ax.scatter(cont["lon"], cont["lat"], s=1, color="#d9d8d3")
+sc = ax.scatter(prov_c["lon"], prov_c["lat"], s=prov_c["siniestros"] / 8, c=prov_c["% fatales"], cmap=CMAP_SEC,
                 edgecolor="white", linewidth=1, alpha=0.9)
-for n, r in prov.nlargest(8, "siniestros").iterrows():
-    ax.annotate(n.title()[:14], (r["lon"], r["lat"]), fontsize=8, xytext=(6, 6), textcoords="offset points")
+OFF = {"GUAYAS": (-8, -40), "SANTA ELENA": (-10, -26), "PICHINCHA": (10, 18), "SANTO DOMINGO DE LOS TSACHILAS": (-90, 16)}
+for n, r in prov_c.nlargest(8, "siniestros").iterrows():
+    ax.annotate(n.title()[:14], (r["lon"], r["lat"]), fontsize=8, xytext=OFF.get(n, (6, 6)), textcoords="offset points",
+                arrowprops=dict(arrowstyle="-", color="#8a8a85", lw=0.6) if n in OFF else None)
 ax.set_xlabel("Longitud (°)")
 ax.set_ylabel("Latitud (°)")
-ax.set_title("Siniestros por provincia: tamaño = volumen, color = % con fallecidos")
-fig.colorbar(sc, ax=ax, label="% de siniestros con fallecidos", shrink=0.7)
+ax.set_title("Siniestros por provincia (continente)\ntamaño = volumen, color = % con fallecidos")
+fig.colorbar(sc, ax=ax, label="% de siniestros con fallecidos", shrink=0.7, pad=0.03)
 ax.set_aspect("equal")
 guardar_fig(fig, "p03_mapa_burbujas_provincias")

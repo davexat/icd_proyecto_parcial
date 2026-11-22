@@ -1,57 +1,65 @@
-# Pregunta de negocio 10: días críticos
+# Pregunta de negocio 10: siniestros de alta consecuencia
 
-> **Pregunta:** ¿Qué días tuvieron muchos más siniestros o fallecidos de lo habitual y qué tienen en común (día de la semana, feriado, mes, causa dominante)?
+> **Pregunta:** ¿Qué características tienen los siniestros de alta consecuencia (3 o más víctimas) y qué tan concentradas están las víctimas en pocos eventos?
 
-**Técnicas:** valores estandarizados (z-score) de la serie diaria, correlación entre siniestros y fallecidos, composición de causas, serie diaria y calendario heatmap.
-**Verificación:** el script corre sin errores y genera 1 tabla y 2 figuras.
+**Script:** `pregunta_10.py`
+**Técnicas:** distribución de víctimas por siniestro, porcentaje de víctimas que concentran los siniestros de alta consecuencia, comparación del % de alta consecuencia con y sin cada característica, top 10 de siniestros y gráfico facetado por zona.
+**Feature nueva usada:** `n_victimas` (lesionados + fallecidos; WHO, 2023).
 
 ## 1. Qué hace el código
 
-**Bloque 0: serie diaria.** Siniestros y fallecidos por día (incluye los días con 0), con marcas de día de la semana, fin de semana y feriado.
+**Bloque 0: definición.** Un siniestro es de "alta consecuencia" si `n_victimas >= 3` (la constante `UMBRAL`).
 
-**Bloque 1: z-score.** Cada día se compara contra el promedio y la desviación estándar *de su mismo día de la semana*: `z = (valor - media del día de la semana) / desviación del día de la semana`. Así un domingo no se marca como crítico solo por ser domingo (los domingos ya son más altos, ver P1). Imprime la correlación entre siniestros y fallecidos y cuántos días tienen z > 2.
+**Bloque 1: distribución y concentración.** Promedio, máximo y percentil 99 de víctimas por siniestro, y qué parte de las víctimas y de los fallecidos concentran los siniestros de alta consecuencia.
 
-**Bloque 2: días críticos.** Un día es crítico si z > 2 en siniestros *o* en fallecidos. Para cada uno muestra día, valores, z, si fue feriado y la causa dominante. Mide el % de críticos entre fines de semana y feriados frente al resto, los críticos por mes, y compara la composición de causas de los días críticos con la del resto. Guarda `p10_dias_criticos.csv`.
+**Bloque 2: características asociadas.** Para 14 características (bus, camión, moto, 3 o más vehículos, zona rural, noche, fin de semana, causa, tipo de siniestro, etc.) compara el % de siniestros de alta consecuencia *con* la característica frente a *sin* ella y calcula la razón ("veces más probable"). Guarda `p10_caracteristicas_alta_consecuencia.csv`.
 
-**Bloque 3: gráficos.** (a) Dos series (siniestros y fallecidos) con media móvil de 7 días y los días críticos en rojo. (b) Dos calendarios heatmap (semana ISO × día de la semana) coloreados por el z-score.
+**Bloque 3: Top 10.** Los 10 siniestros con más víctimas. Guarda `p10_top10_siniestros.csv`.
 
-## 2. Resultados
+**Bloque 4: gráficos.** Histograma de víctimas por siniestro (escala logarítmica, 12 = 12 o más), barras horizontales con la razón de probabilidad y una figura facetada urbano / rural con la distribución en porcentaje.
 
-- Correlación diaria entre siniestros y fallecidos: **0.64**.
-- Días con z > 2: 6 en siniestros y 10 en fallecidos; en total **13 días críticos de 273 (4.8 %)**.
+## 2. Para la exposición (máx. 40 s)
 
-| Fecha | Día | Siniestros | Fallecidos | z sin. | z fall. | Feriado | Causa dominante |
-|---|---|---|---|---|---|---|---|
-| **2026-01-01** | Jueves | **123** | **21** | **4.23** | **3.72** | Sí | Distracción |
-| 2026-06-15 | Lunes | 78 | 12 | 2.44 | 2.33 | No | Velocidad |
-| 2026-06-21 | Domingo | 125 | 20 | 2.09 | 2.12 | No | Distracción |
-| 2026-08-04 | Martes | 50 | 12 | 0.00 | 3.16 | No | Distracción |
-| 2026-09-05 | Sábado | 104 | 19 | 1.74 | 2.73 | No | Distracción |
+> A la izquierda, el histograma con escala logarítmica: casi todos los siniestros tienen cero o una víctima, pero hay una cola larga. Ese 5 % de siniestros con tres o más víctimas concentra casi una cuarta parte de todas las víctimas. A la derecha, las barras muestran cuánto más probable es la alta consecuencia con cada característica: choque frontal, tres o más vehículos y bus duplican o más la probabilidad. Moto y alcohol no suben. Lo que cuenta es cuánta gente hay en el evento.
 
-(La tabla completa tiene los 13 días en `p10_dias_criticos.csv`.)
+*Figura a mostrar:* `p10_distribucion_y_caracteristicas.png` (apoyo: `p10_victimas_por_zona.png`). 85 palabras, unos 34 s a ritmo normal.
 
-- % de críticos entre los feriados: **16.7 %** vs 3.9 % en el resto. Entre fines de semana: 2.6 % vs 5.6 % en los otros días.
-- Críticos por mes: enero 1, mayo 1, junio 3, julio 2, agosto 4, septiembre 2.
-- Causa dominante: distracción en 10 de los 13 días y exceso de velocidad en 3.
-- Composición de causas (críticos frente al resto): distracción +4.0 puntos, alcohol +2.1, velocidad +1.1; irrespeto de señales -5.3.
+## 3. Resultados
 
-## 3. Análisis
+- Promedio: **0.95 víctimas por siniestro**; máximo 41; percentil 99 = 5.
+- **931 siniestros (5.4 %) tienen 3 o más víctimas** y concentran el **22.9 % de las víctimas** y el **16.6 % de los fallecidos**.
 
-1. **Son pocos días y son extremos.** El 1 de enero de 2026 es el caso más fuerte (z de 4.2 en siniestros y 3.7 en fallecidos), consistente con las celebraciones de fin de año.
-2. **El feriado es lo que más se repite**: 1 de cada 6 feriados es crítico, frente a 1 de cada 26 de los demás días. En cambio, el *fin de semana* no es más crítico, justamente porque el z-score ya descuenta su efecto: los fines de semana son altos, pero son "normalmente altos".
-3. **Siniestros y fallecidos no siempre suben juntos** (correlación 0.64): el 4 de agosto tiene 50 siniestros (z = 0.0) pero 12 fallecidos (z = 3.2), mientras que el 17 de agosto tiene un exceso de siniestros (z = 2.1) con solo 3 fallecidos. Por eso se evalúan ambas series.
-4. **Hay concentración en el segundo semestre:** 11 de los 13 críticos están entre junio y septiembre, lo que coincide con el aumento del volumen visto en P1.
-5. **Causa dominante:** en los días críticos pesan algo más la distracción y el alcohol, y menos el irrespeto de señales.
+| Característica | % alta consecuencia (con) | (sin) | Veces más probable |
+|---|---|---|---|
+| Choque frontal | 11.9 | 4.9 | **2.41** |
+| 3 o más vehículos | 11.3 | 5.1 | **2.23** |
+| Participa un bus | 10.3 | 5.1 | **2.01** |
+| Transporte público | 7.7 | 5.1 | 1.53 |
+| Red vial estatal | 6.8 | 4.7 | 1.44 |
+| Zona rural | 6.7 | 4.7 | 1.43 |
+| Participa un camión | 7.0 | 5.2 | 1.33 |
+| Exceso de velocidad | 5.7 | 5.3 | 1.07 |
+| Horario nocturno | 5.4 | 5.4 | 1.01 |
+| Participa una motocicleta | 5.3 | 5.5 | 0.97 |
+| Causa: alcohol / sustancias | 4.5 | 5.5 | 0.82 |
 
-## 4. Limitaciones y advertencias
+- Siniestro más grave: **41 lesionados** en un estrellamiento en Santa Elena (19 de agosto). Le siguen un choque frontal en Santa Elena (34 lesionados y 4 fallecidos, 12 de abril) y una pérdida de carril en Cuenca (27 lesionados y 2 fallecidos).
+- La proporción de alta consecuencia es de 6.7 % en la zona rural y 4.7 % en la urbana.
 
-- Con solo 13 casos, los porcentajes por mes o por tipo de día son frágiles.
-- El calendario heatmap tiene 39 filas (semanas) y es difícil de leer proyectado; para la diapositiva conviene usar la serie diaria con críticos marcados y dejar el calendario como apoyo.
-- Parte del aumento en el segundo semestre puede reflejar mayor cobertura del registro (ver P1).
+## 4. Análisis
 
-## 5. Archivos generados
+1. **Las víctimas están concentradas.** Algo más de 1 de cada 20 siniestros explica casi 1 de cada 4 víctimas.
+2. **La clave es la cantidad de personas expuestas por evento.** Lo que más aumenta la probabilidad de alta consecuencia es lo que implica *muchos ocupantes*: el bus (2.0 veces), el transporte público (1.5), los siniestros con 3 o más vehículos (2.2) y el choque frontal (2.4), que suele implicar un impacto de gran energía (interpretación: el dataset no mide velocidad).
+3. **Variables que no aparecen como se esperaría.** Moto (0.97) y alcohol (0.82) no elevan la probabilidad de alta consecuencia: sus siniestros afectan a pocas personas cada vez (el motociclista y su acompañante), aunque sean letales (ver preguntas 6 y 7). Alta consecuencia y alta letalidad son conceptos distintos.
+4. **Rural y vía estatal** aumentan la probabilidad en torno a 1.4 veces, en línea con lo visto en la pregunta 5.
 
-- Tabla: `p10_dias_criticos.csv`
-- Figuras: `p10_serie_diaria_criticos.png`, `p10_calendario_heatmap.png`
+## 5. Limitaciones y advertencias
 
-**Cumple de las instrucciones:** analítica con medidas estadísticas (punto 5), heatmap (6.3), datos temporales (2.1).
+- El umbral de 3 víctimas es una decisión del equipo; con otro umbral las razones cambiarían.
+- Las razones comparan con y sin cada característica de forma aislada; no controlan que varias se solapen (por ejemplo, bus y transporte público, o choque frontal y rural).
+- Los 18 siniestros con más de 10 lesionados son atípicos reales y se conservaron; influyen en la cola de la distribución.
+
+## 6. Archivos generados
+
+- Tablas: `p10_caracteristicas_alta_consecuencia.csv`, `p10_top10_siniestros.csv`
+- Figuras: `p10_distribucion_y_caracteristicas.png`, `p10_victimas_por_zona.png`

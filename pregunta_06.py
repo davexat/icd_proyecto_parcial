@@ -1,68 +1,77 @@
 # PREGUNTA DE NEGOCIO 6
-# ¿Qué tipos de siniestro y qué vehículos involucrados concentran la mayor gravedad, y esa
-# gravedad cambia entre zona urbana y rural?
+# ¿Qué causas probables (y qué factores: humano, vehículo o vía) explican la mayor parte de los
+# siniestros, cuáles se asocian a mayor gravedad y cambia su peso según la hora del día?
 #
-# Técnicas: tabla de gravedad por tipo de siniestro, comparación del % de siniestros fatales con y
-# sin cada tipo de vehículo, gráfico facetado urbano vs rural y heatmap tipo de siniestro x vehículo.
+# Técnicas: Pareto de causas, porcentaje por factor, gravedad por grupo de causa, gráfico de
+# burbujas (frecuencia vs gravedad) y heatmaps causa x franja horaria.
+import textwrap
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
 from limpieza_datos import cargar_datos
-from utilidades import CMAP_SEC, PALETA, gravedad, guardar_fig, guardar_tabla, mostrar, seccion
+from utilidades import CMAP_SEC, PALETA, gravedad, guardar_fig, guardar_tabla, mostrar, pareto_abc, seccion
 
 sin, _ = cargar_datos()
 
-# 1) Gravedad por tipo de siniestro
-seccion("1) Gravedad por tipo de siniestro")
-t = gravedad(sin, "tipo_siniestro").sort_values("% fatales", ascending=False)
-mostrar(t.round(2))
-guardar_tabla(t, "p06_gravedad_por_tipo_siniestro")
+# 1) Pareto de causas probables (26 códigos) y factor contribuyente
+seccion("1) Frecuencia de causas")
+corto = sin.groupby("cod_causa")["causa_probable"].agg(
+    lambda s: textwrap.shorten(s.iloc[0].split("(")[0].strip().rstrip(".").capitalize(), 58, placeholder="…"))
+abc = pareto_abc(sin.groupby("cod_causa").size())
+abc["causa"] = abc.index.map(corto)
+mostrar(abc[["causa", "valor", "%", "% acumulado", "clase"]].round(1), 12)
+print("\nSiniestros por factor causal (modelo humano - vehículo - vía):")
+print((sin["factor_causal"].value_counts(normalize=True) * 100).round(1).to_string())
 
-# 2) % de siniestros fatales cuando participa cada vehículo frente a cuando no participa
-seccion("2) Gravedad según el vehículo involucrado")
-veh = ["automovil", "motocicleta", "camioneta", "suv", "camion", "bus", "bicicleta", "scooter", "furgoneta"]
-filas = []
-for v in veh:
-    con, sin_v = sin[sin[f"n_{v}"] > 0], sin[sin[f"n_{v}"] == 0]
-    if len(con) < 30:
-        continue
-    filas.append({"vehiculo": v, "siniestros": len(con), "% fatales (con el vehículo)": 100 * con["fatal"].mean(),
-                  "% fatales (sin él)": 100 * sin_v["fatal"].mean()})
-rr = pd.DataFrame(filas).set_index("vehiculo")
-rr["veces más fatales"] = rr["% fatales (con el vehículo)"] / rr["% fatales (sin él)"]
-rr = rr.sort_values("veces más fatales", ascending=False)
-mostrar(rr.round(2))
-guardar_tabla(rr, "p06_gravedad_por_vehiculo")
-print("\n% fatales según número de vehículos (4 = 4 o más):")
-nv = sin.assign(nveh=sin["n_vehiculos"].clip(upper=4)).groupby("nveh")["fatal"].agg(["size", "mean"])
-nv["mean"] *= 100
-mostrar(nv.rename(columns={"size": "siniestros", "mean": "% fatales"}).round(2))
+# 2) Gravedad por grupo de causa
+seccion("2) Gravedad por grupo de causa")
+g = gravedad(sin, "causa_grupo").sort_values("% fatales", ascending=False)
+mostrar(g.round(2), 12)
+guardar_tabla(g, "p06_gravedad_por_grupo_causa")
 
-# 3) Facetas urbano vs rural por tipo de siniestro
-seccion("3) Gravedad urbana vs rural por tipo de siniestro")
-z = gravedad(sin, ["tipo_siniestro", "zona"], minimo=30).reset_index()
-orden = t.index[t["siniestros"] >= 100]
-fig, ax = plt.subplots(1, 2, figsize=(14, 5.5), sharey=True)
-for a, zona, c in zip(ax, ["URBANA", "RURAL"], PALETA):
-    d = z[z["zona"] == zona].set_index("tipo_siniestro").reindex(orden).dropna(subset=["siniestros"])
-    a.barh(range(len(d)), d["% fatales"], color=c)
-    a.set_yticks(range(len(d)))
-    a.set_yticklabels([i.capitalize() for i in d.index])
-    a.invert_yaxis()
-    a.set_title(f"Zona {zona.lower()}")
-    a.set_xlabel("% de siniestros con fallecidos")
-guardar_fig(fig, "p06_gravedad_tipo_por_zona")
+# 3) Gráficos: Pareto horizontal y burbujas frecuencia vs gravedad
+fig, ax = plt.subplots(1, 2, figsize=(16, 6.5), gridspec_kw={"width_ratios": [1, 1.15]})
+top = abc.head(10).iloc[::-1]
+ax[0].barh(top["causa"], top["%"], color=PALETA[0])
+for y, v_ in enumerate(top["%"]):
+    ax[0].text(v_ + 0.3, y, f"{v_:.1f}%", va="center", fontsize=8)
+ax[0].set_xlabel("% de siniestros")
+ax[0].set_title("Top 10 causas probables")
+col = {"Humano": PALETA[0], "Vehículo": PALETA[2], "Vía y entorno": PALETA[3]}
+fac = sin.groupby("causa_grupo")["factor_causal"].first()
+OFF = {"Vehículo / carga": (6, -13), "Distracción al conducir": (-25, 30), "Exceso de velocidad": (-20, -38),
+       "Vía y entorno": (-88, 6)}
+for gname, r in g.iterrows():
+    ax[1].scatter(r["siniestros"], r["% fatales"], s=r["fallecidos"] * 3 + 20, color=col[fac[gname]], alpha=0.8,
+                  edgecolor="white")
+    ax[1].annotate(gname, (r["siniestros"], r["% fatales"]), fontsize=8, textcoords="offset points",
+                   xytext=OFF.get(gname, (6, 4)),
+                   arrowprops=dict(arrowstyle="-", color="#8a8a85", lw=0.6) if gname in OFF else None)
+ax[1].axhline(100 * sin["fatal"].mean(), color="#52514e", ls="--", lw=1, label="Promedio nacional")
+ax[1].set_xscale("log")
+ax[1].set_xlabel("Siniestros (escala logarítmica)")
+ax[1].set_ylabel("% de siniestros con fallecidos")
+ax[1].set_title("Frecuencia vs gravedad (tamaño = fallecidos)")
+for k, c in col.items():
+    ax[1].scatter([], [], color=c, label=k)
+ax[1].legend(title="Factor", frameon=False, loc="lower left")
+guardar_fig(fig, "p06_pareto_y_burbujas")
 
-# 4) Heatmap tipo de siniestro x vehículo 1 (% fatales; celdas con menos de 30 siniestros omitidas)
-sub = sin[sin["tipo_veh_1"].notna()]
-m = sub.pivot_table(index="tipo_siniestro", columns="tipo_veh_1", values="fatal", aggfunc="mean") * 100
-n = sub.pivot_table(index="tipo_siniestro", columns="tipo_veh_1", values="fatal", aggfunc="size")
-m = m.astype(float).where(n >= 30).dropna(how="all").dropna(axis=1, how="all")
-fig, ax = plt.subplots(figsize=(12, 6))
-sns.heatmap(m, annot=True, fmt=".0f", cmap=CMAP_SEC, ax=ax, cbar_kws={"label": "% de siniestros con fallecidos"})
-ax.set_xlabel("Tipo de vehículo 1 (celdas con n < 30 omitidas)")
-ax.set_ylabel("Tipo de siniestro")
-ax.set_xticklabels([x.get_text().title()[:14] for x in ax.get_xticklabels()], rotation=45, ha="right")
-ax.set_yticklabels([x.get_text().capitalize() for x in ax.get_yticklabels()], rotation=0)
-guardar_fig(fig, "p06_heatmap_tipo_vehiculo")
+# 4) Heatmaps: peso de cada causa por franja horaria y % fatal (celdas con menos de 30 siniestros omitidas)
+n = pd.crosstab(sin["causa_grupo"], sin["franja"])
+share = n.div(n.sum(axis=0), axis=1) * 100
+fat = sin.pivot_table(index="causa_grupo", columns="franja", values="fatal", aggfunc="mean", observed=False) * 100
+fat = fat.astype(float).where(n >= 30)
+orden = g.index
+fig, ax = plt.subplots(1, 2, figsize=(15, 5.5), sharey=True)
+sns.heatmap(share.loc[orden], annot=True, fmt=".0f", cmap=CMAP_SEC, ax=ax[0], cbar_kws={"label": "% de los siniestros de la franja"})
+ax[0].set_title("Peso de cada causa dentro de la franja horaria")
+sns.heatmap(fat.loc[orden], annot=True, fmt=".0f", cmap=CMAP_SEC, ax=ax[1], cbar_kws={"label": "% de siniestros con fallecidos"})
+ax[1].set_title("Gravedad por causa y franja (n ≥ 30)")
+for a in ax:
+    a.set_xlabel("Franja horaria")
+    a.set_ylabel("")
+    a.set_xticklabels([t.get_text().split(" ")[0] for t in a.get_xticklabels()], rotation=0)
+guardar_fig(fig, "p06_heatmaps_causa_franja")

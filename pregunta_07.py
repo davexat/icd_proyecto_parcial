@@ -1,71 +1,68 @@
 # PREGUNTA DE NEGOCIO 7
-# ¿Qué perfil (edad, sexo y rol en la vía) tienen las personas lesionadas y fallecidas, y qué
-# grupos son proporcionalmente más vulnerables?
+# ¿Qué tipos de siniestro y qué vehículos involucrados concentran la mayor gravedad, y esa
+# gravedad cambia entre zona urbana y rural?
 #
-# Técnicas: tabla de participantes en formato largo, letalidad (fallecidos / víctimas) por perfil,
-# edad mediana, pirámide de población facetada por condición y heatmap rol x grupo de edad.
+# Técnicas: tabla de gravedad por tipo de siniestro, comparación del % de siniestros fatales con y
+# sin cada tipo de vehículo, gráfico facetado urbano vs rural y heatmap tipo de siniestro x vehículo.
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from limpieza_datos import GRUPOS_EDAD, cargar_datos
-from utilidades import CMAP_SEC, PALETA, guardar_fig, guardar_tabla, mostrar, seccion
+from limpieza_datos import cargar_datos
+from utilidades import CMAP_SEC, PALETA, gravedad, guardar_fig, guardar_tabla, mostrar, seccion
 
-_, part = cargar_datos()
+sin, _ = cargar_datos()
 
-# 0) Cobertura de datos: cuántas personas tienen edad / sexo / condición válidos
-seccion("0) Cobertura de datos de las personas involucradas")
-print(f"Personas registradas: {len(part):,}")
-for c in ["edad", "sexo", "condicion"]:
-    print(f"  {c}: {100 * part[c].notna().mean():.1f}% con dato válido")
-vic = part[part["condicion"].isin(["LESIONADO", "FALLECIDO"])].copy()       # víctimas
-vic["fallecido"] = vic["condicion"].eq("FALLECIDO")
-print(f"Víctimas (lesionados + fallecidos): {len(vic):,} | con edad: {100 * vic['edad'].notna().mean():.1f}% "
-      f"| con sexo: {100 * vic['sexo'].notna().mean():.1f}%")
+# 1) Gravedad por tipo de siniestro
+seccion("1) Gravedad por tipo de siniestro")
+t = gravedad(sin, "tipo_siniestro").sort_values("% fatales", ascending=False)
+mostrar(t.round(2))
+guardar_tabla(t, "p07_gravedad_por_tipo_siniestro")
 
-# 1) Letalidad entre víctimas por rol, sexo y grupo de edad
-seccion("1) Letalidad entre víctimas (fallecidos / (fallecidos + lesionados))")
-tablas = {}
-for var in ["rol", "sexo", "grupo_edad"]:
-    d = vic.dropna(subset=[var]).groupby(var, observed=True).agg(victimas=("fallecido", "size"), fallecidos=("fallecido", "sum"))
-    d["letalidad %"] = 100 * d["fallecidos"] / d["victimas"]
-    tablas[var] = d
-    print(f"\nPor {var}:")
-    mostrar(d.round(2))
-guardar_tabla(pd.concat(tablas), "p07_letalidad_por_perfil")
-e = vic.dropna(subset=["edad"])
-print(f"\nEdad mediana: fallecidos {e.loc[e['fallecido'], 'edad'].median():.0f} años | lesionados {e.loc[~e['fallecido'], 'edad'].median():.0f} años")
-hm = vic[vic["sexo"].isin(["HOMBRE", "MUJER"])]["sexo"].value_counts()
-print(f"Razón hombre : mujer entre víctimas con sexo conocido = {hm['HOMBRE'] / hm['MUJER']:.1f} : 1")
+# 2) % de siniestros fatales cuando participa cada vehículo frente a cuando no participa
+seccion("2) Gravedad según el vehículo involucrado")
+veh = ["automovil", "motocicleta", "camioneta", "suv", "camion", "bus", "bicicleta", "scooter", "furgoneta"]
+filas = []
+for v in veh:
+    con, sin_v = sin[sin[f"n_{v}"] > 0], sin[sin[f"n_{v}"] == 0]
+    if len(con) < 30:
+        continue
+    filas.append({"vehiculo": v, "siniestros": len(con), "% fatales (con el vehículo)": 100 * con["fatal"].mean(),
+                  "% fatales (sin él)": 100 * sin_v["fatal"].mean()})
+rr = pd.DataFrame(filas).set_index("vehiculo")
+rr["veces más fatales"] = rr["% fatales (con el vehículo)"] / rr["% fatales (sin él)"]
+rr = rr.sort_values("veces más fatales", ascending=False)
+mostrar(rr.round(2))
+guardar_tabla(rr, "p07_gravedad_por_vehiculo")
+print("\n% fatales según número de vehículos (4 = 4 o más):")
+nv = sin.assign(nveh=sin["n_vehiculos"].clip(upper=4)).groupby("nveh")["fatal"].agg(["size", "mean"])
+nv["mean"] *= 100
+mostrar(nv.rename(columns={"size": "siniestros", "mean": "% fatales"}).round(2))
 
-# 2) Pirámide de población facetada: lesionados | fallecidos
-fig, ax = plt.subplots(1, 2, figsize=(13, 4.8), sharey=True)
-for a, cond in zip(ax, ["LESIONADO", "FALLECIDO"]):
-    d = vic[(vic["condicion"] == cond) & vic["grupo_edad"].notna() & vic["sexo"].isin(["HOMBRE", "MUJER"])]
-    c = pd.crosstab(d["grupo_edad"], d["sexo"]).reindex(GRUPOS_EDAD, fill_value=0)
-    a.barh(range(len(c)), -c["HOMBRE"], color=PALETA[0], label="Hombres")
-    a.barh(range(len(c)), c["MUJER"], color=PALETA[1], label="Mujeres")
-    a.set_yticks(range(len(c)))
-    a.set_yticklabels(c.index)
-    mx = c.values.max() * 1.1
-    a.set_xlim(-mx, mx)
-    a.set_xticks(a.get_xticks())
-    a.set_xticklabels([f"{abs(int(x)):,}" for x in a.get_xticks()])
-    a.set_title(f"{cond.capitalize()}s")
-    a.set_xlabel("Personas (con edad y sexo conocidos)")
-    a.axvline(0, color="#52514e", lw=0.8)
-ax[0].set_ylabel("Grupo de edad (años)")
-ax[0].legend(frameon=False)
-guardar_fig(fig, "p07_piramide_lesionados_fallecidos")
+# 3) Facetas urbano vs rural por tipo de siniestro
+seccion("3) Gravedad urbana vs rural por tipo de siniestro")
+z = gravedad(sin, ["tipo_siniestro", "zona"], minimo=30).reset_index()
+orden = t.index[t["siniestros"] >= 100]
+fig, ax = plt.subplots(1, 2, figsize=(14, 5.5), sharey=True)
+for a, zona, c in zip(ax, ["URBANA", "RURAL"], PALETA):
+    d = z[z["zona"] == zona].set_index("tipo_siniestro").reindex(orden).dropna(subset=["siniestros"])
+    a.barh(range(len(d)), d["% fatales"], color=c)
+    a.set_yticks(range(len(d)))
+    a.set_yticklabels([i.capitalize() for i in d.index])
+    a.invert_yaxis()
+    a.set_title(f"Zona {zona.lower()}")
+    a.set_xlabel("% de siniestros con fallecidos")
+guardar_fig(fig, "p07_gravedad_tipo_por_zona")
 
-# 3) Heatmap rol x grupo de edad: letalidad entre víctimas (celdas con menos de 30 personas omitidas)
-d = vic.dropna(subset=["grupo_edad"])
-let = d.pivot_table(index="rol", columns="grupo_edad", values="fallecido", aggfunc="mean", observed=False) * 100
-n = d.pivot_table(index="rol", columns="grupo_edad", values="fallecido", aggfunc="size", observed=False)
-let = let.astype(float).where(n >= 30).dropna(how="all")
-fig, ax = plt.subplots(figsize=(8, 4))
-sns.heatmap(let, annot=True, fmt=".0f", cmap=CMAP_SEC, ax=ax, cbar_kws={"label": "Letalidad entre víctimas (%)"})
-ax.set_xlabel("Grupo de edad (años; celdas con n < 30 omitidas)")
-ax.set_ylabel("Rol en el siniestro")
-ax.set_yticklabels([t.get_text().capitalize() for t in ax.get_yticklabels()], rotation=0)
-guardar_fig(fig, "p07_heatmap_rol_edad")
+# 4) Heatmap tipo de siniestro x vehículo 1 (% fatales; celdas con menos de 30 siniestros omitidas)
+sub = sin[sin["tipo_veh_1"].notna()]
+m = sub.pivot_table(index="tipo_siniestro", columns="tipo_veh_1", values="fatal", aggfunc="mean") * 100
+n = sub.pivot_table(index="tipo_siniestro", columns="tipo_veh_1", values="fatal", aggfunc="size")
+m = m.astype(float).where(n >= 30).dropna(how="all").dropna(axis=1, how="all")
+fig, ax = plt.subplots(figsize=(12, 6))
+sns.heatmap(m, annot=True, fmt=".0f", cmap=CMAP_SEC, ax=ax, cbar_kws={"label": "% de siniestros con fallecidos"})
+ax.set_xlabel("Tipo de vehículo 1 (celdas con n < 30 omitidas)")
+ax.set_ylabel("Tipo de siniestro")
+ax.set_xticklabels([x.get_text().title()[:14] for x in ax.get_xticklabels()], rotation=45, ha="right")
+ax.set_yticklabels([x.get_text().capitalize() for x in ax.get_yticklabels()], rotation=0)
+guardar_fig(fig, "p07_heatmap_tipo_vehiculo")

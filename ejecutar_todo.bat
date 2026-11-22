@@ -20,11 +20,6 @@ set PY=".venv\Scripts\python.exe"
 %PY% pregunta_08.py || goto :error
 %PY% pregunta_09.py || goto :error
 %PY% pregunta_10.py || goto :error
-%PY% pregunta_11.py || goto :error
-%PY% pregunta_12.py || goto :error
-%PY% pregunta_13.py || goto :error
-%PY% pregunta_14.py || goto :error
-%PY% pregunta_15.py || goto :error
 %PY% utilidades.py || goto :error
 
 echo.

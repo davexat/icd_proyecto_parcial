@@ -1,77 +1,70 @@
-# Pregunta de negocio 5: causas y factores
+# Pregunta de negocio 5: zona, jerarquía vial y corredores
 
-> **Pregunta:** ¿Qué causas probables (y qué factores: humano, vehículo o vía) explican la mayor parte de los siniestros, cuáles se asocian a mayor gravedad y cambia su peso según la hora del día?
+> **Pregunta:** ¿Cómo influyen la zona (urbana o rural), la jerarquía de la vía y los corredores viales en la cantidad y gravedad de los siniestros, y cómo cambia eso a lo largo del día?
 
-**Técnicas:** Pareto de causas, porcentaje por factor, gravedad por grupo de causa, gráfico de burbujas (frecuencia vs gravedad) y heatmaps causa × franja horaria.
-**Features nuevas usadas:** `causa_grupo` y `factor_causal` (Haddon, 1968; Sabey y Taylor, 1980).
-**Verificación:** el script corre sin errores y genera 1 tabla y 2 figuras.
+**Script:** `pregunta_05.py`
+**Técnicas:** comparación urbano / rural, ranking de corredores viales, gráfico facetado por zona y franja horaria, gráfico de burbujas y heatmap corredor × franja.
 
 ## 1. Qué hace el código
 
-**Bloque 1: frecuencia de causas.** Cuenta los siniestros por código de causa (26 códigos), acorta el texto de cada causa para poder mostrarlo y aplica `pareto_abc()`. Después imprime el porcentaje de siniestros por factor causal (humano, vehículo, vía y entorno), una columna que `limpieza_datos.py` deriva agrupando los códigos.
+**Bloque 1: urbano vs rural.** `gravedad()` por zona, más la hora mediana de ocurrencia. Guarda `p05_zona.csv`.
 
-**Bloque 2: gravedad por grupo de causa.** Con `gravedad()` calcula, para cada uno de los 10 grupos de causa, siniestros, fallecidos y % de siniestros con fallecidos. Guarda `p05_gravedad_por_grupo_causa.csv`.
+**Bloque 2: red vial estatal.** Filtra los siniestros con datos de vía (`via_estatal`, un tercio del total; el resto tenía "ND" en los campos viales y se trató como "no aplica"). Compara el % de fatales dentro y fuera de la red, calcula la gravedad por jerarquía (arterial, colectora) y por corredor (códigos E35, E25...) con al menos 60 siniestros. Guarda `p05_corredores.csv`.
 
-**Bloque 3: gráficos.** Izquierda: barras horizontales con el Top 10 de causas. Derecha: burbujas, donde el eje X es la frecuencia (escala logarítmica, porque hay grupos de 21 y de 4 956 siniestros), el eje Y el % de siniestros con fallecidos y el tamaño de la burbuja el número de fallecidos. El color indica el factor y una línea punteada marca el promedio nacional (9.6 %).
+**Bloque 3: facetas y burbujas.** Dos paneles de barras con el % de siniestros con fallecidos por franja horaria, uno para zona urbana y otro para rural, con el mismo eje Y (0 a 24 %) para poder compararlos. El tercer panel muestra los 12 corredores principales como burbujas: X = siniestros, Y = % con fallecidos, tamaño = fallecidos, con una línea punteada en el promedio de la red estatal.
 
-**Bloque 4: heatmaps causa × franja.** Dos mapas con las mismas filas: (a) el peso de cada causa dentro de cada franja horaria (cada columna suma 100 %) y (b) el % de siniestros con fallecidos por causa y franja, omitiendo celdas con menos de 30 siniestros.
+**Bloque 4: heatmap corredor × franja.** Conteo de siniestros por franja horaria para los 10 corredores con más siniestros.
 
-## 2. Resultados
+## 2. Para la exposición (máx. 40 s)
 
-**Top causas** (28.8 %, 19.3 %, 13.5 %, 6.4 %, 5.6 %, 4.3 %, 4.2 % acumulan 82.1 %, clase A):
+> Los dos primeros paneles comparten eje: muestran el porcentaje de siniestros con fallecidos por franja horaria. La zona rural, en naranja, es el doble de grave que la urbana, y en ambas la madrugada es la peor franja; en la rural llega a uno de cada cinco. A la derecha, cada burbuja es un corredor: E40 tiene más siniestros pero está bajo el promedio, mientras E25, E20 y E482 tienen menos eventos y más muertes por siniestro. Esos son los candidatos a intervención prioritaria.
 
-| Causa | % de siniestros |
-|---|---|
-| Conducir desatento a las condiciones de tránsito | 28.8 |
-| Superar los límites de velocidad | 19.3 |
-| No respetar las señales reglamentarias | 13.5 |
-| No mantener la distancia prudencial | 6.4 |
-| Conducir bajo la influencia de alcohol o sustancias | 5.6 |
+*Figura a mostrar:* `p05_zona_franja_corredores.png` (apoyo: `p05_heatmap_corredor_franja.png`). 84 palabras, unos 34 s a ritmo normal.
 
-**Factor causal:** humano 94.5 %, vía y entorno 4.3 %, vehículo 1.2 %.
+## 3. Resultados
 
-**Gravedad por grupo de causa** (promedio nacional 9.6 %):
+| Zona | Siniestros | % con fallecidos | Hora mediana |
+|---|---|---|---|
+| Rural | 6 297 | **13.97** | 14.3 |
+| Urbana | 10 939 | 7.09 | 14.0 |
 
-| Grupo | Siniestros | % con fallecidos |
+- Red vial estatal: 5 778 siniestros (33.5 %), con **13.7 %** de fatales frente a **7.5 %** fuera de ella.
+- Jerarquía: arterial 13.9 % (3 021 siniestros) y colectora 13.5 % (2 745); casi iguales.
+
+**% con fallecidos por zona y franja:**
+
+| Franja | Urbana | Rural |
 |---|---|---|
-| Vía y entorno | 744 | 12.8 |
-| Distracción al conducir | 4 956 | 12.2 |
-| Exceso de velocidad | 3 331 | 12.0 |
-| Maniobras y distancia | 2 652 | 8.3 |
-| Alcohol / sustancias | 1 044 | 5.8 |
-| Irrespeto de señales / prioridad | 3 382 | 4.8 |
+| Madrugada (00-05) | 10.7 | **20.2** |
+| Mañana (06-11) | 5.8 | 12.2 |
+| Tarde (12-17) | 5.1 | 11.9 |
+| Noche (18-23) | 7.7 | 14.0 |
 
-("Otras infracciones", con 21 siniestros y 14.3 %, no se interpreta por su tamaño.)
+**Corredores principales:**
 
-**Por franja horaria:** el exceso de velocidad pasa de 16.8 % de los siniestros en la tarde a **26.0 % en la madrugada**; el alcohol, de 3.2 % en la mañana a **10.0 % en la madrugada**; la fatiga, de 0.3 % en la tarde a 2.7 %. El irrespeto de señales cae de 23.0 % en la tarde a 12.2 % en la madrugada. La distracción se mantiene en ~28 a 30 % a toda hora.
+| Corredor | Siniestros | % con fallecidos | Fallecidos |
+|---|---|---|---|
+| E40 | 896 | 10.5 | 113 |
+| E35 | 722 | 12.3 | 109 |
+| E25 | 645 | **17.1** | 125 |
+| E20 | 210 | **22.4** | 54 |
+| E482 | 107 | 19.6 | 22 |
 
-## 3. Análisis
+En el heatmap, en E25, E35 y E40 la franja con más siniestros es la noche (233, 239 y 290) y la madrugada es la de menos volumen (106, 148 y 155).
 
-1. **Casi todo es factor humano** (94.5 %). Vehículo y vía suman solo 5.5 %, así que cualquier medida de prevención debe apuntar al comportamiento del conductor.
-2. **Dos causas explican casi la mitad:** distracción y velocidad (48.1 %). Son también las dos más graves entre las frecuentes (12.2 % y 12.0 % de siniestros con fallecidos, frente al 9.6 % nacional).
-3. **Frecuente no es lo mismo que grave.** El irrespeto de señales es la tercera causa en volumen pero una de las menos letales (4.8 %), una hipótesis es que produce sobre todo choques laterales en intersecciones, que suelen ocurrir a menor velocidad (el dataset no lo comprueba).
-4. **Cambia con la hora.** De madrugada pesan más la velocidad, el alcohol y la fatiga, justo cuando también aumenta la letalidad (ver P9). De día dominan las infracciones de señales y prioridad.
+## 4. Análisis
 
-## 4. Limitaciones y advertencias
+1. **La zona rural es el doble de grave** (14.0 % vs 7.1 %) aunque tiene menos siniestros que la urbana. Lo mismo ocurre con la red vial estatal frente al resto.
+2. **La madrugada es la franja más letal en ambas zonas** y en la rural llega a 1 de cada 5 siniestros (20.2 %), pese a tener el menor volumen de eventos. El patrón es en forma de "U": baja en la mañana y la tarde y sube en la noche y la madrugada. En la pregunta 6 se ve que de madrugada pesan más la velocidad, el alcohol y la fatiga, lo que es coherente con este resultado.
+3. **La jerarquía vial no discrimina** (arterial 13.9 % vs colectora 13.5 %): lo que cambia el riesgo es el corredor, no la categoría.
+4. **Volumen y gravedad no coinciden en los corredores.** E40 es el de más siniestros pero con letalidad moderada (10.5 %); E25, E20 y E482 tienen menos eventos pero una proporción mucho mayor de fallecidos, así que son los candidatos a intervención prioritaria.
 
-- **El alcohol sale con baja letalidad (5.8 %), lo que contradice la intuición.** No debe presentarse como "el alcohol es poco peligroso". Lo más probable es un sesgo de registro: la causa se anota cuando se detecta en un control, y eso ocurre más en siniestros leves. Es una hipótesis, el dataset no permite confirmarla.
-- La causa es la *probable* registrada por el ente de control, no una causa verificada.
+## 5. Limitaciones y advertencias
 
-## 5. Corrección recomendada en las etiquetas de burbujas
-
-En la corrida original, la etiqueta "Distracción al conducir" quedaba pegada a la burbuja de "Vía y entorno" y "Exceso de velocidad" caía sobre la burbuja de Distracción, lo que hacía la lectura ambigua. Se probó este cambio (reemplaza la llamada `ax[1].annotate(...)` dentro del `for` de burbujas) y quedó claro:
-
-```python
-    OFF = {"Vehículo / carga": (6, -13), "Distracción al conducir": (-25, 30),
-           "Exceso de velocidad": (-20, -38), "Vía y entorno": (-88, 6)}
-    ax[1].annotate(gname, (r["siniestros"], r["% fatales"]), fontsize=8, textcoords="offset points",
-                   xytext=OFF.get(gname, (6, 4)),
-                   arrowprops=dict(arrowstyle="-", color="#8a8a85", lw=0.6) if gname in OFF else None)
-```
+- Solo hay datos de vía para un tercio de los siniestros (red estatal), así que los corredores no describen la red municipal ni urbana.
+- Algunos corredores tienen pocos casos (E482: 107, E20: 210); sus porcentajes son más variables.
 
 ## 6. Archivos generados
 
-- Tabla: `p05_gravedad_por_grupo_causa.csv`
-- Figuras: `p05_pareto_y_burbujas.png`, `p05_heatmaps_causa_franja.png`
-
-**Cumple de las instrucciones:** feature con referencia (punto 4), heatmaps (6.3), escala logarítmica con etiqueta (6.4).
+- Tablas: `p05_zona.csv`, `p05_corredores.csv`
+- Figuras: `p05_zona_franja_corredores.png`, `p05_heatmap_corredor_franja.png`

@@ -1,67 +1,68 @@
-# Pregunta de negocio 9: zona, jerarquía vial y corredores
+# Pregunta de negocio 9: atropellos
 
-> **Pregunta:** ¿Cómo influyen la zona (urbana o rural), la jerarquía de la vía y los corredores viales en la cantidad y gravedad de los siniestros, y cómo cambia eso a lo largo del día?
+> **Pregunta:** ¿Cuándo, dónde y por qué causas ocurren los atropellos, y qué peatones tienen mayor probabilidad de morir?
 
-**Técnicas:** comparación urbano / rural, ranking de corredores viales, gráfico facetado por zona y franja horaria, gráfico de burbujas y heatmap corredor × franja.
-**Verificación:** el script corre sin errores y genera 2 tablas y 2 figuras.
+**Script:** `pregunta_09.py`
+**Técnicas:** comparación del % de siniestros fatales (atropellos vs resto), heatmaps facetados día × hora por zona, ranking de provincias y causas, y letalidad del peatón por edad, horario y zona.
 
 ## 1. Qué hace el código
 
-**Bloque 1: urbano vs rural.** `gravedad()` por zona, más la hora mediana de ocurrencia. Guarda `p09_zona.csv`.
+**Bloque 0: selección.** `at` son los siniestros de tipo "ATROPELLOS". `ped` son los peatones víctimas (lesionados o fallecidos) de la tabla de participantes.
 
-**Bloque 2: red vial estatal.** Filtra los siniestros con datos de vía (`via_estatal`, un tercio del total; el resto tenía "ND" en los campos viales y se trató como "no aplica"). Compara el % de fatales dentro y fuera de la red, calcula la gravedad por jerarquía (arterial, colectora) y por corredor (códigos E35, E25...) con al menos 60 siniestros. Guarda `p09_corredores.csv`.
+**Bloque 1: dimensión del problema.** Peso de los atropellos en los siniestros y en los fallecidos, comparación de su % de fatales contra el resto y letalidad del peatón.
 
-**Bloque 3: facetas y burbujas.** Dos paneles de barras con el % de siniestros con fallecidos por franja horaria, uno para zona urbana y otro para rural, con el mismo eje Y (0 a 24 %) para poder compararlos. El tercer panel muestra los 12 corredores principales como burbujas: X = siniestros, Y = % con fallecidos, tamaño = fallecidos.
+**Bloque 2: cuándo y dónde.** Peso del atropello por franja horaria y ranking de provincias (cantidad, % fatales y % que representan dentro de los siniestros de la provincia). Guarda `p09_atropellos_por_provincia.csv`.
 
-**Bloque 4: heatmap corredor × franja.** Conteo de siniestros por franja horaria para los 10 corredores con más siniestros.
+**Bloque 3: causas.** Las 6 causas más frecuentes de los atropellos, con su % y su % fatal.
 
-## 2. Resultados
+**Bloque 4: perfil del peatón.** Letalidad por grupo de edad, por horario (noche = 18 a 05 h) y por zona. Guarda `p09_letalidad_peaton_edad.csv`.
 
-| Zona | Siniestros | % con fallecidos | Hora mediana |
-|---|---|---|---|
-| Rural | 6 297 | **13.97** | 14.3 |
-| Urbana | 10 939 | 7.09 | 14.0 |
+**Bloque 5: gráficos.** Dos heatmaps día × hora (zona urbana y rural, con escala común y normalizados por días calendario) y un gráfico de barras con la letalidad del peatón por edad.
 
-- Red vial estatal: 5 778 siniestros (33.5 %), con **13.7 %** de fatales frente a **7.5 %** fuera de ella.
-- Jerarquía: arterial 13.9 % (3 021 siniestros) y colectora 13.5 % (2 745); casi iguales.
+## 2. Para la exposición (máx. 40 s)
 
-**% con fallecidos por zona y franja:**
+> Los dos heatmaps cruzan día y hora para atropellos, en zona urbana y rural. Lo oscuro se concentra entre las 17 y las 21 h: cerca del 40 % de los atropellos ocurre al anochecer. En las barras, la letalidad del peatón sube con la edad hasta 27 % en mayores de 65 años. Además es mayor de noche y en zona rural, donde se duplica. Respuesta: los atropellos son pocos en volumen pero graves, y pasan sobre todo al anochecer, en zona rural y con peatones mayores.
 
-| Franja | Urbana | Rural |
+*Figura a mostrar:* `p09_atropellos_heatmaps_y_edad.png`. 88 palabras, unos 35 s a ritmo normal.
+
+## 3. Resultados
+
+- Atropellos: **1 992 (11.6 % de los siniestros)** con **289 fallecidos (15.5 % de todos los fallecidos)**.
+- % de siniestros fatales: atropellos **14.2 %** vs resto 9.0 % (**1.6 veces**).
+- Peatones víctimas: 2 345, con letalidad de **15.9 %**.
+- Peso del atropello por franja: madrugada 5.9 %, mañana 11.4 %, tarde 12.9 %, **noche 13.6 %**.
+
+**Provincias:** Guayas 859 atropellos (15.2 % de sus siniestros), Pichincha 338 (9.6 %), Tungurahua 132, Santo Domingo 119, Manabí 77 (23.4 % fatales), Los Ríos 45 (22.2 %), El Oro 45 (20.0 %).
+
+**Causas de los atropellos:**
+
+| Causa | % | % fatales |
 |---|---|---|
-| Madrugada (00-05) | 10.7 | **20.2** |
-| Mañana (06-11) | 5.8 | 12.2 |
-| Tarde (12-17) | 5.1 | 11.9 |
-| Noche (18-23) | 7.7 | 14.0 |
+| Conducir desatento a las condiciones de tránsito | 33.1 | 16.1 |
+| Superar los límites de velocidad | 23.8 | 13.1 |
+| No ceder el paso al peatón | 14.0 | 8.3 |
+| Peatón que cruza sin respetar la señalización | 10.8 | 12.0 |
+| No transitar por las aceras o zonas de seguridad | 6.2 | **19.5** |
 
-**Corredores principales:**
+**Letalidad del peatón:** 0-11 años 9.3 %, 12-17 6.2 %, 18-29 13.7 %, 30-64 **20.9 %**, 65+ **27.1 %**; noche 20.1 % vs día 12.4 %; rural 24.3 % vs urbana 12.8 %.
 
-| Corredor | Siniestros | % con fallecidos | Fallecidos |
-|---|---|---|---|
-| E40 | 896 | 10.5 | 113 |
-| E35 | 722 | 12.3 | 109 |
-| E25 | 645 | **17.1** | 125 |
-| E20 | 210 | **22.4** | 54 |
-| E482 | 107 | 19.6 | 22 |
+**Heatmaps:** el pico urbano es el viernes entre las 20:00 y las 20:59 (25 atropellos sumando todos los viernes) y el rural el domingo entre las 19:00 y las 19:59 (22). Las horas 17 a 21 (de 17:00 a 21:59) reúnen cerca del 39 % de los atropellos en ambas zonas.
 
-En el heatmap, en E25, E35 y E40 la franja con más siniestros es la noche (233, 239 y 290) y la madrugada es la de menos volumen (106, 148 y 155).
+## 4. Análisis
 
-## 3. Análisis
+1. **El atropello es un problema desproporcionado:** 1 de cada 9 siniestros pero 1 de cada 6.5 muertes, y es 1.6 veces más letal que el resto.
+2. **Ocurre al anochecer.** Su peso crece del 5.9 % en la madrugada al 13.6 % en la noche, y las horas 17 a 21 concentran casi el 40 % de los casos, un tramo que coincide con la salida del trabajo y con menor visibilidad.
+3. **Las causas dominantes son del conductor** (desatención y velocidad suman 57 %), aunque en 1 de cada 10 atropellos el peatón cruza sin respetar la señalización.
+4. **La probabilidad de morir sube con la edad, la noche y la zona rural**: el peatón de 65 años o más tiene 27.1 % de letalidad, y en zona rural la letalidad se duplica respecto a la urbana (24.3 % vs 12.8 %). Estos tres factores se pueden combinar para priorizar intervenciones (cruces rurales, iluminación, límites de velocidad).
+5. **Provincias:** Guayas y Pichincha concentran el volumen, pero la letalidad es mayor en provincias como Manabí, Los Ríos y El Oro.
 
-1. **La zona rural es el doble de grave** (14.0 % vs 7.1 %) aunque tiene menos siniestros que la urbana. Lo mismo ocurre con la red vial estatal frente al resto.
-2. **La madrugada es la franja más letal en ambas zonas** y en la rural llega a 1 de cada 5 siniestros (20.2 %), pese a tener el menor volumen de eventos. El patrón es en forma de "U": baja en la mañana y la tarde y sube en la noche y la madrugada. En P5 se vio que de madrugada pesan más la velocidad, el alcohol y la fatiga, lo que es coherente con este resultado.
-3. **La jerarquía vial no discrimina** (arterial 13.9 % vs colectora 13.5 %): lo que cambia el riesgo es el corredor, no la categoría.
-4. **Volumen y gravedad no coinciden en los corredores.** E40 es el de más siniestros pero con letalidad moderada (10.5 %); E25, E20 y E482 tienen menos eventos pero una proporción mucho mayor de fallecidos, así que son los candidatos a intervención prioritaria.
+## 5. Limitaciones y advertencias
 
-## 4. Limitaciones y advertencias
+- La letalidad por edad usa solo peatones con edad registrada (ver el sesgo en la pregunta 8).
+- La feature `usuario_vulnerable`, creada en la limpieza, no se usa en este script; aquí se filtra directamente por rol "PEATÓN".
+- El pico urbano/rural de los heatmaps se refiere a una celda día × hora con pocos casos; es orientativo.
 
-- Solo hay datos de vía para un tercio de los siniestros (red estatal), así que los corredores no describen la red municipal ni urbana.
-- Algunos corredores tienen pocos casos (E482: 107, E20: 210); sus porcentajes son más variables.
-- La línea punteada del panel de burbujas es el promedio de la red estatal (13.7 %) pero no está rotulada; conviene añadir una leyenda antes de proyectarla.
+## 6. Archivos generados
 
-## 5. Archivos generados
-
-- Tablas: `p09_zona.csv`, `p09_corredores.csv`
-- Figuras: `p09_zona_franja_corredores.png`, `p09_heatmap_corredor_franja.png`
-
-**Cumple de las instrucciones:** gráfico facetado (6.2), heatmap (6.3), datos espaciales (2.4).
+- Tablas: `p09_atropellos_por_provincia.csv`, `p09_letalidad_peaton_edad.csv`
+- Figura: `p09_atropellos_heatmaps_y_edad.png`

@@ -1,58 +1,81 @@
-# Pregunta de negocio 7: perfil de las víctimas
+# Pregunta de negocio 7: tipo de siniestro y vehículos
 
-> **Pregunta:** ¿Qué perfil (edad, sexo y rol en la vía) tienen las personas lesionadas y fallecidas, y qué grupos son proporcionalmente más vulnerables?
+> **Pregunta:** ¿Qué tipos de siniestro y qué vehículos involucrados concentran la mayor gravedad, y esa gravedad cambia entre zona urbana y rural?
 
-**Técnicas:** tabla de participantes en formato largo, letalidad (fallecidos / víctimas) por perfil, edad mediana, pirámide de población facetada por condición y heatmap rol × grupo de edad.
-**Verificación:** el script corre sin errores y genera 1 tabla y 2 figuras.
+**Script:** `pregunta_07.py`
+**Técnicas:** tabla de gravedad por tipo de siniestro, comparación del % de siniestros fatales con y sin cada tipo de vehículo, gráfico facetado urbano vs rural y heatmap tipo de siniestro × vehículo.
 
 ## 1. Qué hace el código
 
-**Bloque 0: cobertura.** Usa la tabla `part` (una fila por persona, 37 096 en total) y mide cuántas personas tienen edad, sexo y condición válidos. Define las víctimas como los lesionados más los fallecidos.
+**Bloque 1: tipo de siniestro.** `gravedad()` por `tipo_siniestro` (13 tipos), ordenado por % de siniestros con fallecidos. Guarda `p07_gravedad_por_tipo_siniestro.csv`.
 
-**Bloque 1: letalidad por perfil.** Por rol, sexo y grupo de edad calcula víctimas, fallecidos y **letalidad = fallecidos / (fallecidos + lesionados)**. Añade la edad mediana de fallecidos y lesionados y la razón hombre : mujer. Guarda `p07_letalidad_por_perfil.csv`.
+**Bloque 2: vehículo involucrado.** Para cada tipo de vehículo (con al menos 30 siniestros) compara el % de siniestros fatales *cuando participa* ese vehículo contra *cuando no participa*, y calcula la razón entre ambos ("veces más fatales"). También mira el % de fatales según el número de vehículos (4 = 4 o más). Guarda `p07_gravedad_por_vehiculo.csv`.
 
-**Bloque 2: pirámide facetada.** Dos pirámides (lesionados y fallecidos) con hombres a la izquierda y mujeres a la derecha por grupo de edad, usando solo personas con edad y sexo conocidos. El eje X de cada pirámide es distinto porque las magnitudes también lo son (miles vs cientos).
+**Bloque 3: facetas urbano vs rural.** Dos paneles de barras horizontales, uno por zona, con los tipos de siniestro con 100 o más casos y el eje compartido. Se omiten las combinaciones con menos de 30 siniestros.
 
-**Bloque 3: heatmap rol × edad.** Letalidad entre víctimas por rol y grupo de edad, omitiendo celdas con menos de 30 personas.
+**Bloque 4: heatmap tipo × vehículo 1.** Matriz del % de siniestros con fallecidos por tipo de siniestro y tipo del vehículo 1, omitiendo celdas con menos de 30 casos.
 
-## 2. Resultados
+## 2. Para la exposición (máx. 40 s)
 
-**Cobertura:** edad 56.1 %, sexo 87.2 %, condición 81.7 %. Entre las 16 410 víctimas, tienen edad el 65.2 % y sexo el 99.3 %.
+> Cada panel muestra el porcentaje de siniestros con fallecidos por tipo, uno para zona urbana y otro rural, con el mismo eje. Lo más grave son los eventos de un solo actor: atropellos, choques frontales, pérdidas de pista y volcamientos. Lo más frecuente, el choque lateral, es de lo menos letal. Y en todos los tipos la barra rural es más larga: la letalidad casi se duplica. En el heatmap, los siniestros con bus son 1.85 veces más fatales y con moto 1.72 veces. La gravedad depende del tipo, del vehículo y de la zona.
 
-| Perfil | Víctimas | Letalidad |
+*Figura a mostrar:* `p07_gravedad_tipo_por_zona.png` (apoyo: `p07_heatmap_tipo_vehiculo.png`). 95 palabras, unos 38 s a ritmo normal.
+
+## 3. Resultados
+
+**Por tipo de siniestro (% con fallecidos):**
+
+| Tipo | Siniestros | % con fallecidos |
 |---|---|---|
-| Peatón | 2 345 | **15.9 %** |
-| Conductor presente | 7 265 | 13.8 % |
-| Pasajero | 6 780 | 7.2 % |
-| Hombre | 11 952 | **12.7 %** |
-| Mujer | 4 341 | 7.7 % |
-| 0 a 11 años | 438 | 9.4 % |
-| 12 a 17 | 500 | 8.4 % |
-| 18 a 29 | 4 095 | 11.5 % |
-| 30 a 64 | 5 024 | 13.9 % |
-| 65 o más | 646 | **19.7 %** |
+| Arrollamientos | 153 | **45.8** |
+| Pérdida de pista | 504 | 22.4 |
+| Choque frontal | 1 142 | 19.4 |
+| Volcamientos | 218 | 15.1 |
+| Atropellos | 1 992 | 14.2 |
+| Choque lateral | 4 858 | 4.8 |
+| Colisión | 482 | 2.9 |
 
-- Razón hombre : mujer entre víctimas con sexo conocido: **2.8 : 1**.
-- Edad mediana: fallecidos 33 años; lesionados 30 años.
+El choque frontal es también el de más víctimas por siniestro (1.37).
 
-**Heatmap rol × edad (letalidad %):** peatón 9 (0-11), 6 (12-17), 14 (18-29), 21 (30-64), **27 (65+)**; conductor 16, 13, 15 y 16 (12-17 a 65+); pasajero 8 a 9 en todas las edades menos 12 en 65+.
+**Por vehículo involucrado:**
 
-## 3. Análisis
+| Vehículo | Siniestros | % fatales con él | % fatales sin él | Veces más fatales |
+|---|---|---|---|---|
+| Bus | 862 | 17.1 | 9.2 | **1.85** |
+| Motocicleta | 5 647 | 13.4 | 7.8 | **1.72** |
+| Camión | 1 680 | 13.3 | 9.2 | 1.44 |
+| Camioneta | 2 750 | 6.1 | 10.3 | 0.59 |
+| SUV | 2 056 | 5.3 | 10.2 | 0.52 |
+| Automóvil | 6 242 | 4.2 | 12.7 | **0.33** |
 
-1. **Las víctimas son sobre todo hombres adultos.** Casi tres de cada cuatro víctimas son hombres, concentrados en los 18 a 64 años (pirámide).
-2. **Los hombres también mueren más cuando se accidentan** (12.7 % vs 7.7 %).
-3. **El adulto mayor es el grupo más vulnerable** (19.7 %, el doble de los menores de 18). Pero el heatmap muestra que esto es un fenómeno *de peatones*: la letalidad del peatón sube de 6 % a 27 % con la edad, mientras que la del conductor casi no cambia (13 a 16 %).
-4. **El peatón es el rol más letal** (15.9 %), por encima del conductor; el pasajero es el más protegido (7.2 %).
+**Por número de vehículos:** 1 vehículo, 12.3 % fatales; 2 vehículos, 7.2 %; 3, 7.4 %; 4 o más, 4.1 %.
 
-## 4. Limitaciones y advertencias
+**Urbano vs rural (% con fallecidos, cálculo aparte para los casos principales):**
 
-- La edad falta en un tercio de las víctimas. En P13 se ve que las víctimas *sin* edad tienen letalidad menor (8.5 % vs 12.9 %), así que los niveles absolutos de letalidad por edad están algo sesgados; el patrón por grupos se mantiene (ver P13).
-- Ciclista (10 víctimas) y conductor ausente (10) no se interpretan por su tamaño; el heatmap los omite.
-- Los resultados son descriptivos: no se mide exposición (cuánta gente de cada grupo circula).
+| Tipo | Urbana | Rural |
+|---|---|---|
+| Atropellos | 11.3 | 21.3 |
+| Choque frontal | 14.1 | 22.5 |
+| Pérdida de pista | 18.9 | 24.4 |
+| Volcamientos | 9.5 | 18.7 |
+| Choque lateral | 3.7 | 8.2 |
 
-## 5. Archivos generados
+## 4. Análisis
 
-- Tabla: `p07_letalidad_por_perfil.csv`
-- Figuras: `p07_piramide_lesionados_fallecidos.png`, `p07_heatmap_rol_edad.png`
+1. **Los eventos "de un solo actor" son los más graves.** Arrollamientos, pérdidas de pista y volcamientos tienen una letalidad alta; y los siniestros de un solo vehículo (12.3 %) son más mortales que los de dos (7.2 %).
+2. **Lo más frecuente es lo menos grave.** El choque lateral es el tipo más común (4 858) y de los menos letales (4.8 %).
+3. **El bus y la moto elevan el riesgo; el automóvil lo reduce.** Los siniestros con bus son 1.85 veces más fatales que los que no lo incluyen; con moto, 1.72. El automóvil aparece con 0.33: los siniestros donde participa un automóvil son bastante menos letales (4.2 % frente a 12.7 %). Es una asociación, no prueba que el automóvil proteja por sí solo.
+4. **La zona rural es más grave en todos los tipos.** Casi se duplica la letalidad de atropellos, choques frontales y volcamientos al pasar de urbano a rural.
+5. En el heatmap destaca que el arrollamiento tiene un 49 % de fatales cuando el vehículo 1 aparece como "no identificado"; de hecho, 74 de los 153 arrollamientos tienen un vehículo no identificado. Puede sugerir fuga del conductor, pero el dato no lo confirma.
 
-**Cumple de las instrucciones:** gráfico facetado (6.2), heatmap (6.3), datos continuos (edad) y categóricos.
+## 5. Limitaciones y advertencias
+
+- Arrollamientos tiene solo 153 casos; es un porcentaje alto, pero con una base pequeña.
+- La razón "veces más fatales" compara con y sin el vehículo; no controla otras variables (tipo de vía, velocidad, hora), por lo que no es causal.
+- Hay un 22 % de siniestros con el tipo del vehículo 1 sin identificar (parte del ruido global).
+- Las etiquetas del heatmap acortan "Vehículo deportivo utilitario" a "Vehículo Depor".
+
+## 6. Archivos generados
+
+- Tablas: `p07_gravedad_por_tipo_siniestro.csv`, `p07_gravedad_por_vehiculo.csv`
+- Figuras: `p07_gravedad_tipo_por_zona.png`, `p07_heatmap_tipo_vehiculo.png`

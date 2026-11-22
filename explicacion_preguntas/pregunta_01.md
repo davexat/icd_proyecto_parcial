@@ -2,9 +2,9 @@
 
 > **Pregunta:** ¿En qué meses, días de la semana y horas ocurren más siniestros, y ese patrón cambia entre zona urbana y rural?
 
+**Script:** `pregunta_01.py`
 **Técnicas:** conteos normalizados por días de calendario, índices de estacionalidad (valor / promedio), gráfico de barras y heatmap día × hora facetado por zona.
 **Feature nueva usada:** índice de estacionalidad (Hyndman y Athanasopoulos, 2021).
-**Verificación:** el script corre sin errores y genera 1 tabla y 2 figuras.
 
 ## 1. Qué hace el código
 
@@ -16,7 +16,13 @@
 
 **Bloque 3: heatmaps por zona.** Para urbana y rural arma una matriz día de la semana × hora con los siniestros por día calendario, dividiendo cada fila entre el número de ese día en el periodo. Ambos heatmaps comparten la misma escala (`vmax` común) para que los colores sean comparables. Al final imprime el pico de cada zona.
 
-## 2. Resultados
+## 2. Para la exposición (máx. 40 s)
+
+> Este heatmap cruza el día de la semana con la hora; cada celda es el promedio de siniestros por día calendario y las dos zonas comparten escala. Lo más oscuro está en el domingo entre las 19 y las 20 h, tanto en la zona urbana como en la rural. Las barras de índices lo confirman: el domingo está 38 % sobre el promedio y martes y miércoles, 20 % por debajo. Así se responde la pregunta: los siniestros se concentran en fin de semana y al anochecer, y el patrón es parecido en ambas zonas.
+
+*Figura a mostrar:* `p01_heatmap_dia_hora_por_zona.png` (apoyo: `p01_indices_estacionalidad.png`). Unas 85 palabras, cerca de 35 s a ritmo normal.
+
+## 3. Resultados
 
 | Dimensión | Valores destacados |
 |---|---|
@@ -29,22 +35,20 @@
 - En la zona urbana, la madrugada (0 a 5 h) del domingo promedia 2.65 siniestros por hora y por día; de lunes a jueves, 0.69.
 - Entre sábado y domingo, el 24.6 % de los siniestros ocurre de 0 a 5 h; entre semana, el 12.9 %.
 
-## 3. Análisis
+## 4. Análisis
 
 1. **El fin de semana pesa más que cualquier mes.** El domingo es el día con más siniestros (38 % sobre el promedio) y martes y miércoles son los más bajos (cerca de 20 % bajo el promedio).
 2. **Hay dos picos horarios.** Uno en la tarde-noche (17 a 20 h, con máximo a las 19 h) y otro menor a las 7 h, que probablemente coincide con la entrada al trabajo y a clases.
 3. **Urbano y rural comparten el patrón** (picos el domingo entre 19 y 20 h), pero la zona urbana tiene más siniestros por hora y una madrugada de fin de semana más intensa.
 4. **Tendencia creciente en el año.** El índice sube de 0.82 en enero a 1.15 en agosto.
 
-## 4. Limitaciones y advertencias
+## 5. Limitaciones y advertencias
 
 - **Nueve meses no alcanzan para hablar de estacionalidad anual.** No hay octubre a diciembre ni un segundo año, así que el patrón mensual mezcla estacionalidad y tendencia.
-- **El alza de mayo a agosto viene casi toda de dos entes.** Al revisar los siniestros por mes y ente, PNE pasa de ~280 a ~650 al mes y CTE de ~285 a ~450, mientras ATM y DMQ se mantienen estables. Puede ser temporada alta real o mayor cobertura del registro. Conviene decirlo como "posible" en la exposición.
+- **El alza de mayo a agosto viene casi toda de dos entes.** Al revisar los siniestros por mes y ente, PNE pasa de ~280 a ~650 al mes y CTE de ~285 a ~450, mientras ATM y DMQ se mantienen estables. Puede ser temporada alta real o mayor cobertura del registro; conviene decirlo como "posible" en la exposición.
 - El análisis es descriptivo: no se hace una prueba de significancia entre días u horas.
 
-## 5. Archivos generados
+## 6. Archivos generados
 
 - Tabla: `p01_indices.csv`
 - Figuras: `p01_indices_estacionalidad.png`, `p01_heatmap_dia_hora_por_zona.png`
-
-**Cumple de las instrucciones:** feature con referencia (punto 4), gráfico facetado (6.2) y heatmap (6.3).

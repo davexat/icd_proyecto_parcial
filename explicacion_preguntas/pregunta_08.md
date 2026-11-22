@@ -1,50 +1,63 @@
-# Pregunta de negocio 8: casco y cinturón
+# Pregunta de negocio 8: perfil de las víctimas
 
-> **Pregunta:** ¿Las personas que usan casco (motociclistas) o cinturón (ocupantes de vehículos cerrados) mueren menos que las que no lo usan, y qué tan confiable es el registro de estas variables?
+> **Pregunta:** ¿Qué perfil (edad, sexo y rol en la vía) tienen las personas lesionadas y fallecidas, y qué grupos son proporcionalmente más vulnerables?
 
-**Técnicas:** porcentaje de fallecidos con y sin protección (total y por zona), gráfico de barras facetado y comparación del registro entre entes de control.
-**Referencia de contraste:** Liu et al. (2008), Cochrane.
-**Verificación:** el script corre sin errores y genera 1 tabla y 2 figuras.
+**Script:** `pregunta_08.py`
+**Técnicas:** tabla de participantes en formato largo, letalidad (fallecidos / víctimas) por perfil, edad mediana, pirámide de población facetada por condición y heatmap rol × grupo de edad.
 
 ## 1. Qué hace el código
 
-**Bloque 0: grupos de análisis.** Selecciona ocupantes (conductores presentes y pasajeros) con condición conocida y arma dos grupos: *casco*, solo en siniestros donde todos los vehículos son motocicletas; y *cinturón*, solo en siniestros con vehículos cerrados (sin motos, bicicletas, scooters ni triciclos). Así cada protección se evalúa donde corresponde.
+**Bloque 0: cobertura.** Usa la tabla `part` (una fila por persona, 37 096 en total) y mide cuántas personas tienen edad, sexo y condición válidos. Define las víctimas como los lesionados más los fallecidos.
 
-**Bloque 1: fallecidos con y sin protección.** Para cada grupo se queda con quienes tienen el campo registrado como "SI" o "NO" y calcula el % de fallecidos (sobre ocupantes) con y sin protección, en total y por zona. Guarda `p08_fallecidos_con_y_sin_proteccion.csv`. Imprime además el contraste con la literatura.
+**Bloque 1: letalidad por perfil.** Por rol, sexo y grupo de edad calcula víctimas, fallecidos y **letalidad = fallecidos / (fallecidos + lesionados)**. Añade la edad mediana de fallecidos y lesionados y la razón hombre : mujer. También compara la letalidad de las víctimas con y sin edad registrada. Guarda `p08_letalidad_por_perfil.csv`.
 
-**Bloque 2: gráfico facetado.** Un panel por tipo de protección; barras agrupadas con/sin, para "todos", "zona urbana" y "zona rural".
+**Bloque 2: pirámide facetada.** Dos pirámides (lesionados y fallecidos) con hombres a la izquierda y mujeres a la derecha por grupo de edad, usando solo personas con edad y sexo conocidos. El eje X de cada pirámide es distinto porque las magnitudes también lo son (miles vs cientos).
 
-**Bloque 3: auditoría del registro.** Para los motociclistas calcula el % con casco "SI" por ente de control (entes con 100 o más casos).
+**Bloque 3: heatmap rol × edad.** Letalidad entre víctimas por rol y grupo de edad, omitiendo celdas con menos de 30 personas.
 
-## 2. Resultados
+## 2. Para la exposición (máx. 40 s)
 
-| Protección | Grupo | % fallecidos con | % fallecidos sin | Personas (con / sin) |
-|---|---|---|---|---|
-| Casco | Todos | 13.64 | 13.50 | 1 334 / 1 541 |
-| Casco | Urbana | 10.85 | 11.76 | 802 / 944 |
-| Casco | Rural | 17.86 | 16.25 | 532 / 597 |
-| Cinturón | Todos | 3.50 | 3.80 | 4 176 / 8 365 |
-| Cinturón | Urbana | 1.40 | 1.77 | 2 422 / 4 759 |
-| Cinturón | Rural | 6.39 | 6.49 | 1 754 / 3 606 |
+> Las pirámides separan lesionados y fallecidos por edad y sexo: ambas son sobre todo de hombres adultos entre 18 y 64 años. Pero el volumen no es lo mismo que la vulnerabilidad. El heatmap mide la letalidad por rol y edad: la fila del peatón se oscurece con los años, de 6 % en adolescentes a 27 % en mayores de 65, mientras la del conductor casi no cambia. Responde la pregunta: las víctimas son hombres adultos, pero los más vulnerables son los peatones adultos mayores.
 
-- Registro de uso como "SI": casco 46.4 %, cinturón 33.3 %.
-- Por ente, el % de motociclistas con casco "SI" va de 37.3 % (DMQ) a 49.2 % (CTE), con PNE 46.5 %, MSD 47.6 % y ATM 48.6 %.
+*Figura a mostrar:* `p08_heatmap_rol_edad.png` (apoyo: `p08_piramide_lesionados_fallecidos.png`). 86 palabras, unos 34 s a ritmo normal.
 
-## 3. Análisis
+## 3. Resultados
 
-1. **En los datos, casco y cinturón casi no cambian la mortalidad.** Con casco, 13.64 % de fallecidos; sin casco, 13.50 %. La diferencia es prácticamente nula y en zona rural incluso es inversa.
-2. **Esto contradice la literatura.** Liu et al. (2008) estiman que el casco reduce alrededor de 42 % el riesgo de muerte. Que aquí no se vea no indica que el casco no funcione, sino que **el registro no permite medirlo**.
-3. **Por qué probablemente falla el registro** (hipótesis): "NO" parece ser un valor por defecto cuando no se anotó nada; los ilesos están subregistrados (el denominador solo incluye personas con condición conocida, lo que favorece a los más graves); y la variable no distingue casco bien puesto de mal puesto.
-4. **Hay baja fiabilidad.** Menos de la mitad de los motociclistas tiene casco "SI" y el porcentaje varía entre entes, lo que sugiere criterios de registro distintos.
+**Cobertura:** edad 56.1 %, sexo 87.2 %, condición 81.7 %. Entre las 16 410 víctimas, tienen edad el 65.2 % y sexo el 99.3 %.
 
-## 4. Limitaciones y advertencias
+| Perfil | Víctimas | Letalidad |
+|---|---|---|
+| Peatón | 2 345 | **15.9 %** |
+| Conductor presente | 7 265 | 13.8 % |
+| Pasajero | 6 780 | 7.2 % |
+| Hombre | 11 952 | **12.7 %** |
+| Mujer | 4 341 | 7.7 % |
+| 0 a 11 años | 438 | 9.4 % |
+| 12 a 17 | 500 | 8.4 % |
+| 18 a 29 | 4 095 | 11.5 % |
+| 30 a 64 | 5 024 | 13.9 % |
+| 65 o más | 646 | **19.7 %** |
 
-- El análisis es **exploratorio y no causal**: no hay velocidad, tipo de siniestro ni gravedad de la lesión para controlar.
-- Es la pregunta más delicada para presentar: un resultado "el casco no sirve" sería un error de interpretación. Por eso se recomienda ubicarla en el apéndice y, si se muestra, enfocarla como **auditoría de calidad del registro**.
+- Razón hombre : mujer entre víctimas con sexo conocido: **2.8 : 1**.
+- Edad mediana: fallecidos 33 años; lesionados 30 años.
+- Letalidad entre víctimas con edad registrada: 12.9 %; sin edad: 8.5 %.
 
-## 5. Archivos generados
+**Heatmap rol × edad (letalidad %):** peatón 9 (0-11), 6 (12-17), 14 (18-29), 21 (30-64), **27 (65+)**; conductor 16, 13, 15 y 16 (12-17 a 65+); pasajero 8 a 9 en todas las edades menos 12 en 65+.
 
-- Tabla: `p08_fallecidos_con_y_sin_proteccion.csv`
-- Figuras: `p08_fallecidos_con_y_sin_proteccion.png`, `p08_auditoria_casco_por_ente.png`
+## 4. Análisis
 
-**Cumple de las instrucciones:** referencia de literatura (punto 4), gráfico facetado (6.2).
+1. **Las víctimas son sobre todo hombres adultos.** Casi tres de cada cuatro víctimas son hombres, concentrados en los 18 a 64 años (pirámide).
+2. **Los hombres también mueren más cuando se accidentan** (12.7 % vs 7.7 %).
+3. **El adulto mayor es el grupo más vulnerable** (19.7 %, el doble de los menores de 18). Pero el heatmap muestra que esto es un fenómeno *de peatones*: la letalidad del peatón sube de 6 % a 27 % con la edad, mientras que la del conductor casi no cambia (13 a 16 %).
+4. **El peatón es el rol más letal** (15.9 %), por encima del conductor; el pasajero es el más protegido (7.2 %).
+
+## 5. Limitaciones y advertencias
+
+- La edad falta en un tercio de las víctimas, y las víctimas *sin* edad tienen letalidad menor (8.5 % vs 12.9 %), así que los niveles absolutos de letalidad por edad están algo sesgados; el patrón entre grupos se mantiene.
+- Ciclista (10 víctimas) y conductor ausente (10) no se interpretan por su tamaño; el heatmap los omite.
+- Los resultados son descriptivos: no se mide exposición (cuánta gente de cada grupo circula).
+
+## 6. Archivos generados
+
+- Tabla: `p08_letalidad_por_perfil.csv`
+- Figuras: `p08_piramide_lesionados_fallecidos.png`, `p08_heatmap_rol_edad.png`

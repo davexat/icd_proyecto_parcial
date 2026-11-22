@@ -1,72 +1,76 @@
 # PREGUNTA DE NEGOCIO 10
-# ¿Qué días tuvieron muchos más siniestros o fallecidos de lo habitual y qué tienen en común
-# (día de la semana, feriado, mes, causa dominante)?
+# ¿Qué características tienen los siniestros de alta consecuencia (3 o más víctimas) y qué tan
+# concentradas están las víctimas en pocos eventos?
 #
-# Técnicas: valores estandarizados (z-score) de la serie diaria, como en el Ejemplo 1; correlación
-# entre siniestros y fallecidos; composición de causas; serie diaria y calendario heatmap.
+# Técnicas: distribución de víctimas por siniestro, porcentaje de víctimas que concentran los
+# siniestros de alta consecuencia, comparación del % de alta consecuencia con y sin cada
+# característica, top 10 de siniestros y gráfico facetado por zona.
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 
-from limpieza_datos import DIAS, cargar_datos
-from utilidades import CMAP_DIV, PALETA, guardar_fig, guardar_tabla, mostrar, seccion
+from limpieza_datos import cargar_datos
+from utilidades import PALETA, guardar_fig, guardar_tabla, mostrar, seccion
 
 sin, _ = cargar_datos()
-dias = pd.date_range(sin["fecha"].min(), sin["fecha"].max())
-d = pd.DataFrame({"siniestros": sin.groupby("fecha").size(), "fallecidos": sin.groupby("fecha")["fallecidos"].sum()}
-                 ).reindex(dias, fill_value=0)
-d["dow"] = d.index.day_of_week
-d["fin_semana"] = d["dow"] >= 5
-d["feriado"] = d.index.isin(sin.loc[sin["feriado"], "fecha"].unique())
+UMBRAL = 3
+sin["alta"] = sin["n_victimas"] >= UMBRAL
 
-# 1) Estandarización: cada día se compara contra el promedio de su mismo día de la semana,
-#    para no marcar como "crítico" cada domingo solo por ser domingo.
-seccion("1) Serie diaria estandarizada (z-score)")
-for c in ["siniestros", "fallecidos"]:
-    d[f"z_{c}"] = (d[c] - d.groupby("dow")[c].transform("mean")) / d.groupby("dow")[c].transform("std")
-print(f"Correlación entre siniestros y fallecidos por día: {d['siniestros'].corr(d['fallecidos']):.2f}")
-print(f"Días con z > 2: siniestros {int((d['z_siniestros'] > 2).sum())} | fallecidos {int((d['z_fallecidos'] > 2).sum())}")
+# 1) Distribución y concentración
+seccion("1) Distribución de víctimas por siniestro")
+v = sin["n_victimas"]
+print(f"Promedio de víctimas por siniestro: {v.mean():.2f} | máximo: {v.max()} | percentil 99: {v.quantile(.99):.0f}")
+print(f"Siniestros con {UMBRAL} o más víctimas: {int(sin['alta'].sum()):,} ({100 * sin['alta'].mean():.1f}%) "
+      f"-> concentran {100 * v[sin['alta']].sum() / v.sum():.1f}% de las víctimas y "
+      f"{100 * sin.loc[sin['alta'], 'fallecidos'].sum() / sin['fallecidos'].sum():.1f}% de los fallecidos")
 
-# 2) Días críticos y sus características
-seccion("2) Días críticos (z > 2 en siniestros o fallecidos)")
-d["critico"] = (d["z_siniestros"] > 2) | (d["z_fallecidos"] > 2)
-cr = d[d["critico"]].copy()
-cr["causa_dominante"] = sin.groupby("fecha")["causa_grupo"].agg(lambda s: s.value_counts().index[0]).reindex(cr.index)
-cr["dia"] = [DIAS[i].title() for i in cr["dow"]]
-cols = ["dia", "siniestros", "fallecidos", "z_siniestros", "z_fallecidos", "feriado", "causa_dominante"]
-mostrar(cr[cols].round(2), 40)
-guardar_tabla(cr[cols], "p10_dias_criticos")
-print(f"\n{len(cr)} días críticos de {len(d)} ({100 * len(cr) / len(d):.1f}%)")
-for var in ["fin_semana", "feriado"]:
-    print(f"% de días críticos entre los días '{var}': {100 * d.loc[d[var], 'critico'].mean():.1f}% | resto: {100 * d.loc[~d[var], 'critico'].mean():.1f}%")
-print("Críticos por mes:", cr.groupby(cr.index.month).size().to_dict())
+# 2) Características asociadas: % de alta consecuencia con la característica vs sin ella
+seccion("2) Características asociadas a la alta consecuencia")
+car = {
+    "Participa un bus": sin["n_bus"] > 0, "Transporte público": sin["transporte_publico"], "Participa un camión": sin["n_camion"] > 0,
+    "Participa una motocicleta": sin["involucra_moto"], "3 o más vehículos": sin["n_vehiculos"] >= 3,
+    "Zona rural": sin["zona"] == "RURAL", "Horario nocturno (18-05 h)": sin["nocturno"], "Fin de semana": sin["fin_semana"],
+    "Feriado": sin["feriado"], "Red vial estatal": sin["via_estatal"],
+    "Causa: exceso de velocidad": sin["causa_grupo"] == "Exceso de velocidad",
+    "Causa: alcohol / sustancias": sin["causa_grupo"] == "Alcohol / sustancias",
+    "Choque frontal": sin["tipo_siniestro"] == "CHOQUE FRONTAL", "Pérdida de pista": sin["tipo_siniestro"] == "PÉRDIDA DE PISTA",
+}
+filas = []
+for k, mask in car.items():
+    con, sin_c = 100 * sin.loc[mask, "alta"].mean(), 100 * sin.loc[~mask, "alta"].mean()
+    filas.append({"característica": k, "siniestros con ella": int(mask.sum()), "% alta consecuencia (con)": con,
+                  "% alta consecuencia (sin)": sin_c, "veces más probable": con / sin_c})
+res = pd.DataFrame(filas).set_index("característica").sort_values("veces más probable", ascending=False)
+mostrar(res.round(2), 20)
+guardar_tabla(res, "p10_caracteristicas_alta_consecuencia")
 
-# Composición de causas en días críticos frente al resto
-comp = pd.concat([sin[sin["fecha"].isin(cr.index)]["causa_grupo"].value_counts(normalize=True).rename("críticos"),
-                  sin[~sin["fecha"].isin(cr.index)]["causa_grupo"].value_counts(normalize=True).rename("resto")], axis=1) * 100
-comp["diferencia (pp)"] = comp["críticos"] - comp["resto"]
-mostrar(comp.sort_values("diferencia (pp)", ascending=False).round(1))
+# 3) Los 10 siniestros con más víctimas
+seccion("3) Los 10 siniestros con más víctimas")
+t10 = sin.nlargest(10, "n_victimas")[["fecha", "canton", "provincia", "tipo_siniestro", "n_vehiculos", "lesionados", "fallecidos", "causa_grupo"]]
+mostrar(t10)
+guardar_tabla(t10, "p10_top10_siniestros", indice=False)
 
-# 3) Gráficos: serie con críticos y calendario heatmap
-fig, ax = plt.subplots(2, 1, figsize=(14, 7), sharex=True)
-for a, c, col in zip(ax, ["siniestros", "fallecidos"], PALETA):
-    a.plot(d.index, d[c], color=col, lw=1)
-    a.plot(d.index, d[c].rolling(7, center=True).mean(), color="#52514e", lw=2, label="Promedio móvil 7 días")
-    crit = d[d[f"z_{c}"] > 2]
-    a.scatter(crit.index, crit[c], color="#e34948", s=30, zorder=3, label="Día crítico (z > 2)")
-    a.set_ylabel(f"{c.capitalize()} por día")
-    a.legend(frameon=False, ncol=2, loc="upper left")
-ax[1].set_xlabel("Fecha (2026)")
-guardar_fig(fig, "p10_serie_diaria_criticos")
+# 4) Gráficos
+fig, ax = plt.subplots(1, 2, figsize=(14, 5), gridspec_kw={"width_ratios": [1, 1.3]})
+cnt = v.clip(upper=12).value_counts().sort_index()
+ax[0].bar(cnt.index, cnt.values, color=PALETA[0])
+ax[0].set_yscale("log")
+ax[0].set_xlabel("Víctimas por siniestro (12 = 12 o más)")
+ax[0].set_ylabel("Número de siniestros (escala log)")
+ax[0].set_title("Víctimas por siniestro")
+r = res.sort_values("veces más probable")
+ax[1].barh(r.index, r["veces más probable"], color=PALETA[0])
+ax[1].axvline(1, color="#52514e", ls="--", lw=1)
+ax[1].set_xlabel("Veces más probable que el siniestro sea de alta consecuencia (1 = igual)")
+ax[1].set_title("Qué se asocia a la alta consecuencia")
+guardar_fig(fig, "p10_distribucion_y_caracteristicas")
 
-d["semana"] = d.index.to_series().dt.strftime("%G-W%V")
-fig, ax = plt.subplots(1, 2, figsize=(16, 5.5), sharey=True)
-for a, c in zip(ax, ["z_siniestros", "z_fallecidos"]):
-    cal = d.pivot_table(index="semana", columns="dow", values=c)
-    sns.heatmap(cal, cmap=CMAP_DIV, center=0, vmin=-3, vmax=3, ax=a, cbar_kws={"label": "z (vs. mismo día de la semana)"},
-                linewidths=0.4, linecolor="white")
-    a.set_title(f"Calendario: {c[2:]} (naranja = por encima de lo habitual)")
-    a.set_xticklabels([x[:3].title() for x in DIAS], rotation=0)
-    a.set_xlabel("Día de la semana")
-    a.set_ylabel("Semana ISO")
-guardar_fig(fig, "p10_calendario_heatmap")
+fig, ax = plt.subplots(1, 2, figsize=(13, 4.2), sharey=True)
+for a, zona, c in zip(ax, ["URBANA", "RURAL"], PALETA):
+    d = sin[sin["zona"] == zona]
+    cnt = d["n_victimas"].clip(upper=12).value_counts(normalize=True).sort_index() * 100
+    a.bar(cnt.index, cnt.values, color=c)
+    a.set_yscale("log")
+    a.set_title(f"Zona {zona.lower()} | {100 * d['alta'].mean():.1f}% con {UMBRAL} o más víctimas")
+    a.set_xlabel("Víctimas por siniestro (12 = 12 o más)")
+ax[0].set_ylabel("% de siniestros (escala log)")
+guardar_fig(fig, "p10_victimas_por_zona")
