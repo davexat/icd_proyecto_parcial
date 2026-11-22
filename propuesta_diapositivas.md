@@ -2,7 +2,7 @@
 
 Los resultados de abajo salen de ejecutar los 10 scripts (`pregunta_01.py` a `pregunta_10.py`) con `08. BDD_Septiembre_2026_SM.xlsx`. Los gráficos y tablas se generan en `resultados/` (prefijo `pXX_`). Las cifras están redondeadas. Duración sugerida: unos 25 minutos, con una o dos diapositivas por pregunta. El guion de cada pregunta (máx. 40 s) está en `explicacion_preguntas/pregunta_NN.md`, sección "Para la exposición".
 
-**Nivel de las técnicas:** las mismas que usan los ejemplos del curso: agrupaciones y promedios, porcentajes, índices de estacionalidad, Pareto ABC (80-15-5), correlación, z-score, heatmaps, gráficos facetados y mapas con latitud y longitud. No hay pruebas de hipótesis ni modelos.
+**Nivel de las técnicas:** las mismas que usan los ejemplos del curso: agrupaciones y promedios, porcentajes, índices de estacionalidad, Pareto ABC (80-15-5), correlación, z-score, heatmaps, gráficos facetados y mapas con latitud y longitud hechos con Folium. No hay pruebas de hipótesis ni modelos.
 
 ## Estructura general
 
@@ -59,13 +59,13 @@ Franja horaria, fin de semana y feriado son convenciones del proyecto, sin refer
 
 ### P3. ¿Qué provincias y cantones concentran los siniestros y las muertes?
 - **Técnicas:** Pareto ABC (80-15-5), Top 5, ranking por volumen y por gravedad.
-- **Gráficos:** `p03_pareto_provincias.png` (**faceta** siniestros | fallecidos); `p03_mapa_burbujas_provincias.png`.
+- **Gráficos:** `p03_pareto_provincias.png` (**faceta** siniestros | fallecidos); `p03_mapa_burbujas_provincias.png` (mapa de Folium).
 - **Resultados:** Guayas (32,7 %) y Pichincha (20,3 %) suman el 53 %; el Top 5 de provincias, el 70 %. Ocho de 24 provincias (clase A) reúnen el 80 %. En cantones, 35 de 210 (17 %) reúnen el 80 %. Las provincias pequeñas son las más graves: Esmeraldas 25 % de siniestros con fallecidos, Zamora Chinchipe 23 %, Cañar 20 %.
 - **Conclusión:** hay **dos prioridades**: volumen (Guayas, Pichincha) y gravedad (provincias pequeñas, con menos casos pero más mortales).
 
 ### P4. ¿Dónde están los puntos críticos y coinciden con las muertes?
-- **Técnicas:** cuadrícula de ~2 km, ranking de celdas, mapas de densidad.
-- **Gráficos:** `p04_densidad_facetado.png` (**mapas facetados** por cantón, con los siniestros fatales encima); `p04_mapa_nacional_severidad.png`.
+- **Técnicas:** cuadrícula de ~2 km, ranking de celdas, mapas de celdas (Folium).
+- **Gráficos:** `p04_densidad_facetado.png` (**mapas de Folium facetados** por cantón, con los siniestros fatales encima); `p04_mapa_nacional_severidad.png`.
 - **Resultados:** el 5 % de las celdas de 2 km concentra el 49 % de los siniestros y el 1 %, el 19 %. La celda más crítica está en Guayaquil (269 siniestros). Las 5 celdas principales reúnen el 25 % de los siniestros de Guayaquil, 17 % de Quito y 48 % de Santo Domingo.
 - **Conclusión:** los siniestros se concentran en **pocas celdas**, pero esas celdas son más de volumen que de letalidad (4,5 fallecidos por cada 100 siniestros frente a 10,8 nacional); los fatales también aparecen fuera de los núcleos.
 
