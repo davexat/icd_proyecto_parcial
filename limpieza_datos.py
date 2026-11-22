@@ -78,17 +78,12 @@ REFERENCIAS = {
                                   "of trauma. Am. J. Public Health, 58(8). | Sabey, B. E., Taylor, H. (1980). The known risks "
                                   "we run: the highway. TRRL Supplementary Report 567.",
     "usuario_vulnerable": "Peden, M. et al. (2004). World report on road traffic injury prevention. WHO. | WHO (2023).",
-    "celda de cuadricula, densidad kernel": "Xie, Z., Yan, J. (2008). Kernel density estimation of traffic accidents in a network "
-                                            "space. Computers, Environment and Urban Systems, 32(5), 396-406. | Anderson, T. K. "
-                                            "(2009). Kernel density estimation and K-means clustering to profile road accident "
-                                            "hotspots. Accident Analysis & Prevention, 41(3), 359-364.",
-    "hotspots (Gi*)": "Getis, A., Ord, J. K. (1992). The analysis of spatial association by use of distance statistics. "
-                      "Geographical Analysis, 24(3), 189-206.",
+    "celda de cuadricula (puntos criticos)": "Anderson, T. K. (2009). Kernel density estimation and K-means clustering to "
+                                             "profile road accident hotspots. Accident Analysis & Prevention, 41(3), 359-364. "
+                                             "| Xie, Z., Yan, J. (2008). Computers, Environment and Urban Systems, 32(5), 396-406.",
     "indice de estacionalidad": "Hyndman, R. J., Athanasopoulos, G. (2021). Forecasting: Principles and Practice (3a ed.). OTexts.",
-    "indice de sobredispersion": "Lord, D., Mannering, F. (2010). The statistical analysis of crash-frequency data: a review and "
-                                 "assessment of methodological alternatives. Transportation Research Part A, 44(5), 291-305.",
-    "uso de casco (OR)": "Liu, B. C. et al. (2008). Helmets for preventing injury in motorcycle riders. Cochrane Database of "
-                         "Systematic Reviews, 2008(1), CD004333.",
+    "uso de casco (contraste en P8)": "Liu, B. C. et al. (2008). Helmets for preventing injury in motorcycle riders. Cochrane "
+                                      "Database of Systematic Reviews, 2008(1), CD004333.",
 }
 
 # Columnas de analisis (para medir ruido). 'ND' en campos viales = no aplica (el dataset solo tiene

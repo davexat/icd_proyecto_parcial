@@ -2,17 +2,14 @@
 # ¿Qué perfil (edad, sexo y rol en la vía) tienen las personas lesionadas y fallecidas, y qué
 # grupos son proporcionalmente más vulnerables?
 #
-# Técnicas: pasar participantes a formato largo, pirámide poblacional facetada por condición,
-# letalidad entre víctimas con intervalos de Wilson, chi-cuadrado rol x condición, Mann-Whitney
-# sobre la edad y heatmap rol x grupo de edad.
-import numpy as np
+# Técnicas: tabla de participantes en formato largo, letalidad (fallecidos / víctimas) por perfil,
+# edad mediana, pirámide de población facetada por condición y heatmap rol x grupo de edad.
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from scipy import stats
 
 from limpieza_datos import GRUPOS_EDAD, cargar_datos
-from utilidades import CMAP_SEC, PALETA, cramers_v, guardar_fig, guardar_tabla, mostrar, seccion, wilson
+from utilidades import CMAP_SEC, PALETA, guardar_fig, guardar_tabla, mostrar, seccion
 
 _, part = cargar_datos()
 
@@ -32,26 +29,16 @@ tablas = {}
 for var in ["rol", "sexo", "grupo_edad"]:
     d = vic.dropna(subset=[var]).groupby(var, observed=True).agg(victimas=("fallecido", "size"), fallecidos=("fallecido", "sum"))
     d["letalidad %"] = 100 * d["fallecidos"] / d["victimas"]
-    d["ic_inf"], d["ic_sup"] = wilson(d["fallecidos"], d["victimas"])
     tablas[var] = d
     print(f"\nPor {var}:")
     mostrar(d.round(2))
 guardar_tabla(pd.concat(tablas), "p07_letalidad_por_perfil")
-
-# 2) Pruebas estadísticas
-seccion("2) Pruebas estadísticas")
-chi2, p, v = cramers_v(pd.crosstab(vic["rol"], vic["fallecido"]))
-print(f"Rol x fallecido: chi2={chi2:.0f}, p={p:.2e}, V de Cramér={v:.3f}")
-chi2, p, v = cramers_v(pd.crosstab(vic.dropna(subset=["sexo"])["sexo"], vic.dropna(subset=["sexo"])["fallecido"]))
-print(f"Sexo x fallecido: chi2={chi2:.1f}, p={p:.3g}, V de Cramér={v:.3f}")
 e = vic.dropna(subset=["edad"])
-mw = stats.mannwhitneyu(e.loc[e["fallecido"], "edad"], e.loc[~e["fallecido"], "edad"])
-print(f"Edad mediana: fallecidos {e.loc[e['fallecido'], 'edad'].median():.0f} vs lesionados {e.loc[~e['fallecido'], 'edad'].median():.0f} "
-      f"(Mann-Whitney p={mw.pvalue:.2e})")
+print(f"\nEdad mediana: fallecidos {e.loc[e['fallecido'], 'edad'].median():.0f} años | lesionados {e.loc[~e['fallecido'], 'edad'].median():.0f} años")
 hm = vic[vic["sexo"].isin(["HOMBRE", "MUJER"])]["sexo"].value_counts()
-print(f"Razón hombre:mujer entre víctimas con sexo conocido = {hm['HOMBRE'] / hm['MUJER']:.1f} : 1")
+print(f"Razón hombre : mujer entre víctimas con sexo conocido = {hm['HOMBRE'] / hm['MUJER']:.1f} : 1")
 
-# 3) Pirámide poblacional facetada: lesionados | fallecidos
+# 2) Pirámide de población facetada: lesionados | fallecidos
 fig, ax = plt.subplots(1, 2, figsize=(13, 4.8), sharey=True)
 for a, cond in zip(ax, ["LESIONADO", "FALLECIDO"]):
     d = vic[(vic["condicion"] == cond) & vic["grupo_edad"].notna() & vic["sexo"].isin(["HOMBRE", "MUJER"])]
@@ -71,7 +58,7 @@ ax[0].set_ylabel("Grupo de edad (años)")
 ax[0].legend(frameon=False)
 guardar_fig(fig, "p07_piramide_lesionados_fallecidos")
 
-# 4) Heatmap rol x grupo de edad: letalidad entre víctimas (n >= 30)
+# 3) Heatmap rol x grupo de edad: letalidad entre víctimas (celdas con menos de 30 personas omitidas)
 d = vic.dropna(subset=["grupo_edad"])
 let = d.pivot_table(index="rol", columns="grupo_edad", values="fallecido", aggfunc="mean", observed=False) * 100
 n = d.pivot_table(index="rol", columns="grupo_edad", values="fallecido", aggfunc="size", observed=False)

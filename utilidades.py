@@ -2,15 +2,13 @@
 utilidades.py
 =============
 Funciones auxiliares compartidas por las preguntas: estilo de gráficos, guardado de
-resultados y pequeñas utilidades estadísticas (intervalos, odds ratio, Pareto, Gini).
+resultados, tabla de gravedad por grupo y clasificación Pareto ABC.
 """
 import numpy as np
 import pandas as pd
-import matplotlib
 import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib.colors import LinearSegmentedColormap
-from scipy import stats
 
 from limpieza_datos import DIR_RES
 
@@ -57,38 +55,13 @@ def mostrar(df, n=15, **kw):
         print(df.head(n).to_string(**kw))
 
 
-# ------------------------------ estadística ------------------------------
-def wilson(k, n, z=1.96):
-    """Intervalo de Wilson (%) para una proporción k/n."""
-    k, n = np.asarray(k, float), np.asarray(n, float)
-    p = np.divide(k, n, out=np.zeros_like(k), where=n > 0)
-    den = 1 + z ** 2 / np.where(n > 0, n, 1)
-    centro = (p + z ** 2 / (2 * np.where(n > 0, n, 1))) / den
-    mitad = z * np.sqrt(p * (1 - p) / np.where(n > 0, n, 1) + z ** 2 / (4 * np.where(n > 0, n, 1) ** 2)) / den
-    return 100 * (centro - mitad), 100 * (centro + mitad)
-
-
-def odds_ratio(a, b, c, d):
-    """OR de la tabla [[a, b], [c, d]] (a/b = expuestos con/sin evento; c/d = no expuestos). IC 95% de Woolf y p de Fisher."""
-    a, b, c, d = [x + 0.5 if min(a, b, c, d) == 0 else x for x in (a, b, c, d)]
-    orr = (a * d) / (b * c)
-    se = np.sqrt(1 / a + 1 / b + 1 / c + 1 / d)
-    p = stats.fisher_exact([[a, b], [c, d]])[1] if max(a, b, c, d) < 5e4 else stats.chi2_contingency([[a, b], [c, d]])[1]
-    return orr, np.exp(np.log(orr) - 1.96 * se), np.exp(np.log(orr) + 1.96 * se), p
-
-
-def riesgo_relativo(a, n1, c, n0):
-    """RR de a/n1 (expuestos) frente a c/n0 (no expuestos) con IC 95% (log)."""
-    rr = (a / n1) / (c / n0)
-    se = np.sqrt(1 / a - 1 / n1 + 1 / c - 1 / n0)
-    return rr, np.exp(np.log(rr) - 1.96 * se), np.exp(np.log(rr) + 1.96 * se)
-
-
-def cramers_v(tabla):
-    chi2, p, _, _ = stats.chi2_contingency(tabla)
-    n = np.asarray(tabla).sum()
-    k = min(np.asarray(tabla).shape) - 1
-    return chi2, p, float(np.sqrt(chi2 / (n * k)))
+def gravedad(df, por, minimo=0):
+    """Tabla de gravedad por grupo: siniestros, con fallecidos (% fatales), fallecidos, lesionados y víctimas por siniestro."""
+    g = df.groupby(por, observed=True).agg(siniestros=("sid", "size"), fatales=("fatal", "sum"),
+                                          fallecidos=("fallecidos", "sum"), lesionados=("lesionados", "sum"))
+    g["% fatales"] = 100 * g["fatales"] / g["siniestros"]
+    g["víctimas por siniestro"] = (g["fallecidos"] + g["lesionados"]) / g["siniestros"]
+    return g[g["siniestros"] >= minimo]
 
 
 def pareto_abc(serie, cortes=(0.80, 0.95)):
@@ -99,14 +72,3 @@ def pareto_abc(serie, cortes=(0.80, 0.95)):
     previo = d["% acumulado"] - d["%"]          # acumulado antes de sumar la categoría
     d["clase"] = np.where(previo < 100 * cortes[0], "A", np.where(previo < 100 * cortes[1], "B", "C"))
     return d
-
-
-def gini(x):
-    x = np.sort(np.asarray(x, float))
-    n = len(x)
-    return float((2 * np.arange(1, n + 1) - n - 1).dot(x) / (n * x.sum()))
-
-
-def lorenz(x):
-    x = np.sort(np.asarray(x, float))
-    return np.insert(np.cumsum(x) / x.sum(), 0, 0), np.linspace(0, 1, len(x) + 1)
