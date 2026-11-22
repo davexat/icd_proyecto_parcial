@@ -56,7 +56,7 @@
 1. **Casi todo es factor humano** (94.5 %). Vehículo y vía suman solo 5.5 %, así que cualquier medida de prevención debe apuntar al comportamiento del conductor.
 2. **Dos causas explican casi la mitad:** distracción y velocidad (48.1 %). Son también las dos más graves entre las frecuentes (12.2 % y 12.0 % de siniestros con fallecidos, frente al 9.6 % nacional).
 3. **Frecuente no es lo mismo que grave.** El irrespeto de señales es la tercera causa en volumen pero una de las menos letales (4.8 %); una hipótesis es que produce sobre todo choques laterales en intersecciones, que suelen ocurrir a menor velocidad (el dataset no lo comprueba).
-4. **Cambia con la hora.** De madrugada pesan más la velocidad, el alcohol y la fatiga, justo cuando también aumenta la letalidad (ver pregunta 5). De día dominan las infracciones de señales y prioridad.
+4. **Cambia con la hora.** De madrugada pesan más la velocidad, el alcohol y la fatiga, justo cuando también aumenta la letalidad (ver pregunta 5). De día pesa más el irrespeto de señales y prioridad (22 a 23 % de los siniestros, frente a 12 % de madrugada). La distracción es la primera causa a toda hora (28 a 30 %).
 
 ## 5. Limitaciones y advertencias
 
