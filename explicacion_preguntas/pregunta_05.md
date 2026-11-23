@@ -2,19 +2,19 @@
 
 > **Pregunta:** ¿Cómo influyen la zona (urbana o rural), la jerarquía de la vía y los corredores viales en la cantidad y gravedad de los siniestros, y cómo cambia eso a lo largo del día?
 
-**Script:** `pregunta_05.py` · **Técnicas:** comparación urbano / rural, ranking de corredores, gráfico facetado por zona y franja horaria, burbujas y heatmap corredor × franja.
+**Script:** `pregunta_05.py` · **Técnicas:** comparación urbano / rural, ranking de corredores, barras agrupadas por franja horaria y zona, burbujas y heatmap corredor × franja.
 
 ## 1. Qué hace el código
 
 - `gravedad()` por zona y por red vial: compara el % de fatales dentro y fuera de la red estatal (un tercio de los siniestros; el resto tiene "no aplica" en los campos viales) y por jerarquía y corredor (mínimo 60 siniestros).
-- Dos paneles con el % de fatales por franja horaria, urbana y rural, con el mismo eje Y, y un tercero con los 12 corredores principales en burbujas (X = siniestros, Y = % fatales, tamaño = fallecidos, línea punteada = promedio de la red estatal).
+- Un gráfico de barras agrupadas con el % de fatales por franja horaria, con la zona urbana (azul) junto a la rural (naranja) en cada franja, y a su derecha los 12 corredores principales en burbujas (X = siniestros, Y = % fatales, tamaño = fallecidos, línea punteada = promedio de la red estatal).
 - Un heatmap corredor × franja con los 10 corredores de más siniestros.
 
 ## 2. Para la exposición (máx. 40 s)
 
-> Los dos primeros paneles comparten eje: muestran el porcentaje de siniestros con fallecidos por franja horaria. La zona rural, en naranja, es el doble de grave que la urbana, y en ambas la madrugada es la peor franja; en la rural llega a uno de cada cinco. A la derecha, cada burbuja es un corredor: E40 tiene más siniestros pero está bajo el promedio, mientras E25, E20 y E482 tienen menos eventos y más muertes por siniestro. Volumen y gravedad no coinciden en los corredores.
+> A la izquierda, el porcentaje de siniestros con fallecidos por franja horaria, con la zona urbana en azul junto a la rural en naranja. La rural es el doble de grave que la urbana, y en ambas la madrugada es la peor franja; en la rural llega a uno de cada cinco. A la derecha, cada burbuja es un corredor: E40 tiene más siniestros pero está bajo el promedio, mientras E25, E20 y E482 tienen menos eventos y más muertes por siniestro. Volumen y gravedad no coinciden en los corredores.
 
-*Figura a mostrar:* `p05_zona_franja_corredores.png` (apoyo: `p05_heatmap_corredor_franja.png`). 85 palabras, unos 34 s a ritmo normal.
+*Figura a mostrar:* `p05_zona_franja_corredores.png` (apoyo: `p05_heatmap_corredor_franja.png`). 90 palabras, unos 36 s a ritmo normal.
 
 ## 3. Resultados
 
