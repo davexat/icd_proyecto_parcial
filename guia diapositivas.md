@@ -1,0 +1,187 @@
+# Guía de diapositivas: qué poner en cada una y qué parte del guion le corresponde
+
+Acompaña al documento «Guion de exposición (13:17 min)» · 16 diapositivas + apéndice oculto · numeración igual a la del guion
+
+## 1. Regla de oro: del guion a la pantalla
+
+Cada parte del guion tiene un lugar fijo en la diapositiva. Así el público aprende dónde mirar y nadie lee la pantalla.
+
+| Parte del guion | Dónde va en la diapositiva |
+| --- | --- |
+| **Pregunta** | El **título**, con su número: «P3 · ¿Qué provincias y cantones concentran más siniestros?» |
+| **Cómo** | Una **franja de 2 o 3 etiquetas** bajo el título con las técnicas (ejemplo: «Pareto ABC» · «Ranking por gravedad»). Nunca código ni párrafos |
+| **Resultado** | El **gráfico**, con una flecha o círculo naranja en lo que se menciona, y **2 o 3 cifras grandes** que son las mismas que se dicen en voz alta |
+| Hallazgo principal | Una **banda al pie** con una sola oración (la «frase titular» de cada diapositiva, abajo) |
+| Matiz o advertencia | **Nota pequeña en gris** al pie |
+| **Puente** | No se escribe: solo se dice |
+
+## 2. Plantilla repetible para las preguntas (diapositivas 6 a 15)
+
+1. **Arriba:** título con la pregunta (28 pt o más). Debajo, la franja de etiquetas de «Cómo lo respondimos» (18 pt).
+2. **Centro:** el gráfico, lo más grande posible y recortado al panel que importa.
+3. **Derecha o sobre el gráfico:** 2 o 3 cifras grandes (40 pt o más), una por idea que se dice.
+4. **Pie:** banda con la frase titular en una sola línea; nota gris debajo si hay matiz.
+5. **Esquina:** nombre del expositor y número de diapositiva (así el cambio de persona es evidente).
+6. **Colores:** los del proyecto, azul #2a78d6 y naranja #eb6834. Resalten en naranja lo que se está diciendo.
+7. **Tope de texto:** 25 palabras en pantalla, sin contar el gráfico.
+
+Si lo anterior se mantiene igual en las 10 preguntas, el público entiende cada diapositiva en 3 segundos.
+
+## 3. Estado de los gráficos antes de armar las diapositivas
+
+| Gráfico | Problema | Estado |
+| --- | --- | --- |
+| P3 mapa de burbujas | Galápagos aplastaba el continente y las etiquetas se montaban | Hecho: ahora es un mapa de Folium con encuadre del continente (`pregunta_03.py`); usar la captura `p03_mapa_burbujas_provincias.png` |
+| P5 burbujas de corredores | La línea punteada no tenía rótulo | Hecho: lleva la leyenda «Promedio de la red estatal» (`pregunta_05.py`) |
+| P6 burbujas | Etiquetas ambiguas entre Distracción, Velocidad y Vía | Hecho: etiquetas separadas con líneas guía (`pregunta_06.py`) |
+| P7 facetas urbano / rural | Los ejes X no se comparten (urbana llega a ~37 %, rural a ~59 %), así que las barras no muestran que lo rural casi se duplica | **Pendiente:** en `pregunta_07.py`, cambiar `sharey=True` por `sharex=True, sharey=True` |
+
+Opcional en P2: anotar «1-ene» sobre el punto más alto de la serie.
+
+## 4. Diapositivas, una por una
+
+### Diapositiva 1: Portada (expositor 1)
+
+- **Título:** Siniestros de tránsito en Ecuador, enero a septiembre de 2026
+- **Subtítulo:** ¿Cuándo, dónde, por qué y a quién afectan?
+- **En pantalla:** nombres de los tres integrantes, materia y fecha.
+- **Visual:** fondo azul sobrio, sin gráfico.
+- **Del guion:** el saludo y «Somos \[nombres\]…» se dicen con esta diapositiva. Cambien a la 2 al decir «Queremos responder…».
+
+### Diapositiva 2: Contexto y las 10 preguntas
+
+- **Título:** 10 preguntas, un solo hilo
+- **En pantalla:** cinco bloques en fila unidos por flechas: **Cuándo** (P1, P2) → **Dónde** (P3, P4, P5) → **Por qué** (P6) → **Qué y a quién** (P7, P8, P9) → **Consecuencias** (P10). Bajo cada bloque, el nombre de quien lo presenta (un color por expositor).
+- **Frase al pie:** Objetivo: describir qué variables explican mejor lo ocurrido (análisis retrospectivo).
+- **Del guion:** «cuándo, dónde y por qué ocurrieron los siniestros y a quién afectaron» son los cinco bloques; «análisis retrospectivo» es la frase al pie; «diez preguntas» es el título; «varias técnicas» es una nota pequeña («Cada pregunta usa varias técnicas»).
+- **No escribir:** el párrafo completo.
+
+### Diapositiva 3: Los datos
+
+- **Título:** Los datos
+- **En pantalla:** cuatro cifras grandes en fila: **17 236** siniestros · **374** columnas · **1 863** fallecidos · **14 547** lesionados. Debajo, cuatro tarjetas: *Temporal* (fecha, hora) · *Categórico* (tipo, causa, vehículo) · *Continuo* (edad, víctimas) · *Espacial* (provincia, cantón, latitud, longitud).
+- **Del guion:** la primera oración son las cifras; la última oración son las tarjetas. «Hasta 43 personas y 13 vehículos» solo se dice.
+
+### Diapositiva 4: Limpieza y ruido
+
+- **Título:** Limpieza: 0 registros eliminados y 8.96 % de ruido
+- **Izquierda:** cuatro cuadros numerados: **1 Estructura** (ancho → largo, 37 096 personas) · **2 Fechas, horas y texto** · **3 Validación** (duplicados, coordenadas, víctimas) · **4 Marcadores → nulo**.
+- **Derecha:** barras horizontales del ruido por campo, con los cinco campos que tienen ruido: edad 43.9 %, tipo de vehículo 1 22.5 %, tipo de ID 21.8 %, condición 18.4 %, sexo 12.8 % (salen de `limpieza_ruido_por_campo.csv`). Si falta tiempo para el gráfico, tres cifras: **8.96 %** global · **1.5 %** siniestros · **19 %** personas.
+- **Nota gris al pie:** Campos de vía vacíos (66 %) = «no aplica» (fuera de la red estatal), no son ruido.
+- **Del guion:** cada «Primero, Segundo, Tercero, Cuarto» es un cuadro; «Así medimos el ruido…» son las cifras; la última oración es la nota al pie.
+
+### Diapositiva 5: Métricas nuevas
+
+- **Título:** Métricas nuevas, con respaldo en la literatura
+- **En pantalla:** una tabla de tres columnas, una fila por oración del guion:
+
+| Métrica | Referencia | Se usa en |
+| --- | --- | --- |
+| Número de víctimas y letalidad | OMS (2023) | P8, P9, P10 |
+| Severidad en 3 niveles | Highway Safety Manual, AASHTO (2010) | P4 |
+| Factor causal y grupo de causa | Haddon (1968); Sabey y Taylor (1980) | P6 |
+| Cuadrícula de 2 km | Anderson (2009) | P4 |
+| Índice de estacionalidad | Hyndman y Athanasopoulos (2021) | P1 |
+
+- **No incluir** `severidad_ponderada` ni `usuario_vulnerable`: están creadas en la limpieza pero ninguna pregunta las usa, y el jurado podría preguntar dónde se aplican. Las referencias completas van en el apéndice.
+
+### Diapositiva 6: P1 · ¿Cuándo ocurren los siniestros?
+
+- **Etiquetas:** Índice de estacionalidad · Mes, día y hora · Urbano vs rural
+- **Visual:** arriba, `p01_indices_general.png` (los tres paneles nacionales). Abajo, en tres miniaturas, `p01_indices_mes_zona.png`, `p01_indices_dia_zona.png` y `p01_indices_hora_zona.png` (azul = urbano, naranja = rural). Círculo naranja en el domingo y en el pico de las 19 h.
+- **Cifras grandes:** Domingo: índice **1.38** (rural **1.50**, urbano 1.31) · Pico a las **19 h** (rural **1.86**, urbano 1.43) · Enero → agosto: **0.82 → 1.15**
+- **Frase titular:** Fin de semana y tarde-noche concentran los siniestros, y el campo es más extremo que la ciudad.
+- **Nota gris:** Son nueve meses: el alza de enero a agosto no prueba estacionalidad anual.
+- **Del guion:** «Calculamos un índice…» son las etiquetas; «El domingo es el día más cargado…» son las cifras; «Un matiz…» es la nota gris.
+
+### Diapositiva 7: P2 · ¿Qué días fueron críticos?
+
+- **Etiquetas:** z-score contra el mismo día de la semana
+- **Visual:** `p02_serie_diaria_criticos.png` (los puntos rojos son los días críticos). Anotar «1-ene: 123 siniestros, 21 fallecidos». El calendario heatmap queda en el apéndice porque es demasiado denso.
+- **Cifras grandes:** **13 de 273** días críticos · Feriados: **1 de cada 6** vs 1 de cada 26 · **10 de 13**: distracción
+- **Frase titular:** Pocos días concentran los excesos; el 1 de enero es el extremo.
+- **Del guion:** «Estandarizamos…» es la etiqueta; el resto de «Resultado» son las cifras.
+
+### Diapositiva 8: P3 · ¿Qué provincias y cantones concentran más siniestros y muertes?
+
+- **Etiquetas:** Pareto ABC (80-15-5) · Ranking por volumen vs gravedad
+- **Visual:** `p03_mapa_burbujas_provincias.png` corregido, a la izquierda y grande. A la derecha, dos cajas: **Por volumen**: Guayas 32.7 %, Pichincha 20.3 %. **Por gravedad** (% con fallecidos): Esmeraldas 25.3 %, Zamora Chinchipe 23.3 %, Cañar 19.5 %.
+- **Cifra grande:** **8 de 24** provincias = 80 % de los siniestros
+- **Frase titular:** Volumen y gravedad apuntan a provincias distintas.
+- **Nota gris:** Promedio nacional: 9.6 % de siniestros con fallecidos (provincias con 100 o más siniestros).
+- **Respaldo:** `p03_pareto_provincias.png` en el apéndice.
+
+### Diapositiva 9: P4 · ¿Dónde están los puntos críticos?
+
+- **Etiquetas:** Cuadrícula de 2 km · Mapas de densidad · Facetas por cantón
+- **Visual:** `p04_densidad_facetado.png` a todo el ancho (Guayaquil, Quito, Santo Domingo; puntos naranja = siniestros con fallecidos).
+- **Cifras grandes:** **5 %** de las celdas = **49 %** de los siniestros · **4.5** vs **10.8** fallecidos por cada 100 siniestros (10 celdas principales vs país)
+- **Frase titular:** Los puntos críticos concentran volumen, no letalidad.
+- **Nota gris:** La escala de color es distinta en cada mapa.
+
+### Diapositiva 10: P5 · ¿Cómo influyen la zona y los corredores viales?
+
+- **Etiquetas:** Facetas urbano / rural · Gravedad por franja · Burbujas por corredor
+- **Visual:** `p05_zona_franja_corredores.png` completo. Círculo en la barra «Madrugada rural 20.2 %» y en los puntos E25 y E20.
+- **Cifras grandes:** Rural **14 %** vs urbana **7 %** · E25 **17 %** · E20 **22 %**
+- **Frase titular:** Rural y madrugada son lo más letal; E25 y E20, los corredores más letales.
+- **No escribir:** la jerarquía de la vía (arterial 13.9 % y colectora 13.5 %); solo se dice.
+
+### Diapositiva 11: P6 · ¿Qué causas explican los siniestros y cuáles son más graves?
+
+- **Etiquetas:** Pareto de 26 causas · Factor humano / vehículo / vía · Burbujas frecuencia vs gravedad
+- **Visual:** recortar la mitad derecha de `p06_pareto_y_burbujas.png` (burbujas, versión corregida), porque el Pareto de la izquierda tiene los nombres de causa cortados. A la izquierda, tres cifras en vez del Pareto.
+- **Cifras grandes:** **94.5 %** factor humano · **28.8 %** distracción · **19.3 %** velocidad
+- **Frase titular:** Distracción y velocidad: casi la mitad de los siniestros y de las más graves.
+- **Nota gris:** Alcohol: 5.8 % de siniestros fatales. Probable sesgo de registro (hipótesis).
+- **Respaldo:** `p06_heatmaps_causa_franja.png` en el apéndice.
+
+### Diapositiva 12: P7 · ¿Qué tipos de siniestro y vehículos son más graves?
+
+- **Etiquetas:** % fatales por tipo · Con vs sin cada vehículo · Facetas urbano / rural
+- **Visual:** `p07_gravedad_tipo_por_zona.png` regenerado con el eje X compartido (ver sección 3).
+- **Cifras grandes:** Arrollamientos **46 %** · Bus **1.85×**, moto **1.72×** · Atropellos **11 % → 21 %** (urbano → rural)
+- **Frase titular:** Arrollamientos, pérdidas de pista y choques frontales son lo más grave; el campo lo agrava todo.
+- **Nota gris:** Son asociaciones, no causas. Arrollamientos: 153 casos.
+
+### Diapositiva 13: P8 · ¿Quiénes son las víctimas y los más vulnerables?
+
+- **Etiquetas:** Letalidad = fallecidos / víctimas · Pirámide por condición · Mapa de calor rol × edad
+- **Visual:** dos gráficos lado a lado: la pirámide `p08_piramide_lesionados_fallecidos.png` (60 % del ancho) y `p08_heatmap_rol_edad.png` (40 %). Círculo en la celda Peatón / 65+ (27).
+- **Cifras grandes:** **2.8** hombres por cada mujer · 65 o más: **19.7 %** · Peatón: **6 % → 27 %**
+- **Frase titular:** La vulnerabilidad por edad es un fenómeno de peatones.
+- **Nota gris:** La edad está registrada en el 65 % de las víctimas.
+
+### Diapositiva 14: P9 · ¿Cuándo, dónde y por qué ocurren los atropellos?
+
+- **Etiquetas:** Atropellos vs resto · Mapas de calor día × hora · Letalidad del peatón
+- **Visual:** `p09_atropellos_heatmaps_y_edad.png` completo (dos mapas de calor facetados y las barras por edad).
+- **Cifras grandes:** **11.6 %** de los siniestros → **15.5 %** de las muertes · Horas 17 a 21: **\~40 %** · Peatón 65+: **27 %**, noche **20 %**, rural **24 %**
+- **Frase titular:** En atropellos, el anochecer, la edad y la zona rural elevan la letalidad.
+- **No escribir:** las causas (33 % y 24 %); solo se dicen.
+
+### Diapositiva 15: P10 · ¿Qué caracteriza a los siniestros de alta consecuencia?
+
+- **Etiquetas:** Alta consecuencia = 3 o más víctimas · Con vs sin cada característica
+- **Visual:** recortar el panel derecho de `p10_distribucion_y_caracteristicas.png` (barras «veces más probable») y pintar en naranja las tres primeras. El histograma izquierdo, como miniatura opcional.
+- **Cifras grandes:** **5.4 %** de los siniestros → **23 %** de las víctimas · Choque frontal **2.4×** · 3+ vehículos **2.2×** · Bus **2.0×**
+- **Frase titular:** Pocos eventos concentran muchas víctimas, y lo define cuánta gente va expuesta.
+- **No escribir:** moto 0.97 y alcohol 0.82; solo se dicen.
+
+### Diapositiva 16: Conclusiones
+
+- **Título:** Conclusiones
+- **En pantalla:** cuatro columnas con un ícono, una cifra y máximo 10 palabras cada una:
+  - **Cuándo:** fines de semana, 17 a 20 h, feriados
+  - **Dónde:** 5 % de celdas = 49 %; gravedad en provincias pequeñas, zona rural y madrugada
+  - **Por qué:** 94.5 % factor humano: distracción y velocidad
+  - **A quién:** peatón mayor, nocturno y rural; choque frontal y buses
+- **Banda «En conjunto»:** las diferencias más marcadas en gravedad aparecen según la zona, la hora, el tipo de siniestro y el rol de la víctima.
+- **Pie gris:** Límites: análisis descriptivo y retrospectivo, no causal ni predictivo · ruido 8.96 % · cobertura del registro variable por ente.
+- **Visual:** sin gráfico. Cada columna corresponde a una oración de las conclusiones del guion, en el mismo orden; la banda es la oración «En conjunto».
+
+## 5. Apéndice oculto (para la ronda de preguntas)
+
+- **Respaldos de las diapositivas:** calendario heatmap de P2, Pareto de provincias de P3, heatmap causa × franja de P6, heatmap tipo × vehículo de P7 y heatmap corredor × franja de P5.
+- **Limpieza:** tabla completa de pasos y ruido por campo.
+- **Referencias completas** de las métricas nuevas (autores, año, revista o editorial).

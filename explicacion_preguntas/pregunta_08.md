@@ -2,18 +2,13 @@
 
 > **Pregunta:** ¿Qué perfil (edad, sexo y rol en la vía) tienen las personas lesionadas y fallecidas, y qué grupos son proporcionalmente más vulnerables?
 
-**Script:** `pregunta_08.py`
-**Técnicas:** tabla de participantes en formato largo, letalidad (fallecidos / víctimas) por perfil, edad mediana, pirámide de población facetada por condición y heatmap rol × grupo de edad.
+**Script:** `pregunta_08.py` · **Técnicas:** tabla de participantes (una fila por persona), letalidad por perfil, edad mediana, pirámide facetada por condición y heatmap rol × edad.
 
 ## 1. Qué hace el código
 
-**Bloque 0: cobertura.** Usa la tabla `part` (una fila por persona, 37 096 en total) y mide cuántas personas tienen edad, sexo y condición válidos. Define las víctimas como los lesionados más los fallecidos.
-
-**Bloque 1: letalidad por perfil.** Por rol, sexo y grupo de edad calcula víctimas, fallecidos y **letalidad = fallecidos / (fallecidos + lesionados)**. Añade la edad mediana de fallecidos y lesionados y la razón hombre : mujer. También compara la letalidad de las víctimas con y sin edad registrada. Guarda `p08_letalidad_por_perfil.csv`.
-
-**Bloque 2: pirámide facetada.** Dos pirámides (lesionados y fallecidos) con hombres a la izquierda y mujeres a la derecha por grupo de edad, usando solo personas con edad y sexo conocidos. El eje X de cada pirámide es distinto porque las magnitudes también lo son (miles vs cientos).
-
-**Bloque 3: heatmap rol × edad.** Letalidad entre víctimas por rol y grupo de edad, omitiendo celdas con menos de 30 personas.
+- Usa la tabla de participantes (37 096 personas) y define víctimas = lesionados + fallecidos.
+- Calcula la **letalidad = fallecidos / (fallecidos + lesionados)** por rol, sexo y grupo de edad, la edad mediana y la razón hombre : mujer. Compara también la letalidad con y sin edad registrada.
+- Dibuja dos pirámides (lesionados y fallecidos) por edad y sexo, y un heatmap de letalidad rol × edad (celdas con 30 o más personas).
 
 ## 2. Para la exposición (máx. 40 s)
 
@@ -23,41 +18,22 @@
 
 ## 3. Resultados
 
-**Cobertura:** edad 56.1 %, sexo 87.2 %, condición 81.7 %. Entre las 16 410 víctimas, tienen edad el 65.2 % y sexo el 99.3 %.
-
-| Perfil | Víctimas | Letalidad |
-|---|---|---|
-| Peatón | 2 345 | **15.9 %** |
-| Conductor presente | 7 265 | 13.8 % |
-| Pasajero | 6 780 | 7.2 % |
-| Hombre | 11 952 | **12.7 %** |
-| Mujer | 4 341 | 7.7 % |
-| 0 a 11 años | 438 | 9.4 % |
-| 12 a 17 | 500 | 8.4 % |
-| 18 a 29 | 4 095 | 11.5 % |
-| 30 a 64 | 5 024 | 13.9 % |
-| 65 o más | 646 | **19.7 %** |
-
-- Razón hombre : mujer entre víctimas con sexo conocido: **2.8 : 1**.
-- Edad mediana: fallecidos 33 años; lesionados 30 años.
-- Letalidad entre víctimas con edad registrada: 12.9 %; sin edad: 8.5 %.
-
-**Heatmap rol × edad (letalidad %):** peatón 9 (0-11), 6 (12-17), 14 (18-29), 21 (30-64), **27 (65+)**; conductor 16, 13, 15 y 16 (12-17 a 65+); pasajero 8 a 9 en todas las edades menos 12 en 65+.
+- **16 410 víctimas** (con edad el 65.2 %). Hombre : mujer = **2.8 : 1**.
+- Letalidad: peatón **15.9 %**, conductor 13.8 %, pasajero 7.2 %; hombres 12.7 % y mujeres 7.7 %.
+- Por edad: 0-11 años 9.4 %, 12-17 8.4 %, 18-29 11.5 %, 30-64 13.9 %, **65 o más 19.7 %**.
+- Peatón por edad: 9, 6, 14, 21 y **27 %** (0-11 a 65+); la del conductor se mantiene en 13 a 16 %.
+- Edad mediana: fallecidos 33 años, lesionados 30.
 
 ## 4. Análisis
 
-1. **Las víctimas son sobre todo hombres adultos.** Casi tres de cada cuatro víctimas son hombres, concentrados en los 18 a 64 años (pirámide).
-2. **Los hombres también mueren más cuando se accidentan** (12.7 % vs 7.7 %).
-3. **El adulto mayor es el grupo más vulnerable** (19.7 %, el doble de los menores de 18). Pero el heatmap muestra que esto es un fenómeno *de peatones*: la letalidad del peatón sube de 6 % a 27 % con la edad, mientras que la del conductor casi no cambia (13 a 16 %).
-4. **El peatón es el rol más letal** (15.9 %), por encima del conductor; el pasajero es el más protegido (7.2 %).
+1. **Las víctimas son sobre todo hombres adultos,** y ellos también mueren más.
+2. **El adulto mayor es el más vulnerable,** pero es un fenómeno de peatones: la letalidad del conductor casi no cambia con la edad.
 
-## 5. Limitaciones y advertencias
+## 5. Limitaciones
 
-- La edad falta en un tercio de las víctimas, y las víctimas *sin* edad tienen letalidad menor (8.5 % vs 12.9 %), así que los niveles absolutos de letalidad por edad están algo sesgados; el patrón entre grupos se mantiene.
-- Ciclista (10 víctimas) y conductor ausente (10) no se interpretan por su tamaño; el heatmap los omite.
-- Los resultados son descriptivos: no se mide exposición (cuánta gente de cada grupo circula).
+- La edad falta en un tercio de las víctimas y las que no la tienen son menos letales (8.5 % frente a 12.9 %), así que los niveles por edad están algo sesgados.
+- No se mide exposición. Ciclista y conductor ausente (10 víctimas cada uno) no se interpretan.
 
-## 6. Archivos generados
+## 6. Archivos
 
-- Tabla: `p08_letalidad_por_perfil.csv`
-- Figuras: `p08_piramide_lesionados_fallecidos.png`, `p08_heatmap_rol_edad.png`
+`p08_letalidad_por_perfil.csv` · `p08_piramide_lesionados_fallecidos.png`, `p08_heatmap_rol_edad.png`

@@ -2,63 +2,77 @@
 # ¿En qué meses, días de la semana y horas ocurren más siniestros, y ese patrón cambia entre
 # zona urbana y rural?
 #
-# Técnicas: conteos, índices de estacionalidad (valor / promedio; mayor a 1 = temporada alta),
-# gráfico de barras y heatmap día x hora facetado por zona.
+# Técnicas: índices de estacionalidad (valor / promedio; mayor a 1 = temporada alta) y
+# gráficos de barras y líneas: uno general y uno por categoría (mes, día, hora) urbana vs rural.
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 from limpieza_datos import cargar_datos, MESES, DIAS
-from utilidades import CMAP_SEC, PALETA, guardar_fig, guardar_tabla, mostrar, seccion
+from utilidades import PALETA, guardar_fig, guardar_tabla, mostrar, seccion
 
 sin, _ = cargar_datos()
 dias_cal = pd.Series(pd.date_range(sin["fecha"].min(), sin["fecha"].max()))   # días del periodo observado
+dias_por_mes = dias_cal.dt.month.value_counts().sort_index()
+dias_por_dow = dias_cal.dt.day_of_week.add(1).value_counts().sort_index()
 
-# 1) Índices de estacionalidad: siniestros por día calendario / promedio (> 1 = temporada alta)
+
+def indices(df):
+    """Índice = siniestros por día calendario / promedio de la categoría (1 = promedio)."""
+    por_mes = df.groupby("mes").size() / dias_por_mes
+    por_dia = df.groupby("dia_semana").size() / dias_por_dow
+    por_hora = df.groupby("hora_num").size().reindex(range(24), fill_value=0)
+    return {"mes": (por_mes / por_mes.mean()).rename(index=lambda m: MESES[m - 1]),
+            "día": (por_dia / por_dia.mean()).rename(index=lambda d: DIAS[d - 1]),
+            "hora": por_hora / por_hora.mean()}
+
+
+# 1) Índices generales y por zona
 seccion("1) Índices de estacionalidad")
-por_mes = sin.groupby("mes").size() / dias_cal.dt.month.value_counts().sort_index()
-idx_mes = (por_mes / por_mes.mean()).rename(index=lambda m: MESES[m - 1])
-por_dia = sin.groupby("dia_semana").size() / dias_cal.dt.day_of_week.add(1).value_counts().sort_index()
-idx_dia = (por_dia / por_dia.mean()).rename(index=lambda d: DIAS[d - 1])
-por_hora = sin.groupby("hora_num").size()
-idx_hora = por_hora / por_hora.mean()
-for nombre, idx in [("mes", idx_mes), ("día de la semana", idx_dia), ("hora", idx_hora)]:
-    print(f"\nÍndice por {nombre}:")
-    mostrar(idx.round(2).to_frame("índice"), 24)
-guardar_tabla(pd.concat({"mes": idx_mes, "dia": idx_dia, "hora": idx_hora}).rename("indice").to_frame(), "p01_indices")
-print("\nHoras pico (índice > 1.3):", [int(h) for h in idx_hora[idx_hora > 1.3].index])
+gen = indices(sin)
+zonas = {"Urbana": indices(sin[sin["zona"] == "URBANA"]), "Rural": indices(sin[sin["zona"] == "RURAL"])}
+for cat in ["mes", "día", "hora"]:
+    tabla = pd.DataFrame({"General": gen[cat], **{z: zonas[z][cat] for z in zonas}})
+    print(f"\nÍndice por {cat}:")
+    mostrar(tabla.round(2), 24)
+tablas = {cat: pd.DataFrame({"General": gen[cat], **{z: zonas[z][cat] for z in zonas}}) for cat in gen}
+guardar_tabla(pd.concat(tablas, names=["categoria", "valor"]), "p01_indices")
+print("\nHoras pico generales (índice > 1.3):", [int(h) for h in gen["hora"][gen["hora"] > 1.3].index])
+for cat in ["mes", "día", "hora"]:
+    for z, ind in zonas.items():
+        print(f"{cat} | {z}: máximo {ind[cat].idxmax()} ({ind[cat].max():.2f}), mínimo {ind[cat].idxmin()} ({ind[cat].min():.2f})")
 
-# 2) Gráfico de índices (naranja = temporada alta)
+# 2) Imagen general: las tres categorías (naranja = temporada alta)
 fig, ax = plt.subplots(1, 3, figsize=(15, 4), gridspec_kw={"width_ratios": [9, 7, 24]})
-for a, idx, t, xl in [(ax[0], idx_mes, "mes", "Mes (2026)"), (ax[1], idx_dia, "día de la semana", "Día"),
-                      (ax[2], idx_hora, "hora del día", "Hora de ocurrencia (0-23 h)")]:
+for a, cat, xl in [(ax[0], "mes", "Mes (2026)"), (ax[1], "día", "Día de la semana"), (ax[2], "hora", "Hora de ocurrencia (0-23 h)")]:
+    idx = gen[cat]
     a.bar(range(len(idx)), idx.values, color=[PALETA[1] if v > 1 else PALETA[0] for v in idx.values], width=0.75)
     a.axhline(1, color="#52514e", lw=1)
     a.set_xticks(range(len(idx)))
-    a.set_xticklabels([str(i)[:3].title() if not isinstance(i, (int, np.integer)) else str(i) for i in idx.index],
-                      rotation=0 if t == "hora del día" else 45)
-    a.set_title(f"Índice por {t}")
+    a.set_xticklabels([str(i)[:3].title() if cat != "hora" else str(i) for i in idx.index], rotation=0 if cat == "hora" else 45)
+    a.set_title(f"Índice por {cat if cat != 'hora' else 'hora del día'}")
     a.set_xlabel(xl)
     a.set_ylabel("Índice (1 = promedio)")
-guardar_fig(fig, "p01_indices_estacionalidad")
+guardar_fig(fig, "p01_indices_general")
 
-# 3) Heatmaps facetados por zona: siniestros promedio por día calendario, día x hora
-seccion("3) Día x hora por zona")
-dias_por_dow = dias_cal.dt.day_of_week.add(1).value_counts().sort_index()
-mat = {}
-for z in ["URBANA", "RURAL"]:
-    m = sin[sin["zona"] == z].pivot_table(index="dia_semana", columns="hora_num", values="sid", aggfunc="count", fill_value=0)
-    mat[z] = m.div(dias_por_dow, axis=0).reindex(columns=range(24), fill_value=0)
-vmax = max(m.values.max() for m in mat.values())
-fig, ax = plt.subplots(1, 2, figsize=(15, 4.5), sharey=True)
-for a, z in zip(ax, mat):
-    sns.heatmap(mat[z], ax=a, cmap=CMAP_SEC, vmin=0, vmax=vmax, yticklabels=[d.title()[:3] for d in DIAS],
-                cbar_kws={"label": "Siniestros por día calendario"})
-    a.set_title(f"Zona {z.lower()}")
-    a.set_xlabel("Hora de ocurrencia (0-23 h)")
-    a.set_ylabel("Día de la semana")
-guardar_fig(fig, "p01_heatmap_dia_hora_por_zona")
-for z, m in mat.items():
-    pico = m.stack().idxmax()
-    print(f"Zona {z}: pico el {DIAS[pico[0] - 1].lower()} a las {pico[1]} h ({m.stack().max():.2f} siniestros por día)")
+# 3) Una imagen por categoría: urbana vs rural (cada zona contra su propio promedio)
+seccion("3) Urbana vs rural")
+COL = {"Urbana": PALETA[0], "Rural": PALETA[1]}
+for cat, xl, nombre in [("mes", "Mes (2026)", "p01_indices_mes_zona"), ("día", "Día de la semana", "p01_indices_dia_zona"),
+                        ("hora", "Hora de ocurrencia (0-23 h)", "p01_indices_hora_zona")]:
+    fig, a = plt.subplots(figsize=(11 if cat == "hora" else 8, 4.2))
+    n = len(gen[cat])
+    x = np.arange(n)
+    for k, (z, ind) in enumerate(zonas.items()):
+        if cat == "hora":
+            a.plot(x, ind[cat].values, color=COL[z], lw=2, marker="o", ms=4, label=z)
+        else:
+            a.bar(x + (k - 0.5) * 0.38, ind[cat].values, width=0.36, color=COL[z], label=z)
+    a.axhline(1, color="#52514e", lw=1, ls="--")
+    a.set_xticks(x)
+    a.set_xticklabels([str(i)[:3].title() if cat != "hora" else str(i) for i in gen[cat].index])
+    a.set_title(f"Índice por {cat if cat != 'hora' else 'hora del día'}: zona urbana vs rural")
+    a.set_xlabel(xl)
+    a.set_ylabel("Índice (1 = promedio de su zona)")
+    a.legend(frameon=False, ncol=2, loc="upper left")
+    guardar_fig(fig, nombre)

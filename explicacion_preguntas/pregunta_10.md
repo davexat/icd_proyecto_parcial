@@ -2,21 +2,13 @@
 
 > **Pregunta:** ¿Qué características tienen los siniestros de alta consecuencia (3 o más víctimas) y qué tan concentradas están las víctimas en pocos eventos?
 
-**Script:** `pregunta_10.py`
-**Técnicas:** distribución de víctimas por siniestro, porcentaje de víctimas que concentran los siniestros de alta consecuencia, comparación del % de alta consecuencia con y sin cada característica, top 10 de siniestros y gráfico facetado por zona.
-**Feature nueva usada:** `n_victimas` (lesionados + fallecidos; WHO, 2023).
+**Script:** `pregunta_10.py` · **Técnicas:** distribución de víctimas por siniestro, concentración, % de alta consecuencia con y sin cada característica, top 10 · **Feature:** `n_victimas` (lesionados + fallecidos; WHO, 2023).
 
 ## 1. Qué hace el código
 
-**Bloque 0: definición.** Un siniestro es de "alta consecuencia" si `n_victimas >= 3` (la constante `UMBRAL`).
-
-**Bloque 1: distribución y concentración.** Promedio, máximo y percentil 99 de víctimas por siniestro, y qué parte de las víctimas y de los fallecidos concentran los siniestros de alta consecuencia.
-
-**Bloque 2: características asociadas.** Para 14 características (bus, camión, moto, 3 o más vehículos, zona rural, noche, fin de semana, causa, tipo de siniestro, etc.) compara el % de siniestros de alta consecuencia *con* la característica frente a *sin* ella y calcula la razón ("veces más probable"). Guarda `p10_caracteristicas_alta_consecuencia.csv`.
-
-**Bloque 3: Top 10.** Los 10 siniestros con más víctimas. Guarda `p10_top10_siniestros.csv`.
-
-**Bloque 4: gráficos.** Histograma de víctimas por siniestro (escala logarítmica, 12 = 12 o más), barras horizontales con la razón de probabilidad y una figura facetada urbano / rural con la distribución en porcentaje.
+- Define alta consecuencia como `n_victimas >= 3` y mide cuánto concentran esos siniestros de las víctimas y fallecidos.
+- Para 14 características (bus, camión, moto, 3 o más vehículos, zona rural, noche, causa, tipo de siniestro, etc.) compara el % de alta consecuencia *con* y *sin* ella y calcula las "veces más probable". Lista el top 10 de siniestros.
+- Grafica un histograma de víctimas (escala log), las razones de probabilidad en barras y la distribución por zona.
 
 ## 2. Para la exposición (máx. 40 s)
 
@@ -26,40 +18,20 @@
 
 ## 3. Resultados
 
-- Promedio: **0.95 víctimas por siniestro**; máximo 41; percentil 99 = 5.
-- **931 siniestros (5.4 %) tienen 3 o más víctimas** y concentran el **22.9 % de las víctimas** y el **16.6 % de los fallecidos**.
-
-| Característica | % alta consecuencia (con) | (sin) | Veces más probable |
-|---|---|---|---|
-| Choque frontal | 11.9 | 4.9 | **2.41** |
-| 3 o más vehículos | 11.3 | 5.1 | **2.23** |
-| Participa un bus | 10.3 | 5.1 | **2.01** |
-| Transporte público | 7.7 | 5.1 | 1.53 |
-| Red vial estatal | 6.8 | 4.7 | 1.44 |
-| Zona rural | 6.7 | 4.7 | 1.43 |
-| Participa un camión | 7.0 | 5.2 | 1.33 |
-| Exceso de velocidad | 5.7 | 5.3 | 1.07 |
-| Horario nocturno | 5.4 | 5.4 | 1.01 |
-| Participa una motocicleta | 5.3 | 5.5 | 0.97 |
-| Causa: alcohol / sustancias | 4.5 | 5.5 | 0.82 |
-
-- Siniestro más grave: **41 lesionados** en un estrellamiento en Santa Elena (19 de agosto). Le siguen un choque frontal en Santa Elena (34 lesionados y 4 fallecidos, 12 de abril) y una pérdida de carril en Cuenca (27 lesionados y 2 fallecidos).
-- La proporción de alta consecuencia es de 6.7 % en la zona rural y 4.7 % en la urbana.
+- Promedio 0.95 víctimas por siniestro; máximo 41. **931 siniestros (5.4 %)** tienen 3 o más y concentran el **22.9 % de las víctimas** y el 16.6 % de los fallecidos.
+- Veces más probable: choque frontal **2.41**, 3 o más vehículos **2.23**, bus **2.01**, transporte público 1.53, red estatal 1.44, zona rural 1.43. Velocidad 1.07, noche 1.01, moto 0.97, alcohol 0.82.
+- El más grave: 41 lesionados en un estrellamiento en Santa Elena (19 de agosto).
 
 ## 4. Análisis
 
-1. **Las víctimas están concentradas.** Algo más de 1 de cada 20 siniestros explica casi 1 de cada 4 víctimas.
-2. **La clave es la cantidad de personas expuestas por evento.** Lo que más aumenta la probabilidad de alta consecuencia es lo que implica *muchos ocupantes*: el bus (2.0 veces), el transporte público (1.5), los siniestros con 3 o más vehículos (2.2) y el choque frontal (2.4), que suele implicar un impacto de gran energía (interpretación: el dataset no mide velocidad).
-3. **Variables que no aparecen como se esperaría.** Moto (0.97) y alcohol (0.82) no elevan la probabilidad de alta consecuencia: sus siniestros afectan a pocas personas cada vez (el motociclista y su acompañante), aunque sean letales (ver preguntas 6 y 7). Alta consecuencia y alta letalidad son conceptos distintos.
-4. **Rural y vía estatal** aumentan la probabilidad en torno a 1.4 veces, en línea con lo visto en la pregunta 5.
+1. **Las víctimas están concentradas:** 1 de cada 20 siniestros explica casi 1 de cada 4 víctimas.
+2. **Lo define cuánta gente va expuesta** (bus, transporte público, varios vehículos). Moto y alcohol son letales (preguntas 6 y 7) pero afectan a pocas personas por evento.
 
-## 5. Limitaciones y advertencias
+## 5. Limitaciones
 
-- El umbral de 3 víctimas es una decisión del equipo; con otro umbral las razones cambiarían.
-- Las razones comparan con y sin cada característica de forma aislada; no controlan que varias se solapen (por ejemplo, bus y transporte público, o choque frontal y rural).
-- Los 18 siniestros con más de 10 lesionados son atípicos reales y se conservaron; influyen en la cola de la distribución.
+- El umbral de 3 víctimas es una decisión del equipo.
+- Las razones comparan cada característica por separado, aunque varias se solapan (bus y transporte público, choque frontal y rural).
 
-## 6. Archivos generados
+## 6. Archivos
 
-- Tablas: `p10_caracteristicas_alta_consecuencia.csv`, `p10_top10_siniestros.csv`
-- Figuras: `p10_distribucion_y_caracteristicas.png`, `p10_victimas_por_zona.png`
+`p10_caracteristicas_alta_consecuencia.csv`, `p10_top10_siniestros.csv` · `p10_distribucion_y_caracteristicas.png`, `p10_victimas_por_zona.png`

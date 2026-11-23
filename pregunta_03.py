@@ -1,6 +1,6 @@
 # PREGUNTA DE NEGOCIO 3
 # ¿Qué provincias y cantones concentran la mayor parte de los siniestros y de las muertes, y el
-# orden de prioridad cambia si se mide por volumen o por gravedad?
+# ranking cambia si se mide por volumen o por gravedad?
 #
 # Técnicas: clasificación Pareto ABC (80-15-5), concentración del Top 5, ranking por volumen y por
 # gravedad, gráfico Pareto facetado y mapa de burbujas con latitud y longitud (Folium).

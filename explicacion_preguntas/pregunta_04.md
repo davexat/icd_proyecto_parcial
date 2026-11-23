@@ -2,17 +2,13 @@
 
 > **Pregunta:** ¿Dónde están los puntos críticos (zonas pequeñas con muchos siniestros) en el país y en las ciudades con más eventos, y coinciden con los lugares donde ocurren las muertes?
 
-**Script:** `pregunta_04.py`
-**Técnicas:** cuadrícula de ~2 km (agrupar por coordenadas), concentración en pocas celdas, ranking de celdas, mapa de severidad y mapas de celdas facetados por cantón. Los mapas se hacen con Folium.
-**Feature nueva usada:** celda de cuadrícula (Anderson, 2009; Xie y Yan, 2008).
+**Script:** `pregunta_04.py` · **Técnicas:** cuadrícula de ~2 km, concentración en pocas celdas, ranking de celdas, mapas de celdas facetados por cantón y mapa de severidad, con Folium · **Feature:** celda de cuadrícula (Anderson, 2009; Xie y Yan, 2008).
 
 ## 1. Qué hace el código
 
-**Bloque 1: concentración nacional.** Agrupa los siniestros por `celda_lat` y `celda_lon`, columnas que creó `limpieza_datos.py` redondeando cada coordenada al múltiplo de 0.02° más cercano (unos 2.2 km en el Ecuador). Por celda cuenta siniestros y fallecidos y toma el cantón más frecuente. Luego calcula el acumulado y responde: ¿cuánto concentra el 1 %, el 5 % y el 10 % de las celdas más activas, tanto de siniestros como de fallecidos? Guarda las 50 principales en `p04_top50_celdas.csv`.
-
-**Bloque 2: mapas de celdas facetados (Folium).** Toma los tres cantones con más siniestros (Guayaquil, Quito, Santo Domingo). Para cada uno elimina las coordenadas extremas (por debajo del percentil 0.3 y por encima del 99.7) para que un punto lejano no estire el mapa, pinta cada celda de 2 km con un azul más oscuro mientras más siniestros tiene, y encima marca con puntos naranja los siniestros con fallecidos. Las tres facetas se unen en una sola página. También mide qué porcentaje de los siniestros del cantón cae en sus 5 celdas principales.
-
-**Bloque 3: mapa nacional por severidad (Folium).** Dibuja todos los siniestros en latitud y longitud, con tres capas que se pueden activar o apagar (sin víctimas, con lesionados, fatales), donde los fatales son más grandes y opacos.
+- Agrupa los siniestros por `celda_lat` y `celda_lon` (coordenadas redondeadas a 0.02°, unos 2.2 km), cuenta siniestros y fallecidos por celda y calcula cuánto concentran el 1 %, 5 % y 10 % de las celdas más activas. Guarda las 50 principales.
+- Para Guayaquil, Quito y Santo Domingo recorta coordenadas extremas, pinta cada celda más oscura mientras más siniestros tiene, marca con puntos naranja los siniestros con fallecidos y une las tres facetas en una página.
+- Dibuja un mapa nacional con tres capas activables (sin víctimas, con lesionados, fatales).
 
 ## 2. Para la exposición (máx. 40 s)
 
@@ -22,34 +18,31 @@
 
 ## 3. Resultados
 
-- Celdas con al menos un siniestro: **2 860**.
-- El **1 %** de las celdas (29) concentra el **18.9 %** de los siniestros; el **5 %** (143), el **48.8 %**; el **10 %** (286), el **62.7 %**.
-- Esas mismas celdas concentran menos fallecidos: **8.7 %** (1 %), **27.4 %** (5 %) y **38.7 %** (10 %). Es la evidencia más directa de que los fallecidos están más repartidos que los siniestros.
-- Top 10 de celdas: 7 en Guayaquil, 2 en Santo Domingo y 1 en Quito. La mayor está en Guayaquil (lat -2.20, lon -79.90) con **269 siniestros y 12 fallecidos**.
+- 2 860 celdas con siniestros. El **1 %** (29) concentra 18.9 % de los siniestros, el **5 %** (143) el **48.8 %** y el 10 % el 62.7 %.
+- Esas mismas celdas concentran menos fallecidos: 8.7 %, **27.4 %** y 38.7 %.
+- Top 10: 7 celdas en Guayaquil, 2 en Santo Domingo y 1 en Quito; la mayor, en Guayaquil, con 269 siniestros y 12 fallecidos.
+- Las 10 celdas principales: 1 504 siniestros y 68 fallecidos = **4.5 fallecidos por 100 siniestros**, frente a **10.8** nacional.
 
-| Cantón | Siniestros (tras recorte) | Celdas con eventos | Celda máxima | % en sus 5 celdas principales |
-|---|---|---|---|---|
-| Guayaquil | 3 438 | 106 | 269 | 24.8 % |
-| Quito | 3 019 | 162 | 149 | 17.4 % |
-| Santo Domingo | 984 | 107 | 133 | **48.2 %** |
+| Cantón | Siniestros | % en sus 5 celdas principales |
+|---|---|---|
+| Guayaquil | 3 438 | 24.8 % |
+| Quito | 3 019 | 17.4 % |
+| Santo Domingo | 984 | **48.2 %** |
 
 ## 4. Análisis
 
-1. **Los puntos críticos existen y son muy marcados.** Con el 5 % de las celdas se explica casi la mitad de los siniestros del país.
-2. **Cada ciudad tiene un patrón distinto.** Santo Domingo es la más concentrada (casi la mitad en 5 celdas); Quito es la más dispersa (forma una franja norte-sur sin un núcleo único); Guayaquil está en el medio, con un núcleo muy denso alrededor de (-79.9, -2.2) y una cola hacia el oeste.
-3. **Volumen y muertes no coinciden del todo.** Las 10 celdas principales suman 1 504 siniestros y 68 fallecidos, es decir, **4.5 fallecidos por cada 100 siniestros**, frente a **10.8** a nivel nacional. Los puntos críticos concentran *cantidad* de eventos, pero no son los más letales: los puntos con fallecidos aparecen también fuera de esos núcleos. Esto responde la segunda parte de la pregunta. Lo confirma que el 5 % de celdas con más siniestros reúne el 48.8 % de los siniestros pero solo el 27.4 % de los fallecidos.
+1. **Los puntos críticos existen:** con el 5 % de las celdas se explica casi la mitad de los siniestros.
+2. **Cada ciudad es distinta:** Santo Domingo la más concentrada; Quito la más dispersa (franja norte-sur); Guayaquil, con un núcleo denso.
+3. **Volumen y muertes no coinciden:** los puntos críticos concentran cantidad, no letalidad.
 
-## 5. Limitaciones y advertencias
+## 5. Limitaciones
 
-- La escala de color es distinta en cada faceta (llega a 269 siniestros por celda en Guayaquil, 149 en Quito y 133 en Santo Domingo); sirve para ver la forma de cada ciudad, no para comparar intensidades entre ellas.
-- Los mapas de Folium necesitan internet para cargar el mapa base. El PNG se genera con una captura automática de Edge o Chrome; si no hay ninguno, se abre el HTML y se toma la captura a mano.
-- La cuadrícula depende del tamaño de celda elegido (0.02°); con otro tamaño los números exactos cambiarían, aunque no la idea.
-- Las celdas críticas son urbanas, y la zona urbana ya es menos letal que la rural (7.1 % frente a 14.0 %, pregunta 5); parte de la menor letalidad de los puntos críticos se debe a eso, no solo a la concentración.
-- En el mapa de Guayaquil los puntos con fallecidos se acumulan en el núcleo; "también fuera de los núcleos" se aprecia sobre todo en Quito y Santo Domingo.
-- El cálculo de 4.5 frente a 10.8 es una razón de fallecidos por siniestro hecha a partir de la tabla del Top 10; si se quiere citar en diapositiva, conviene dejarlo documentado.
+- La escala de color es distinta en cada faceta: sirve para ver la forma de cada ciudad, no para comparar intensidades.
+- Las celdas críticas son urbanas y la zona urbana ya es menos letal (7.1 % frente a 14.0 %, pregunta 5), así que parte de la menor letalidad se debe a eso.
+- En Guayaquil los puntos con fallecidos se acumulan en el núcleo; lo de «fuera de los núcleos» se ve sobre todo en Quito y Santo Domingo.
+- Los puntos críticos describen dónde se concentraron los siniestros registrados entre enero y septiembre; no predicen dónde ocurrirá el próximo.
+- La cuadrícula depende del tamaño de celda (0.02°). Folium necesita internet y el PNG se captura con Edge o Chrome.
 
-## 6. Archivos generados
+## 6. Archivos
 
-- Tablas: `p04_top50_celdas.csv`, `p04_concentracion_por_canton.csv`
-- Figuras (capturas de los mapas): `p04_densidad_facetado.png`, `p04_mapa_nacional_severidad.png`
-- Mapas interactivos de Folium: `p04_densidad_facetado.html`, `p04_mapa_nacional_severidad.html`
+`p04_top50_celdas.csv`, `p04_concentracion_por_canton.csv` · `p04_densidad_facetado.png`, `p04_mapa_nacional_severidad.png` · `p04_densidad_facetado.html`, `p04_mapa_nacional_severidad.html`
