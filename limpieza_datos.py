@@ -78,9 +78,6 @@ REFERENCIAS = {
                                   "of trauma. Am. J. Public Health, 58(8). | Sabey, B. E., Taylor, H. (1980). The known risks "
                                   "we run: the highway. TRRL Supplementary Report 567.",
     "usuario_vulnerable": "Peden, M. et al. (2004). World report on road traffic injury prevention. WHO. | WHO (2023).",
-    "celda de cuadricula (puntos criticos)": "Anderson, T. K. (2009). Kernel density estimation and K-means clustering to "
-                                             "profile road accident hotspots. Accident Analysis & Prevention, 41(3), 359-364. "
-                                             "| Xie, Z., Yan, J. (2008). Computers, Environment and Urban Systems, 32(5), 396-406.",
     "indice de estacionalidad": "Hyndman, R. J., Athanasopoulos, G. (2021). Forecasting: Principles and Practice (3a ed.). OTexts.",
     "uso de casco (contraste en P8)": "Liu, B. C. et al. (2008). Helmets for preventing injury in motorcycle riders. Cochrane "
                                       "Database of Systematic Reviews, 2008(1), CD004333.",
@@ -233,8 +230,6 @@ def _construir(raw):
     s["usuario_vulnerable"] = vru | s["tipo_siniestro"].eq("ATROPELLOS")
     s["solo_vehiculos_cerrados"] = s[["n_motocicleta", "n_bicicleta", "n_scooter", "n_tricimoto",
                                       "n_no_identificado"]].sum(axis=1) == 0
-    s["celda_lat"] = (s["lat"] / 0.02).round() * 0.02     # cuadricula ~2 km (0.02 grados)
-    s["celda_lon"] = (s["lon"] / 0.02).round() * 0.02
 
     # ---------------- Participantes: formato ancho -> largo ----------------
     partes = []
