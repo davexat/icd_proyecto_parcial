@@ -52,7 +52,8 @@ ATRIB_GRIS = "Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ"
 
 def mapa_base(**kw):
     """Mapa de Folium con el fondo gris de Esri (sin entrada en el control de capas)."""
-    m = folium.Map(tiles=None, zoom_snap=0.25, **kw)
+    kw.setdefault("zoom_snap", 0.25)
+    m = folium.Map(tiles=None, **kw)
     folium.TileLayer(TILES_GRIS, attr=ATRIB_GRIS, name="Mapa base", control=False).add_to(m)
     return m
 
