@@ -1,6 +1,6 @@
 # Guía de diapositivas: qué poner en cada una y qué parte del guion le corresponde
 
-Acompaña al documento «Guion de exposición (13:17 min)» · 16 diapositivas + apéndice oculto · numeración igual a la del guion
+Acompaña al documento «Guion de exposición (13:16 min)» · 16 diapositivas + apéndice oculto · numeración igual a la del guion
 
 ## 1. Regla de oro: del guion a la pantalla
 
@@ -78,12 +78,10 @@ Opcional en P2: anotar «1-ene» sobre el punto más alto de la serie.
 | Métrica | Referencia | Se usa en |
 | --- | --- | --- |
 | Número de víctimas y letalidad | OMS (2023) | P8, P9, P10 |
-| Severidad en 3 niveles | Highway Safety Manual, AASHTO (2010) | P4 |
 | Factor causal y grupo de causa | Haddon (1968); Sabey y Taylor (1980) | P6 |
-| Cuadrícula de 2 km | Anderson (2009) | P4 |
 | Índice de estacionalidad | Hyndman y Athanasopoulos (2021) | P1 |
 
-- **No incluir** `severidad_ponderada` ni `usuario_vulnerable`: están creadas en la limpieza pero ninguna pregunta las usa, y el jurado podría preguntar dónde se aplican. Las referencias completas van en el apéndice.
+- **No incluir** `severidad`, `severidad_ponderada` ni `usuario_vulnerable`: están creadas en la limpieza pero ninguna pregunta las usa, y el jurado podría preguntar dónde se aplican. Las referencias completas van en el apéndice.
 
 ### Diapositiva 6: P1 · ¿Cuándo ocurren los siniestros?
 
@@ -111,18 +109,18 @@ Opcional en P2: anotar «1-ene» sobre el punto más alto de la serie.
 - **Nota gris:** Promedio nacional: 9.6 % de siniestros con fallecidos (provincias con 100 o más siniestros).
 - **Respaldo:** `p03_pareto_provincias.png` en el apéndice.
 
-### Diapositiva 9: P4 · ¿Dónde están los puntos críticos?
+### Diapositiva 9: P4 · ¿En qué provincias pesan más las motos, los camiones y los buses?
 
-- **Etiquetas:** Cuadrícula de 2 km · Mapas de densidad · Facetas por cantón
-- **Visual:** `p04_densidad_facetado.png` a todo el ancho (Guayaquil, Quito, Santo Domingo; puntos naranja = siniestros con fallecidos).
-- **Cifras grandes:** **5 %** de las celdas = **49 %** de los siniestros · **4.5** vs **10.8** fallecidos por cada 100 siniestros (10 celdas principales vs país)
-- **Frase titular:** Los puntos críticos concentran volumen, no letalidad.
-- **Nota gris:** La escala de color es distinta en cada mapa.
+- **Etiquetas:** Porcentaje por provincia · Mapas de burbujas · Un mapa por vehículo
+- **Visual:** `p04_vehiculos_por_provincia.png` a todo el ancho (tres mapas: motocicleta, camión y bus; tamaño = siniestros con ese vehículo, color = % de los siniestros de la provincia).
+- **Cifras grandes:** Motos **50 %** en Santo Domingo vs **33 %** en el país · Camiones **17 %** en Cotopaxi vs **10 %** · Buses **8 %** en Chimborazo vs **5 %**
+- **Frase titular:** Cada vehículo pesa más en provincias distintas.
+- **Nota gris:** Muestra dónde participa cada vehículo, no cuál es más peligroso. La escala de color es distinta en cada mapa.
 
 ### Diapositiva 10: P5 · ¿Cómo influyen la zona y los corredores viales?
 
-- **Etiquetas:** Facetas urbano / rural · Gravedad por franja · Burbujas por corredor
-- **Visual:** `p05_zona_franja_corredores.png` completo. Círculo en la barra «Madrugada rural 20.2 %» y en los puntos E25 y E20.
+- **Etiquetas:** Urbano vs rural · Gravedad por franja · Burbujas por corredor
+- **Visual:** `p05_zona_franja_corredores.png` completo (barras agrupadas a la izquierda, burbujas a la derecha). Círculo en la barra «Madrugada rural 20.2 %» y en los puntos E25 y E20.
 - **Cifras grandes:** Rural **14 %** vs urbana **7 %** · E25 **17 %** · E20 **22 %**
 - **Frase titular:** Rural y madrugada son lo más letal; E25 y E20, los corredores más letales.
 - **No escribir:** la jerarquía de la vía (arterial 13.9 % y colectora 13.5 %); solo se dice.
@@ -173,7 +171,7 @@ Opcional en P2: anotar «1-ene» sobre el punto más alto de la serie.
 - **Título:** Conclusiones
 - **En pantalla:** cuatro columnas con un ícono, una cifra y máximo 10 palabras cada una:
   - **Cuándo:** fines de semana, 17 a 20 h, feriados
-  - **Dónde:** 5 % de celdas = 49 %; gravedad en provincias pequeñas, zona rural y madrugada
+  - **Dónde:** cada vehículo, en provincias distintas; gravedad en zona rural y madrugada
   - **Por qué:** 94.5 % factor humano: distracción y velocidad
   - **A quién:** peatón mayor, nocturno y rural; choque frontal y buses
 - **Banda «En conjunto»:** las diferencias más marcadas en gravedad aparecen según la zona, la hora, el tipo de siniestro y el rol de la víctima.

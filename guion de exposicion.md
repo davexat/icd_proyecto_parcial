@@ -1,6 +1,6 @@
 # Guion de exposición: siniestros de tránsito en Ecuador, enero a septiembre de 2026
 
-Duración estimada: **13:25** (rango de 12:25 a 14:20 según el ritmo de cada quien) · 1 740 palabras · 3 expositores · 16 diapositivas
+Duración estimada: **13:16** (rango de 12:16 a 14:11 según el ritmo de cada quien) · 1 720 palabras · 3 expositores · 16 diapositivas
 
 ## 1. Cómo usar este guion
 
@@ -17,24 +17,24 @@ Duración estimada: **13:25** (rango de 12:25 a 14:20 según el ritmo de cada qu
 | 1 a 2 | Contexto | 1 | 84 | 0:41 | 0:41 |
 | 3 | Los datos | 1 | 60 | 0:28 | 1:10 |
 | 4 | Limpieza y ruido | 1 | 126 | 0:58 | 2:08 |
-| 5 | Métricas nuevas | 1 | 71 | 0:33 | 2:41 |
-| 6 | P1 · Cuándo | 1 | 145 | 1:06 | 3:48 |
-| 7 | P2 · Días críticos | 1 | 102 | 0:47 | **4:35** |
-| 8 | P3 · Provincias y cantones | 2 | 132 | 1:00 | 5:36 |
-| 9 | P4 · Puntos críticos | 2 | 115 | 0:53 | 6:29 |
-| 10 | P5 · Zona y corredores | 2 | 129 | 0:59 | 7:28 |
-| 11 | P6 · Causas | 2 | 138 | 1:03 | **8:31** |
-| 12 | P7 · Tipo y vehículo | 3 | 124 | 0:57 | 9:28 |
-| 13 | P8 · Perfil de víctimas | 3 | 134 | 1:01 | 10:30 |
-| 14 | P9 · Atropellos | 3 | 130 | 0:59 | 11:30 |
-| 15 | P10 · Alta consecuencia | 3 | 115 | 0:53 | 12:23 |
-| 16 | Conclusiones | 3 | 135 | 1:02 | **13:25** |
+| 5 | Métricas nuevas | 1 | 51 | 0:24 | 2:32 |
+| 6 | P1 · Cuándo | 1 | 145 | 1:06 | 3:39 |
+| 7 | P2 · Días críticos | 1 | 102 | 0:47 | **4:26** |
+| 8 | P3 · Provincias y cantones | 2 | 132 | 1:00 | 5:27 |
+| 9 | P4 · Vehículos por provincia | 2 | 115 | 0:53 | 6:20 |
+| 10 | P5 · Zona y corredores | 2 | 129 | 0:59 | 7:19 |
+| 11 | P6 · Causas | 2 | 138 | 1:03 | **8:22** |
+| 12 | P7 · Tipo y vehículo | 3 | 124 | 0:57 | 9:19 |
+| 13 | P8 · Perfil de víctimas | 3 | 134 | 1:01 | 10:21 |
+| 14 | P9 · Atropellos | 3 | 130 | 0:59 | 11:21 |
+| 15 | P10 · Alta consecuencia | 3 | 115 | 0:53 | 12:14 |
+| 16 | Conclusiones | 3 | 135 | 1:02 | **13:16** |
 
-**Por expositor:** el 1 dura 4:35, el 2 dura 3:56 y el 3 dura 4:53. Los cambios de expositor suman unos 5 a 10 segundos extra, así que el total real ronda 13:35.
+**Por expositor:** el 1 dura 4:26, el 2 dura 3:56 y el 3 dura 4:53. Los cambios de expositor suman unos 5 a 10 segundos extra, así que el total real ronda 13:26.
 
-**Relojes de control:** el expositor 1 debe terminar cerca de 4:35 y el 2 cerca de 8:30. Si en el cambio al expositor 3 ya van pasados de 9:00, activen los recortes. El expositor 2 tiene menos texto, así que puede dejar 2 a 3 segundos de silencio sobre cada mapa para que se lean.
+**Relojes de control:** el expositor 1 debe terminar cerca de 4:26 y el 2 cerca de 8:22. Si en el cambio al expositor 3 ya van pasados de 9:00, activen los recortes. El expositor 2 tiene menos texto, así que puede dejar 2 a 3 segundos de silencio sobre cada mapa para que se lean.
 
-## 3. Expositor 1: introducción, P1 y P2 (0:00 a 4:35)
+## 3. Expositor 1: introducción, P1 y P2 (0:00 a 4:26)
 
 ### &#91;Diap. 1 a 2\] Contexto (0:41)
 
@@ -48,9 +48,9 @@ Trabajamos con 17 236 siniestros, con 1 863 fallecidos y más de 14 000 lesionad
 
 La limpieza tuvo cuatro pasos. Primero, estructura: pasamos la tabla de formato ancho a largo, con una fila por persona, 37 096 en total. Segundo, fechas, horas y texto: convertimos horas guardadas como texto y unificamos mayúsculas. Tercero, validación: no hay filas duplicadas, ninguna coordenada cae fuera de Ecuador y las víctimas coinciden con los participantes. Cuarto, los marcadores como «ND» o «no identificado» pasaron a datos nulos; no eliminamos ningún registro. Así medimos el ruido: el 8.96 % de los campos analíticos no sirve. Es solo 1.5 % en siniestros, pero 19 % en personas, sobre todo porque falta la edad en el 44 %. Y los campos de vía vacíos no son ruido: significan que el siniestro ocurrió fuera de la red vial estatal.
 
-### &#91;Diap. 5\] Métricas nuevas (0:33)
+### &#91;Diap. 5\] Métricas nuevas (0:24)
 
-Creamos métricas nuevas apoyadas en la literatura. El número de víctimas y la letalidad, de la Organización Mundial de la Salud. La severidad en tres niveles, del Highway Safety Manual. La agrupación de causas en factor humano, vehículo y vía, de Haddon y de Sabey y Taylor. Una cuadrícula de dos kilómetros para detectar puntos críticos, de Anderson. Y un índice de estacionalidad, de Hyndman. Con esto, pasamos a las preguntas.
+Creamos métricas nuevas apoyadas en la literatura. El número de víctimas y la letalidad, de la Organización Mundial de la Salud. La agrupación de causas en factor humano, vehículo y vía, de Haddon y de Sabey y Taylor. Y un índice de estacionalidad, de Hyndman. Con esto, pasamos a las preguntas.
 
 ### &#91;Diap. 6\] P1 · Cuándo ocurren (1:06)
 
@@ -72,7 +72,7 @@ Creamos métricas nuevas apoyadas en la literatura. El número de víctimas y la
 
 **Puente:** Ya sabemos cuándo. Mi compañero \[nombre\] les cuenta dónde.
 
-## 4. Expositor 2: P3, P4, P5 y P6 (4:35 a 8:31)
+## 4. Expositor 2: P3, P4, P5 y P6 (4:26 a 8:22)
 
 ### &#91;Diap. 8\] P3 · Provincias y cantones (1:00)
 
@@ -82,23 +82,23 @@ Creamos métricas nuevas apoyadas en la literatura. El número de víctimas y la
 
 **Resultado:** Ocho de las 24 provincias suman el 80 % de los siniestros, y solo Guayas y Pichincha son más de la mitad. *Por cantón, 35 de 210 bastan para el 80 %.* Pero al medir gravedad el orden cambia: Esmeraldas tiene fallecidos en el 25 % de sus siniestros, aunque es la número 16 en volumen, y le siguen Zamora Chinchipe y Cañar. El promedio nacional es 9.6 %. El ranking cambia según se mida por volumen o por gravedad.
 
-**Puente:** Y dentro de las ciudades, ¿dónde exactamente?
+**Puente:** ¿Y qué vehículos pesan en cada provincia?
 
-### &#91;Diap. 9\] P4 · Puntos críticos (0:53)
+### &#91;Diap. 9\] P4 · Vehículos por provincia (0:53)
 
-**Pregunta:** Pregunta cuatro: ¿dónde están los puntos críticos?
+**Pregunta:** Pregunta cuatro: ¿en qué provincias pesan más las motos, los camiones y los buses?
 
-**Cómo:** Dividimos el país en una cuadrícula de dos por dos kilómetros, contamos siniestros por celda y dibujamos mapas de densidad de Guayaquil, Quito y Santo Domingo, con los siniestros con fallecidos en naranja.
+**Cómo:** Calculamos, para cada provincia, el porcentaje de sus siniestros que involucra cada vehículo, y lo dibujamos en tres mapas: el tamaño de la burbuja es la cantidad y el color, ese porcentaje.
 
-**Resultado:** De 2 860 celdas, el 5 % más activo concentra casi la mitad de los siniestros, y siete de las diez principales están en Guayaquil. Guayaquil tiene un núcleo muy denso, Santo Domingo es la más concentrada y Quito la más dispersa, en una franja norte-sur. Un detalle clave: esas diez celdas tienen 4.5 fallecidos por cada 100 siniestros, frente a 10.8 en el país. Los puntos críticos concentran volumen, no letalidad.
+**Resultado:** Las motos participan en un tercio de todos los siniestros del país, pero en Santo Domingo y Los Ríos llegan a cerca de la mitad. Los camiones destacan en Cotopaxi y Cañar, y los buses en Chimborazo e Imbabura. Por cantidad mandan Guayas y Pichincha, porque tienen más siniestros en total. *Esto muestra dónde participa cada vehículo, no cuál es más peligroso.*
 
-**Puente:** ¿Y en carretera?
+**Puente:** ¿Y entre la ciudad y la carretera?
 
 ### &#91;Diap. 10\] P5 · Zona y corredores (0:59)
 
 **Pregunta:** Pregunta cinco: ¿cómo influyen la zona y los corredores viales?
 
-**Cómo:** Comparamos urbano contra rural, separamos la gravedad por franja horaria en gráficos facetados, y ubicamos los corredores de la red estatal en burbujas, donde el tamaño es el número de fallecidos.
+**Cómo:** Comparamos urbano contra rural con barras agrupadas por cada franja horaria del día, y ubicamos los corredores de la red estatal en burbujas, donde el tamaño es el número de fallecidos.
 
 **Resultado:** La zona rural es el doble de grave: 14 % de siniestros con fallecidos, contra 7 % en la urbana. *La jerarquía de la vía casi no importa: arterial y colectora andan en 14 % y 13 %.* La madrugada es la franja más letal en ambas zonas, y en la rural llega a uno de cada cinco. Entre corredores, la E40 tiene más siniestros pero 10.5 % fatales; la E25, con 17 %, y la E20, con 22 %, fueron más letales.
 
@@ -114,7 +114,7 @@ Creamos métricas nuevas apoyadas en la literatura. El número de víctimas y la
 
 **Puente:** Con cuándo, dónde y por qué claros, \[nombre\] continúa con qué siniestros y a quiénes afectan.
 
-## 5. Expositor 3: P7, P8, P9, P10 y conclusiones (8:31 a 13:25)
+## 5. Expositor 3: P7, P8, P9, P10 y conclusiones (8:22 a 13:16)
 
 ### &#91;Diap. 12\] P7 · Tipo de siniestro y vehículo (0:57)
 
@@ -158,7 +158,7 @@ Creamos métricas nuevas apoyadas en la literatura. El número de víctimas y la
 
 ### &#91;Diap. 16\] Conclusiones (1:02)
 
-Para cerrar. Cuándo: fines de semana, entre las 17 y las 20 horas, y feriados. Dónde: el 5 % de las celdas concentra casi la mitad de los siniestros; el volumen está en Guayas y Pichincha, pero la gravedad en provincias pequeñas, zonas rurales y madrugadas. Por qué: 94.5 % es factor humano, sobre todo distracción y velocidad. A quién: peatones mayores, de noche y en zona rural; y choques frontales y buses producen los eventos con más víctimas. En conjunto, las diferencias más marcadas en la gravedad aparecen según la zona, la hora, el tipo de siniestro y el rol de la víctima. Como límites, el análisis es descriptivo y retrospectivo: caracteriza lo que ya ocurrió, no predice dónde ocurrirá, y la calidad del registro varía entre entes. Gracias, quedamos atentos a sus preguntas.
+Para cerrar. Cuándo: fines de semana, entre las 17 y las 20 horas, y feriados. Dónde: las motos, los camiones y los buses destacan cada uno en provincias distintas; el volumen está en Guayas y Pichincha, pero la gravedad en provincias pequeñas, zonas rurales y madrugadas. Por qué: 94.5 % es factor humano, sobre todo distracción y velocidad. A quién: peatones mayores, de noche y en zona rural; y choques frontales y buses producen los eventos con más víctimas. En conjunto, las diferencias más marcadas en la gravedad aparecen según la zona, la hora, el tipo de siniestro y el rol de la víctima. Como límites, el análisis es descriptivo y retrospectivo: caracteriza lo que ya ocurrió, no predice dónde ocurrirá, y la calidad del registro varía entre entes. Gracias, quedamos atentos a sus preguntas.
 
 ## 6. Si van tarde o si sobra tiempo
 
@@ -167,6 +167,6 @@ Para cerrar. Cuándo: fines de semana, entre las 17 y las 20 horas, y feriados. 
 1. Saltar las 5 frases en cursiva (matiz de P1, cantones de P3, jerarquía de P5, señales de P6 y asociaciones de P7): ahorra unos 30 segundos. El matiz de P1 (solo nueve meses) conviene tenerlo como respuesta preparada si preguntan por el aumento mensual.
 2. En la diapositiva 4, nombrar solo los cuatro pasos sin el detalle de cada uno: ahorra unos 15 segundos.
 
-**Si sobra tiempo:** no agreguen preguntas nuevas. Usen esos segundos para señalar con el puntero el punto del gráfico que mencionan (el domingo y las 19 h, el 1 de enero, la celda de Guayaquil) y para dejar un silencio breve tras cada cambio de diapositiva.
+**Si sobra tiempo:** no agreguen preguntas nuevas. Usen esos segundos para señalar con el puntero el punto del gráfico que mencionan (el domingo y las 19 h, el 1 de enero, Santo Domingo en el mapa de motos) y para dejar un silencio breve tras cada cambio de diapositiva.
 
 **Consejos de ritmo:** no lean la diapositiva; digan las cifras redondeadas como están escritas; en el cambio de expositor, el que termina dice el nombre del siguiente y el que empieza retoma con la pregunta, sin agradecer ni resumir.
