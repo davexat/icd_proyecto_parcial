@@ -3,13 +3,13 @@
 # (día de la semana, feriado, mes, causa dominante)?
 #
 # Técnicas: valores estandarizados (z-score) de la serie diaria, como en el Ejemplo 1; correlación
-# entre siniestros y fallecidos; composición de causas; serie diaria y calendario heatmap.
+# entre siniestros y fallecidos; comparación de los días críticos con el total de días (día de la
+# semana, mes, feriado y causa dominante) en gráficos facetados.
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 from limpieza_datos import DIAS, cargar_datos
-from utilidades import CMAP_DIV, PALETA, guardar_fig, guardar_tabla, mostrar, seccion
+from utilidades import GRIS, PALETA, guardar_fig, guardar_tabla, mostrar, seccion
 
 sin, _ = cargar_datos()
 dias = pd.date_range(sin["fecha"].min(), sin["fecha"].max())
@@ -21,6 +21,7 @@ d["feriado"] = d.index.isin(sin.loc[sin["feriado"], "fecha"].unique())
 
 # 1) Estandarización: cada día se compara contra el promedio de su mismo día de la semana,
 #    para no marcar como "crítico" cada domingo solo por ser domingo.
+#    z = cuántas desviaciones estándar está un día por encima (o por debajo) de lo habitual; 0 = día normal.
 seccion("1) Serie diaria estandarizada (z-score)")
 for c in ["siniestros", "fallecidos"]:
     d[f"z_{c}"] = (d[c] - d.groupby("dow")[c].transform("mean")) / d.groupby("dow")[c].transform("std")
@@ -47,26 +48,62 @@ comp = pd.concat([sin[sin["fecha"].isin(cr.index)]["causa_grupo"].value_counts(n
 comp["diferencia (pp)"] = comp["críticos"] - comp["resto"]
 mostrar(comp.sort_values("diferencia (pp)", ascending=False).round(1))
 
-# 3) Gráficos: serie con críticos y calendario heatmap
-fig, ax = plt.subplots(2, 1, figsize=(14, 7), sharex=True)
-for a, c, col in zip(ax, ["siniestros", "fallecidos"], PALETA):
-    a.plot(d.index, d[c], color=col, lw=1)
-    a.plot(d.index, d[c].rolling(7, center=True).mean(), color="#52514e", lw=2, label="Promedio móvil 7 días")
-    crit = d[d[f"z_{c}"] > 2]
-    a.scatter(crit.index, crit[c], color="#e34948", s=30, zorder=3, label="Día crítico (z > 2)")
-    a.set_ylabel(f"{c.capitalize()} por día")
-    a.legend(frameon=False, ncol=2, loc="upper left")
+# 3) Gráfico 1: cuántas desviaciones sobre lo habitual tuvo cada día (los críticos pasan de 2)
+MESES_ABR = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep"]
+fig, ax = plt.subplots(2, 1, figsize=(14, 7.5), sharex=True)
+for a, c, titulo in zip(ax, ["siniestros", "fallecidos"], ["Siniestros por día", "Fallecidos por día"]):
+    z = d[f"z_{c}"]
+    crit = d[z > 2]
+    a.scatter(d.index[z <= 2], z[z <= 2], color=GRIS, s=14, alpha=0.6, label="Día normal")
+    a.scatter(crit.index, z[z > 2], color="#e34948", s=34, zorder=3, label=f"Día crítico ({len(crit)})")
+    # Rótulos en una fila arriba, separados lo justo para no montarse, con una línea guía hacia cada punto
+    fechas = list(crit.index)
+    xs = [f.toordinal() for f in fechas]
+    sep, tope = 12, d.index[-1].toordinal() + 2
+    for i in range(1, len(xs)):
+        xs[i] = max(xs[i], xs[i - 1] + sep)
+    xs[-1] = min(xs[-1], tope)
+    for i in range(len(xs) - 2, -1, -1):
+        xs[i] = min(xs[i], xs[i + 1] - sep)
+    for fecha, x in zip(fechas, xs):
+        a.annotate(f"{fecha.day} {MESES_ABR[fecha.month - 1]}", (fecha, z[fecha]), xytext=(pd.Timestamp.fromordinal(x), 6.4),
+                   textcoords="data", ha="center", va="bottom", fontsize=8,
+                   arrowprops=dict(arrowstyle="-", color="#9a9994", lw=0.7, shrinkA=1, shrinkB=3))
+    a.axhline(2, color="#52514e", ls="--", lw=1)
+    a.text(d.index[10], 2.1, "Límite: 2 desviaciones", ha="left", va="bottom", fontsize=8, color="#52514e")
+    a.axhline(0, color="#c9c8c3", lw=0.8)
+    a.set_ylim(-3, 7.6)
+    a.set_ylabel("Desviaciones sobre lo habitual\n(0 = día normal)")
+    a.set_title(titulo, loc="left")
+    a.legend(frameon=False, loc="lower right", bbox_to_anchor=(1, 1.0), ncol=2)
 ax[1].set_xlabel("Fecha (2026)")
-guardar_fig(fig, "p02_serie_diaria_criticos")
+guardar_fig(fig, "p02_dias_criticos_z")
 
-d["semana"] = d.index.to_series().dt.strftime("%G-W%V")
-fig, ax = plt.subplots(1, 2, figsize=(16, 5.5), sharey=True)
-for a, c in zip(ax, ["z_siniestros", "z_fallecidos"]):
-    cal = d.pivot_table(index="semana", columns="dow", values=c)
-    sns.heatmap(cal, cmap=CMAP_DIV, center=0, vmin=-3, vmax=3, ax=a, cbar_kws={"label": "z (vs. mismo día de la semana)"},
-                linewidths=0.4, linecolor="white")
-    a.set_title(f"Calendario: {c[2:]} (naranja = por encima de lo habitual)")
-    a.set_xticklabels([x[:3].title() for x in DIAS], rotation=0)
-    a.set_xlabel("Día de la semana")
-    a.set_ylabel("Semana ISO")
-guardar_fig(fig, "p02_calendario_heatmap")
+# 4) Gráfico 2: ¿en qué se parecen los días críticos? Cada grupo de barras compara los días críticos con TODOS los días.
+seccion("3) Qué tienen en común los días críticos (% de los críticos vs % de todos los días)")
+causa4 = {"Distracción al conducir": "Distracción", "Exceso de velocidad": "Velocidad",
+          "Irrespeto de señales / prioridad": "Señales"}
+d["causa_dominante"] = sin.groupby("fecha")["causa_grupo"].agg(lambda s: s.value_counts().index[0]).reindex(d.index)
+d["causa4"] = d["causa_dominante"].map(causa4).fillna("Otras")
+d["mes"] = d.index.month
+d["tipo_dia"] = d["feriado"].map({True: "Feriado", False: "No feriado"})
+paneles = [("Día de la semana", d["dow"].map(lambda i: DIAS[i][:3].title()), [x[:3].title() for x in DIAS]),
+           ("Mes", d["mes"].map(lambda m: MESES_ABR[m - 1].title()), [m.title() for m in MESES_ABR]),
+           ("Feriado", d["tipo_dia"], ["Feriado", "No feriado"]),
+           ("Causa dominante del día", d["causa4"], ["Distracción", "Velocidad", "Señales", "Otras"])]
+fig, ax = plt.subplots(2, 2, figsize=(14, 7.5))
+for a, (titulo, serie, orden) in zip(ax.ravel(), paneles):
+    todos = 100 * serie.value_counts(normalize=True).reindex(orden).fillna(0)
+    crit_ = 100 * serie[d["critico"]].value_counts(normalize=True).reindex(orden).fillna(0)
+    print(f"\n{titulo}:")
+    mostrar(pd.DataFrame({"% críticos": crit_, "% todos los días": todos}).round(1))
+    x = range(len(orden))
+    a.bar([i - 0.2 for i in x], todos, 0.4, color=GRIS, label=f"Todos los días ({len(d)})")
+    b = a.bar([i + 0.2 for i in x], crit_, 0.4, color=PALETA[1], label=f"Días críticos ({len(cr)})")
+    a.bar_label(b, fmt="%.0f", fontsize=8, padding=2)
+    a.set_xticks(list(x))
+    a.set_xticklabels(orden)
+    a.set_ylabel("% de los días del grupo")
+    a.set_title(titulo)
+ax[1, 0].legend(frameon=False, loc="upper left")
+guardar_fig(fig, "p02_que_tienen_en_comun")

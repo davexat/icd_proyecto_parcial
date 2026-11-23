@@ -1,6 +1,6 @@
 # Guía de diapositivas: qué poner en cada una y qué parte del guion le corresponde
 
-Acompaña al documento «Guion de exposición (13:16 min)» · 16 diapositivas + apéndice oculto · numeración igual a la del guion
+Acompaña al documento «Guion de exposición (13:33 min)» · 16 diapositivas + apéndice oculto · numeración igual a la del guion
 
 ## 1. Regla de oro: del guion a la pantalla
 
@@ -35,8 +35,6 @@ Si lo anterior se mantiene igual en las 10 preguntas, el público entiende cada 
 | P5 burbujas de corredores | La línea punteada no tenía rótulo | Hecho: lleva la leyenda «Promedio de la red estatal» (`pregunta_05.py`) |
 | P6 burbujas | Etiquetas ambiguas entre Distracción, Velocidad y Vía | Hecho: etiquetas separadas con líneas guía (`pregunta_06.py`) |
 | P7 facetas urbano / rural | Los ejes X no se comparten (urbana llega a ~37 %, rural a ~59 %), así que las barras no muestran que lo rural casi se duplica | **Pendiente:** en `pregunta_07.py`, cambiar `sharey=True` por `sharex=True, sharey=True` |
-
-Opcional en P2: anotar «1-ene» sobre el punto más alto de la serie.
 
 ## 4. Diapositivas, una por una
 
@@ -94,11 +92,12 @@ Opcional en P2: anotar «1-ene» sobre el punto más alto de la serie.
 
 ### Diapositiva 7: P2 · ¿Qué días fueron críticos?
 
-- **Etiquetas:** z-score contra el mismo día de la semana
-- **Visual:** `p02_serie_diaria_criticos.png` (los puntos rojos son los días críticos). Anotar «1-ene: 123 siniestros, 21 fallecidos». El calendario heatmap queda en el apéndice porque es demasiado denso.
-- **Cifras grandes:** **13 de 273** días críticos · Feriados: **1 de cada 6** vs 1 de cada 26 · **10 de 13**: distracción
-- **Frase titular:** Pocos días concentran los excesos; el 1 de enero es el extremo.
-- **Del guion:** «Estandarizamos…» es la etiqueta; el resto de «Resultado» son las cifras.
+- **Etiquetas:** z-score contra el mismo día de la semana · Comparación con todos los días
+- **Visual en dos pasos (misma diapositiva):** al empezar, `p02_dias_criticos_z.png` a todo el ancho (los puntos rojos son los días críticos y ya llevan su fecha). Al decir «Si los comparamos con todos los días…», se reemplaza por `p02_que_tienen_en_comun.png` (naranja = días críticos, gris = todos los días).
+- **Cifras grandes:** **13 de 273** días críticos · Feriado: **23 %** vs 7 % de todos los días · Distracción: **77 %** vs 58 %
+- **Frase titular:** Pocos días concentran los excesos; el 1 de enero es el extremo y casi siempre caen entre junio y septiembre.
+- **Nota gris:** El nivel diario sube durante el año, lo que refuerza el peso de los meses recientes.
+- **Del guion:** «Calculamos…» son las etiquetas; «Cada punto es un día…» es el primer gráfico; «¿Qué tienen en común?…» es el segundo gráfico y las cifras.
 
 ### Diapositiva 8: P3 · ¿Qué provincias y cantones concentran más siniestros y muertes?
 
@@ -180,6 +179,6 @@ Opcional en P2: anotar «1-ene» sobre el punto más alto de la serie.
 
 ## 5. Apéndice oculto (para la ronda de preguntas)
 
-- **Respaldos de las diapositivas:** calendario heatmap de P2, Pareto de provincias de P3, heatmap causa × franja de P6, heatmap tipo × vehículo de P7 y heatmap corredor × franja de P5.
+- **Respaldos de las diapositivas:** Pareto de provincias de P3, heatmap causa × franja de P6, heatmap tipo × vehículo de P7 y heatmap corredor × franja de P5.
 - **Limpieza:** tabla completa de pasos y ruido por campo.
 - **Referencias completas** de las métricas nuevas (autores, año, revista o editorial).

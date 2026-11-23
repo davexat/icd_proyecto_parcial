@@ -1,11 +1,11 @@
 # Guion de exposición: siniestros de tránsito en Ecuador, enero a septiembre de 2026
 
-Duración estimada: **13:16** (rango de 12:16 a 14:11 según el ritmo de cada quien) · 1 720 palabras · 3 expositores · 16 diapositivas
+Duración estimada: **13:33** (rango de 12:33 a 14:28 según el ritmo de cada quien) · 1 758 palabras · 3 expositores · 16 diapositivas
 
 ## 1. Cómo usar este guion
 
 - **Texto normal** = lo que se dice. Lo que está entre **\[corchetes\]** son nombres que deben completar. Las etiquetas en negrita (*Pregunta, Cómo, Resultado, Puente*) son guía y no se leen.
-- *Las frases en cursiva se pueden saltar* si van tarde (ahorran unos 30 segundos en total).
+- *Las frases en cursiva se pueden saltar* si van tarde (ahorran unos 40 segundos en total).
 - **Orden en cada pregunta: Pregunta → Cómo → Resultado → Puente.** Primero se explica cómo se respondió (una o dos frases, en lenguaje ejecutivo) porque eso le dice al público cómo leer el gráfico; el resultado se cuenta con el gráfico ya en pantalla, y el puente conecta con la pregunta siguiente.
 - **Ritmo base:** 135 palabras por minuto más 2 segundos por cambio de diapositiva. Es una estimación: léanlo en voz alta con cronómetro una vez y ajusten. Si les da más de 13:45, usen los recortes de la sección 6.
 - Las cifras están redondeadas igual que en la guía de diapositivas: digan lo mismo que muestra la pantalla.
@@ -19,22 +19,22 @@ Duración estimada: **13:16** (rango de 12:16 a 14:11 según el ritmo de cada qu
 | 4 | Limpieza y ruido | 1 | 126 | 0:58 | 2:08 |
 | 5 | Métricas nuevas | 1 | 51 | 0:24 | 2:32 |
 | 6 | P1 · Cuándo | 1 | 145 | 1:06 | 3:39 |
-| 7 | P2 · Días críticos | 1 | 102 | 0:47 | **4:26** |
-| 8 | P3 · Provincias y cantones | 2 | 132 | 1:00 | 5:27 |
-| 9 | P4 · Vehículos por provincia | 2 | 115 | 0:53 | 6:20 |
-| 10 | P5 · Zona y corredores | 2 | 129 | 0:59 | 7:19 |
-| 11 | P6 · Causas | 2 | 138 | 1:03 | **8:22** |
-| 12 | P7 · Tipo y vehículo | 3 | 124 | 0:57 | 9:19 |
-| 13 | P8 · Perfil de víctimas | 3 | 134 | 1:01 | 10:21 |
-| 14 | P9 · Atropellos | 3 | 130 | 0:59 | 11:21 |
-| 15 | P10 · Alta consecuencia | 3 | 115 | 0:53 | 12:14 |
-| 16 | Conclusiones | 3 | 135 | 1:02 | **13:16** |
+| 7 | P2 · Días críticos | 1 | 140 | 1:04 | **4:43** |
+| 8 | P3 · Provincias y cantones | 2 | 132 | 1:00 | 5:44 |
+| 9 | P4 · Vehículos por provincia | 2 | 115 | 0:53 | 6:37 |
+| 10 | P5 · Zona y corredores | 2 | 129 | 0:59 | 7:36 |
+| 11 | P6 · Causas | 2 | 138 | 1:03 | **8:39** |
+| 12 | P7 · Tipo y vehículo | 3 | 124 | 0:57 | 9:36 |
+| 13 | P8 · Perfil de víctimas | 3 | 134 | 1:01 | 10:38 |
+| 14 | P9 · Atropellos | 3 | 130 | 0:59 | 11:38 |
+| 15 | P10 · Alta consecuencia | 3 | 115 | 0:53 | 12:31 |
+| 16 | Conclusiones | 3 | 135 | 1:02 | **13:33** |
 
-**Por expositor:** el 1 dura 4:26, el 2 dura 3:56 y el 3 dura 4:53. Los cambios de expositor suman unos 5 a 10 segundos extra, así que el total real ronda 13:26.
+**Por expositor:** el 1 dura 4:43, el 2 dura 3:56 y el 3 dura 4:53. Los cambios de expositor suman unos 5 a 10 segundos extra, así que el total real ronda 13:43.
 
-**Relojes de control:** el expositor 1 debe terminar cerca de 4:26 y el 2 cerca de 8:22. Si en el cambio al expositor 3 ya van pasados de 9:00, activen los recortes. El expositor 2 tiene menos texto, así que puede dejar 2 a 3 segundos de silencio sobre cada mapa para que se lean.
+**Relojes de control:** el expositor 1 debe terminar cerca de 4:45 y el 2 cerca de 8:40. Si en el cambio al expositor 3 ya van pasados de 9:00, activen los recortes. El expositor 2 tiene menos texto, así que puede dejar 2 a 3 segundos de silencio sobre cada mapa para que se lean.
 
-## 3. Expositor 1: introducción, P1 y P2 (0:00 a 4:26)
+## 3. Expositor 1: introducción, P1 y P2 (0:00 a 4:43)
 
 ### &#91;Diap. 1 a 2\] Contexto (0:41)
 
@@ -62,17 +62,17 @@ Creamos métricas nuevas apoyadas en la literatura. El número de víctimas y la
 
 **Puente:** ¿Hay días que se salen incluso de este patrón?
 
-### &#91;Diap. 7\] P2 · Días críticos (0:47)
+### &#91;Diap. 7\] P2 · Días críticos (1:04)
 
-**Pregunta:** Pregunta dos: ¿qué días fueron críticos?
+**Pregunta:** Pregunta dos: ¿qué días fueron críticos y qué tienen en común?
 
-**Cómo:** Estandarizamos la serie diaria con un z-score, comparando cada día contra el promedio de su mismo día de la semana, para no marcar cada domingo como crítico solo por ser domingo.
+**Cómo:** Medimos cuántas desviaciones se aparta cada día de lo habitual para su día de la semana: cero es normal y más de dos es crítico. Luego comparamos esos días con todos los demás.
 
-**Resultado:** De 273 días, 13 son críticos. El caso extremo es el 1 de enero, con 123 siniestros y 21 fallecidos. Uno de cada seis feriados es crítico, frente a uno de cada 26 de los demás días. Casi todos caen entre junio y septiembre, y en 10 de los 13 la causa dominante es la distracción.
+**Resultado:** Cada punto es un día y los rojos son los críticos: 13 de 273. El más extremo es el 1 de enero, con 123 siniestros y 21 fallecidos. En común: 11 de los 13 caen entre junio y septiembre; casi uno de cada cuatro es feriado, frente a uno de cada quince en general; y la distracción domina en 77 %, contra 58 %. El día de la semana no los distingue. *Un matiz: el nivel diario sube de enero a agosto, lo que refuerza esos meses.*
 
 **Puente:** Ya sabemos cuándo. Mi compañero \[nombre\] les cuenta dónde.
 
-## 4. Expositor 2: P3, P4, P5 y P6 (4:26 a 8:22)
+## 4. Expositor 2: P3, P4, P5 y P6 (4:43 a 8:39)
 
 ### &#91;Diap. 8\] P3 · Provincias y cantones (1:00)
 
@@ -114,7 +114,7 @@ Creamos métricas nuevas apoyadas en la literatura. El número de víctimas y la
 
 **Puente:** Con cuándo, dónde y por qué claros, \[nombre\] continúa con qué siniestros y a quiénes afectan.
 
-## 5. Expositor 3: P7, P8, P9, P10 y conclusiones (8:22 a 13:16)
+## 5. Expositor 3: P7, P8, P9, P10 y conclusiones (8:39 a 13:33)
 
 ### &#91;Diap. 12\] P7 · Tipo de siniestro y vehículo (0:57)
 
@@ -164,7 +164,7 @@ Para cerrar. Cuándo: fines de semana, entre las 17 y las 20 horas, y feriados. 
 
 **Recortes, en este orden:**
 
-1. Saltar las 5 frases en cursiva (matiz de P1, cantones de P3, jerarquía de P5, señales de P6 y asociaciones de P7): ahorra unos 30 segundos. El matiz de P1 (solo nueve meses) conviene tenerlo como respuesta preparada si preguntan por el aumento mensual.
+1. Saltar las 7 frases en cursiva (matiz de P1, matiz de P2, cantones de P3, alcance de P4, jerarquía de P5, señales de P6 y asociaciones de P7): ahorra unos 40 segundos. El matiz de P1 (solo nueve meses) conviene tenerlo como respuesta preparada si preguntan por el aumento mensual.
 2. En la diapositiva 4, nombrar solo los cuatro pasos sin el detalle de cada uno: ahorra unos 15 segundos.
 
 **Si sobra tiempo:** no agreguen preguntas nuevas. Usen esos segundos para señalar con el puntero el punto del gráfico que mencionan (el domingo y las 19 h, el 1 de enero, Santo Domingo en el mapa de motos) y para dejar un silencio breve tras cada cambio de diapositiva.
