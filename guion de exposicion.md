@@ -1,6 +1,6 @@
 # Guion de exposición: siniestros de tránsito en Ecuador, enero a septiembre de 2026
 
-Duración estimada: **13:56** (rango de 12:56 a 14:51 según el ritmo de cada quien) · 1 811 palabras · 3 expositores · 16 diapositivas
+Duración estimada: **13:50** (rango de 12:50 a 14:45 según el ritmo de cada quien) · 1 801 palabras · 3 expositores · 16 diapositivas
 
 ## 1. Cómo usar este guion
 
@@ -24,13 +24,13 @@ Duración estimada: **13:56** (rango de 12:56 a 14:51 según el ritmo de cada qu
 | 9 | P4 · Vehículos por provincia | 2 | 115 | 0:53 | 7:00 |
 | 10 | P5 · Zona y corredores | 2 | 129 | 0:59 | 8:00 |
 | 11 | P6 · Causas | 2 | 138 | 1:03 | **9:03** |
-| 12 | P7 · Tipo y vehículo | 3 | 124 | 0:57 | 10:00 |
-| 13 | P8 · Perfil de víctimas | 3 | 134 | 1:01 | 11:02 |
-| 14 | P9 · Atropellos | 3 | 130 | 0:59 | 12:01 |
-| 15 | P10 · Alta consecuencia | 3 | 115 | 0:53 | 12:54 |
-| 16 | Conclusiones | 3 | 135 | 1:02 | **13:56** |
+| 12 | P7 · Tipo y vehículo | 3 | 121 | 0:55 | 9:58 |
+| 13 | P8 · Perfil de víctimas | 3 | 125 | 0:57 | 10:55 |
+| 14 | P9 · A quién afecta | 3 | 117 | 0:54 | 11:49 |
+| 15 | P10 · Alta consecuencia | 3 | 118 | 0:54 | 12:43 |
+| 16 | Conclusiones | 3 | 147 | 1:07 | **13:50** |
 
-**Por expositor:** el 1 dura 5:06, el 2 dura 3:56 y el 3 dura 4:53. Los cambios de expositor suman unos 5 a 10 segundos extra, así que el total real ronda 14:06.
+**Por expositor:** el 1 dura 5:06, el 2 dura 3:56 y el 3 dura 4:47. Los cambios de expositor suman unos 5 a 10 segundos extra, así que el total real ronda 14:00.
 
 **Relojes de control:** el expositor 1 debe terminar cerca de 5:05 y el 2 cerca de 9:05. Si en el cambio al expositor 3 ya van pasados de 9:00, activen los recortes. El expositor 2 tiene menos texto, así que puede dejar 2 a 3 segundos de silencio sobre cada mapa para que se lean.
 
@@ -74,7 +74,8 @@ A partir de lo registrado, creamos métricas nuevas apoyadas en literatura. La d
 
 **Cómo:** Calculamos un índice de estacionalidad: los siniestros de cada mes, día u hora divididos entre su promedio; si pasa de uno, es temporada alta. Lo mostramos primero a nivel nacional y luego separado por zona urbana y rural.
 
-**Resultado:** El domingo es el día más cargado, con índice 1.38, y el pico está entre las 17 y las 20 horas, con máximo a las 19. En ambas zonas es igual, pero el campo es más extremo: el domingo llega a 1.50 contra 1.31 en la ciudad, y a las 19 horas, a 1.86 contra 1.43. La ciudad es más pareja y tiene más actividad de madrugada. *Un matiz: son solo nueve meses, así que el alza de enero a agosto no prueba una estacionalidad anual.*
+**Resultado:** El domingo es el día más cargado, con índice de casi 1.4, y el pico está entre las 17 y las 20 horas, con máximo a las 19.
+(sig) En ambas zonas es igual, pero el campo es más extremo: el domingo llega a 1.50 contra 1.31 en la ciudad, y a las 19 horas, a 1.86 contra 1.43. La ciudad es más pareja y tiene más actividad de madrugada. *Un matiz: son solo nueve meses, así que el alza de enero a agosto no prueba una estacionalidad anual.*
 
 **Puente:** ¿Hay días que se salen incluso de este patrón?
 
@@ -130,51 +131,51 @@ A partir de lo registrado, creamos métricas nuevas apoyadas en literatura. La d
 
 **Puente:** Con cuándo, dónde y por qué claros, \[nombre\] continúa con qué siniestros y a quiénes afectan.
 
-## 5. Expositor 3: P7, P8, P9, P10 y conclusiones (9:03 a 13:56)
+## 5. Expositor 3: P7, P8, P9, P10 y conclusiones (9:03 a 13:50)
 
-### &#91;Diap. 12\] P7 · Tipo de siniestro y vehículo (0:57)
+### &#91;Diap. 12\] P7 · Tipo de siniestro y vehículo (0:55)
 
 **Pregunta:** Pregunta siete: ¿qué tipos de siniestro y qué vehículos son más graves?
 
-**Cómo:** Calculamos el porcentaje de siniestros con fallecidos por tipo, comparamos los siniestros con y sin cada vehículo, y separamos urbano y rural en gráficos facetados.
+**Cómo:** Calculamos el porcentaje de siniestros con fallecidos por tipo, en ciudad y campo, y por vehículo, con y sin él.
 
-**Resultado:** Los arrollamientos son los más graves, con 46 % de siniestros fatales; siguen pérdida de pista y choque frontal, cerca de 20 %. El choque lateral es el más frecuente, pero de los menos graves. Si participa un bus, el siniestro es 1.85 veces más fatal; con una moto, 1.72. Y en la zona rural la letalidad casi se duplica: en atropellos pasa de 11 % a 21 %. *Son asociaciones, no prueba de que el vehículo cause la gravedad.*
+**Resultado:** Los arrollamientos son los más graves: 37 % de siniestros con fallecidos en la ciudad y 59 % en el campo; siguen pérdida de pista y choque frontal. El choque lateral es el más frecuente, pero de los menos graves. En casi todos los tipos el campo es peor: en atropellos, 11 % contra 21 %. Si participa un bus, el siniestro es 1.85 veces más fatal; con una moto, 1.72. *Son asociaciones, no prueba de que el vehículo cause la gravedad.*
 
 **Puente:** Pasemos de los vehículos a las personas.
 
-### &#91;Diap. 13\] P8 · Perfil de las víctimas (1:01)
+### &#91;Diap. 13\] P8 · Perfil de las víctimas (0:57)
 
 **Pregunta:** Pregunta ocho: ¿qué perfil tienen las víctimas y quiénes son más vulnerables?
 
-**Cómo:** Pasamos los datos a una fila por persona y medimos la letalidad, que es fallecidos sobre fallecidos más lesionados, por sexo, edad y rol, con una pirámide y un mapa de calor de rol por edad.
+**Cómo:** Medimos la letalidad, que es fallecidos sobre fallecidos más lesionados, por sexo, edad y rol, con una pirámide, barras y un mapa de calor.
 
-**Resultado:** Hay 2.8 hombres víctimas por cada mujer, y ellos mueren más: 12.7 % contra 7.7 %. Los de 65 años o más tienen 19.7 % de letalidad, el doble que los menores de 18. Pero el mapa de calor muestra que es un fenómeno de peatones: su letalidad sube de 6 % a 27 % con la edad, mientras que la del conductor casi no cambia. Un límite: la edad falta en un tercio de las víctimas.
+**Resultado:** Por cada mujer víctima hay 2.8 hombres, y desde los 12 años ellos mueren más: su letalidad llega a 22 % desde los 65 años, contra 16 % en ellas. El mapa de calor muestra de dónde viene el aumento: en el peatón sube de 6 % en adolescentes a 27 % desde los 65 años, y en el conductor casi no cambia. Un límite: falta la edad en más de un tercio de las víctimas.
 
-**Puente:** Y el peatón nos lleva a la siguiente pregunta.
+**Puente:** Ahora cruzamos a estas personas con el tipo de siniestro y el vehículo.
 
-### &#91;Diap. 14\] P9 · Atropellos (0:59)
+### &#91;Diap. 14\] P9 · A quién afecta cada siniestro (0:54)
 
-**Pregunta:** Pregunta nueve: ¿cuándo, dónde y por qué ocurren los atropellos?
+**Pregunta:** Pregunta nueve: ¿qué tipos de siniestro y qué vehículos afectan a quién?
 
-**Cómo:** Comparamos los atropellos con el resto de siniestros, hicimos mapas de calor de día por hora para zona urbana y rural, y medimos la letalidad del peatón por edad, horario y zona.
+**Cómo:** Vemos, entre las víctimas, qué porcentaje es conductor, pasajero, peatón, hombre, menor de 18 o de 65 años o más, por tipo de siniestro y por vehículo. La primera fila es el total.
 
-**Resultado:** Los atropellos son el 11.6 % de los siniestros, pero el 15.5 % de las muertes. Ocurren al anochecer: entre las 17 y las 21 horas se concentra cerca del 40 %. La causa principal es conducir desatento, 33 %, y luego la velocidad, 24 %. El peatón de 65 años o más muere en 27 % de los casos; de noche, 20 % contra 12 % de día; y en zona rural, 24 % contra 13 % en la urbana.
+**Resultado:** Cada siniestro golpea a alguien distinto. En los atropellos, 84 % son peatones y casi una de cada cinco víctimas tiene 65 años o más, contra 6 % en general. En la caída de pasajero, 97 % son pasajeros. Con una moto, 61 % son conductores y 80 % hombres; con un bus, 65 % son pasajeros y 10 % tiene 65 años o más.
 
 **Puente:** Y por último, los eventos más graves.
 
-### &#91;Diap. 15\] P10 · Alta consecuencia (0:53)
+### &#91;Diap. 15\] P10 · Alta consecuencia (0:54)
 
 **Pregunta:** Pregunta diez: ¿qué características tienen los siniestros de alta consecuencia, con tres o más víctimas?
 
-**Cómo:** Comparamos el porcentaje de alta consecuencia con y sin cada característica, y calculamos cuántas veces más probable es.
+**Cómo:** Medimos cuánto concentran esos siniestros y comparamos, con y sin cada característica, su frecuencia y las personas por siniestro.
 
-**Resultado:** Solo el 5.4 % de los siniestros tiene tres o más víctimas, pero reúne casi el 23 % de todas las víctimas. Los más probables son el choque frontal, 2.4 veces; los de tres o más vehículos, 2.2; y los que involucran un bus, 2. Moto y alcohol no la elevan, porque sus siniestros afectan a pocas personas por evento: la alta consecuencia depende de cuánta gente va expuesta. El peor dejó 41 lesionados en Santa Elena, en agosto.
+**Resultado:** Solo el 5.4 % de los siniestros tiene tres o más víctimas, pero reúne el 23 % de las víctimas. Son más frecuentes con choque frontal, 2.4 veces; tres o más vehículos, 2.2; y bus, 2. Y son los que involucran más gente: de 2.6 a 3.6 personas por siniestro, contra 2 en el resto. Moto y alcohol no la elevan ni tienen más gente: la alta consecuencia depende de cuántos van expuestos. El peor dejó 41 lesionados en Santa Elena.
 
 **Puente:** Con esto, cerramos.
 
-### &#91;Diap. 16\] Conclusiones (1:02)
+### &#91;Diap. 16\] Conclusiones (1:07)
 
-Para cerrar. Cuándo: fines de semana, entre las 17 y las 20 horas, y feriados. Dónde: las motos, los camiones y los buses destacan cada uno en provincias distintas; el volumen está en Guayas y Pichincha, pero la gravedad en provincias pequeñas, zonas rurales y madrugadas. Por qué: 94.5 % es factor humano, sobre todo distracción y velocidad. A quién: peatones mayores, de noche y en zona rural; y choques frontales y buses producen los eventos con más víctimas. En conjunto, las diferencias más marcadas en la gravedad aparecen según la zona, la hora, el tipo de siniestro y el rol de la víctima. Como límites, el análisis es descriptivo y retrospectivo: caracteriza lo que ya ocurrió, no predice dónde ocurrirá, y la calidad del registro varía entre entes. Gracias, quedamos atentos a sus preguntas.
+Para cerrar. Cuándo: fines de semana, entre las 17 y las 20 horas, y feriados. Dónde: las motos, los camiones y los buses destacan cada uno en provincias distintas; el volumen está en Guayas y Pichincha, pero la gravedad en provincias pequeñas, zonas rurales y madrugadas. Por qué: 94.5 % es factor humano, sobre todo distracción y velocidad. A quién: los hombres, casi tres de cada cuatro víctimas, y los peatones mayores, los más vulnerables; cada siniestro golpea a alguien distinto. Choques frontales y buses producen los eventos con más víctimas. En conjunto, las diferencias más marcadas en la gravedad aparecen según la zona, la hora, el tipo de siniestro y el rol de la víctima. Como límites, el análisis es descriptivo y retrospectivo: caracteriza lo que ya ocurrió, no predice dónde ocurrirá, y la calidad del registro varía entre entes. Gracias, quedamos atentos a sus preguntas.
 
 ## 6. Si van tarde o si sobra tiempo
 

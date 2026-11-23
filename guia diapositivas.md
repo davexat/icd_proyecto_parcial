@@ -34,7 +34,9 @@ Si lo anterior se mantiene igual en las 10 preguntas, el público entiende cada 
 | P3 mapa de burbujas | Galápagos aplastaba el continente y las etiquetas se montaban | Hecho: ahora es un mapa de Folium con encuadre del continente (`pregunta_03.py`); usar la captura `p03_mapa_burbujas_provincias.png` |
 | P5 burbujas de corredores | La línea punteada no tenía rótulo | Hecho: lleva la leyenda «Promedio de la red estatal» (`pregunta_05.py`) |
 | P6 burbujas | Etiquetas ambiguas entre Distracción, Velocidad y Vía | Hecho: etiquetas separadas con líneas guía (`pregunta_06.py`) |
-| P7 facetas urbano / rural | Los ejes X no se comparten (urbana llega a ~37 %, rural a ~59 %), así que las barras no muestran que lo rural casi se duplica | **Pendiente:** en `pregunta_07.py`, cambiar `sharey=True` por `sharex=True, sharey=True` |
+| P7 facetas urbano / rural | Estaban en dos paneles con ejes distintos, y el efecto de cada vehículo no se veía | Hecho: ahora son barras agrupadas urbano vs rural con el mismo eje, y un segundo panel con y sin cada vehículo (`pregunta_07.py`) |
+| P8 sexo y edad | La pirámide solo muestra cantidades; la vulnerabilidad por sexo no se veía | Hecho: se añaden barras de letalidad por sexo y edad junto al mapa de calor (`pregunta_08.py`) |
+| P9 y P10 | P9 hablaba de cuándo y dónde; P10 mezclaba dos gráficos sin relación | Hecho: P9 pasó a «a quién afecta» y P10 muestra concentración y exposición en una sola figura |
 
 ## 4. Diapositivas, una por una
 
@@ -135,33 +137,34 @@ Si lo anterior se mantiene igual en las 10 preguntas, el público entiende cada 
 
 ### Diapositiva 12: P7 · ¿Qué tipos de siniestro y vehículos son más graves?
 
-- **Etiquetas:** % fatales por tipo · Con vs sin cada vehículo · Facetas urbano / rural
-- **Visual:** `p07_gravedad_tipo_por_zona.png` regenerado con el eje X compartido (ver sección 3).
-- **Cifras grandes:** Arrollamientos **46 %** · Bus **1.85×**, moto **1.72×** · Atropellos **11 % → 21 %** (urbano → rural)
-- **Frase titular:** Arrollamientos, pérdidas de pista y choques frontales son lo más grave; el campo lo agrava todo.
-- **Nota gris:** Son asociaciones, no causas. Arrollamientos: 153 casos.
+- **Etiquetas:** % de siniestros con fallecidos · Tipo, urbano vs rural · Vehículo, con vs sin él
+- **Visual:** `p07_gravedad_tipo_y_vehiculo.png` completo (a la izquierda, barras por tipo con la zona urbana y la rural; a la derecha, barras con y sin cada vehículo y las veces más fatales).
+- **Cifras grandes:** Arrollamientos **37 % → 59 %** (urbano → rural) · Atropellos **11 % → 21 %** · Bus **1.85×**, moto **1.72×**
+- **Frase titular:** Arrollamientos, pérdidas de pista y choques frontales son lo más grave; el campo agrava casi todos los tipos.
+- **Nota gris:** Son asociaciones, no causas. Entre paréntesis, el número de siniestros de cada tipo o vehículo.
 
 ### Diapositiva 13: P8 · ¿Quiénes son las víctimas y los más vulnerables?
 
-- **Etiquetas:** Letalidad = fallecidos / víctimas · Pirámide por condición · Mapa de calor rol × edad
-- **Visual:** dos gráficos lado a lado: la pirámide `p08_piramide_lesionados_fallecidos.png` (60 % del ancho) y `p08_heatmap_rol_edad.png` (40 %). Círculo en la celda Peatón / 65+ (27).
-- **Cifras grandes:** **2.8** hombres por cada mujer · 65 o más: **19.7 %** · Peatón: **6 % → 27 %**
-- **Frase titular:** La vulnerabilidad por edad es un fenómeno de peatones.
+- **Etiquetas:** Letalidad = fallecidos / víctimas · Pirámide por condición · Sexo y edad · Rol y edad
+- **Visual:** dos imágenes: la pirámide `p08_piramide_lesionados_fallecidos.png` arriba o a la izquierda (40 % del ancho) y `p08_vulnerabilidad.png` (barras por sexo y edad, y mapa de calor rol × edad) con el resto. Círculo en la celda Peatón / 65+ (27).
+- **Cifras grandes:** **2.8** hombres por cada mujer · Hombres 65+: **22 %** (mujeres **16 %**) · Peatón: **6 % → 27 %**
+- **Frase titular:** El aumento de la letalidad con la edad viene de los peatones.
 - **Nota gris:** La edad está registrada en el 65 % de las víctimas.
 
-### Diapositiva 14: P9 · ¿Cuándo, dónde y por qué ocurren los atropellos?
+### Diapositiva 14: P9 · ¿Qué tipos de siniestro y vehículos afectan a quién?
 
-- **Etiquetas:** Atropellos vs resto · Mapas de calor día × hora · Letalidad del peatón
-- **Visual:** `p09_atropellos_heatmaps_y_edad.png` completo (dos mapas de calor facetados y las barras por edad).
-- **Cifras grandes:** **11.6 %** de los siniestros → **15.5 %** de las muertes · Horas 17 a 21: **\~40 %** · Peatón 65+: **27 %**, noche **20 %**, rural **24 %**
-- **Frase titular:** En atropellos, el anochecer, la edad y la zona rural elevan la letalidad.
-- **No escribir:** las causas (33 % y 24 %); solo se dicen.
+- **Etiquetas:** % de las víctimas · Rol, sexo y edad · Tipo de siniestro y vehículo
+- **Visual:** `p09_a_quien_afecta.png` completo (dos mapas de calor; la primera fila de cada uno es el total). Resaltar con un círculo Atropellos / Peatón (84), Caída de pasajero / Pasajero (97), Moto / Conductor (61) y Bus / Pasajero (65).
+- **Cifras grandes:** Atropellos: **84 %** peatones, **19 %** de 65+ (general 6 %) · Moto: **61 %** conductores, **80 %** hombres · Bus: **65 %** pasajeros, **10 %** de 65+
+- **Frase titular:** Cada siniestro golpea a alguien distinto: atropellos a peatones, motos a sus conductores y buses a sus pasajeros.
+- **Nota gris:** Las víctimas son las de los siniestros donde participa el vehículo, no solo quienes iban en él.
+- **No escribir:** el resto de filas; el gráfico las muestra.
 
 ### Diapositiva 15: P10 · ¿Qué caracteriza a los siniestros de alta consecuencia?
 
-- **Etiquetas:** Alta consecuencia = 3 o más víctimas · Con vs sin cada característica
-- **Visual:** recortar el panel derecho de `p10_distribucion_y_caracteristicas.png` (barras «veces más probable») y pintar en naranja las tres primeras. El histograma izquierdo, como miniatura opcional.
-- **Cifras grandes:** **5.4 %** de los siniestros → **23 %** de las víctimas · Choque frontal **2.4×** · 3+ vehículos **2.2×** · Bus **2.0×**
+- **Etiquetas:** Alta consecuencia = 3 o más víctimas · Con vs sin cada característica · Personas por siniestro
+- **Visual:** `p10_concentracion_y_exposicion.png` completo (a la izquierda, qué parte del total son los siniestros de 3+ víctimas; en el centro, el % con y sin cada característica; a la derecha, las personas por siniestro). Marcar con un recuadro las tres primeras filas (choque frontal, 3+ vehículos, bus) y las dos últimas (moto, alcohol).
+- **Cifras grandes:** **5.4 %** de los siniestros → **23 %** de las víctimas · Choque frontal **2.4×** · 3+ vehículos **2.2×** · Bus **2.0×** · Personas por siniestro: **2.6**, **3.6** y **3.0** contra 2
 - **Frase titular:** Pocos eventos concentran muchas víctimas, y lo define cuánta gente va expuesta.
 - **No escribir:** moto 0.97 y alcohol 0.82; solo se dicen.
 

@@ -3,7 +3,8 @@
 # grupos son proporcionalmente más vulnerables?
 #
 # Técnicas: tabla de participantes en formato largo, letalidad (fallecidos / víctimas) por perfil,
-# edad mediana, pirámide de población facetada por condición y heatmap rol x grupo de edad.
+# edad mediana, pirámide de población facetada por condición, barras agrupadas sexo x edad y
+# heatmap rol x grupo de edad.
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -60,14 +61,31 @@ ax[0].set_ylabel("Grupo de edad (años)")
 ax[0].legend(frameon=False)
 guardar_fig(fig, "p08_piramide_lesionados_fallecidos")
 
-# 3) Heatmap rol x grupo de edad: letalidad entre víctimas (celdas con menos de 30 personas omitidas)
+# 3) Vulnerabilidad: letalidad por edad y sexo (barras agrupadas) y por rol y edad (heatmap).
+#    Se omiten las celdas con menos de 30 personas.
+seccion("2) Letalidad por sexo y grupo de edad")
+ls = vic[vic["sexo"].isin(["HOMBRE", "MUJER"])].dropna(subset=["grupo_edad"])
+let_se = ls.pivot_table(index="sexo", columns="grupo_edad", values="fallecido", aggfunc="mean", observed=False)[GRUPOS_EDAD] * 100
+n_se = ls.pivot_table(index="sexo", columns="grupo_edad", values="fallecido", aggfunc="size", observed=False)[GRUPOS_EDAD]
+mostrar(pd.concat({"letalidad %": let_se, "víctimas": n_se}, axis=1).round(1))
+guardar_tabla(pd.concat({"letalidad %": let_se, "víctimas": n_se}, axis=1), "p08_letalidad_sexo_edad")
 d = vic.dropna(subset=["grupo_edad"])
 let = d.pivot_table(index="rol", columns="grupo_edad", values="fallecido", aggfunc="mean", observed=False) * 100
 n = d.pivot_table(index="rol", columns="grupo_edad", values="fallecido", aggfunc="size", observed=False)
 let = let.astype(float).where(n >= 30).dropna(how="all")
-fig, ax = plt.subplots(figsize=(8, 4))
-sns.heatmap(let, annot=True, fmt=".0f", cmap=CMAP_SEC, ax=ax, cbar_kws={"label": "Letalidad entre víctimas (%)"})
-ax.set_xlabel("Grupo de edad (años; celdas con n < 30 omitidas)")
-ax.set_ylabel("Rol en el siniestro")
-ax.set_yticklabels([t.get_text().capitalize() for t in ax.get_yticklabels()], rotation=0)
-guardar_fig(fig, "p08_heatmap_rol_edad")
+fig, ax = plt.subplots(1, 2, figsize=(14, 4.8), gridspec_kw={"width_ratios": [1, 1.15]})
+for desp, sexo, c, lab in [(-0.2, "HOMBRE", PALETA[0], "Hombres"), (0.2, "MUJER", PALETA[1], "Mujeres")]:
+    b = ax[0].bar([i + desp for i in range(len(GRUPOS_EDAD))], let_se.loc[sexo], 0.4, color=c, label=lab)
+    ax[0].bar_label(b, fmt="%.0f", fontsize=8, padding=2)
+ax[0].set_xticks(range(len(GRUPOS_EDAD)))
+ax[0].set_xticklabels(GRUPOS_EDAD)
+ax[0].set_xlabel("Grupo de edad (años)")
+ax[0].set_ylabel("Letalidad entre víctimas (%)")
+ax[0].set_title("Por sexo y edad")
+ax[0].legend(frameon=False, loc="upper left")
+sns.heatmap(let, annot=True, fmt=".0f", cmap=CMAP_SEC, ax=ax[1], cbar_kws={"label": "Letalidad entre víctimas (%)"})
+ax[1].set_xlabel("Grupo de edad (años; celdas con n < 30 omitidas)")
+ax[1].set_ylabel("Rol en el siniestro")
+ax[1].set_yticklabels([t.get_text().capitalize() for t in ax[1].get_yticklabels()], rotation=0)
+ax[1].set_title("Por rol y edad")
+guardar_fig(fig, "p08_vulnerabilidad")
