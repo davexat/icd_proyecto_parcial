@@ -8,7 +8,7 @@
 
 - Cuenta los siniestros por causa (26 códigos), aplica `pareto_abc()` y calcula el % por factor causal (humano, vehículo, vía y entorno).
 - `gravedad()` por cada uno de los 10 grupos de causa: siniestros, fallecidos y % con fallecidos.
-- Grafica el Top 10 de causas en barras y un gráfico de burbujas (X = frecuencia en escala log, Y = % fatales, tamaño = fallecidos, color = factor, línea = promedio nacional 9.6 %). Dos heatmaps causa × franja: peso de cada causa y % fatales (celdas con 30 o más siniestros).
+- Grafica el Top 10 de causas en barras, coloreadas por factor causal y con una leyenda que da el % de todos los siniestros de cada factor (humano 94.5 %, vehículo 1.2 %, vía y entorno 4.3 %), y un gráfico de burbujas (X = frecuencia en escala log, Y = % fatales, tamaño = fallecidos, color = factor, línea = promedio nacional 9.6 %). Dos heatmaps causa × franja: peso de cada causa y % fatales (celdas con 30 o más siniestros).
 
 ## 2. Para la exposición (máx. 40 s)
 

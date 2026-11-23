@@ -9,6 +9,7 @@ import textwrap
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from matplotlib.patches import Patch
 
 from limpieza_datos import cargar_datos
 from utilidades import CMAP_SEC, PALETA, gravedad, guardar_fig, guardar_tabla, mostrar, pareto_abc, seccion
@@ -33,14 +34,18 @@ guardar_tabla(g, "p06_gravedad_por_grupo_causa")
 
 # 3) Gráficos: Pareto horizontal y burbujas frecuencia vs gravedad
 fig, ax = plt.subplots(1, 2, figsize=(16, 6.5), gridspec_kw={"width_ratios": [1, 1.15]})
+col = {"Humano": PALETA[0], "Vehículo": PALETA[2], "Vía y entorno": PALETA[3]}
+pct_factor = sin["factor_causal"].value_counts(normalize=True) * 100     # % de todos los siniestros por factor
+factor_cod = sin.groupby("cod_causa")["factor_causal"].first()
 top = abc.head(10).iloc[::-1]
-ax[0].barh(top["causa"], top["%"], color=PALETA[0])
+ax[0].barh(top["causa"], top["%"], color=[col[factor_cod[c]] for c in top.index])
 for y, v_ in enumerate(top["%"]):
     ax[0].text(v_ + 0.3, y, f"{v_:.1f}%", va="center", fontsize=8)
 ax[0].set_xlabel("% de siniestros")
-ax[0].set_title("Top 10 causas probables")
-col = {"Humano": PALETA[0], "Vehículo": PALETA[2], "Vía y entorno": PALETA[3]}
-fac = sin.groupby("causa_grupo")["factor_causal"].first()
+ax[0].set_title("Top 10 causas probables (color = factor causal)")
+ax[0].legend(handles=[Patch(color=c, label=f"{k}: {pct_factor[k]:.1f} % de todos los siniestros") for k, c in col.items()],
+             frameon=False, loc="lower right", fontsize=9)
+fac =sin.groupby("causa_grupo")["factor_causal"].first()
 OFF = {"Vehículo / carga": (6, -13), "Distracción al conducir": (-25, 30), "Exceso de velocidad": (-20, -38),
        "Vía y entorno": (-88, 6)}
 for gname, r in g.iterrows():
