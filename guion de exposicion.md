@@ -1,6 +1,6 @@
 # Guion de exposición: siniestros de tránsito en Ecuador, enero a septiembre de 2026
 
-Duración estimada: **13:33** (rango de 12:33 a 14:28 según el ritmo de cada quien) · 1 758 palabras · 3 expositores · 16 diapositivas
+Duración estimada: **13:56** (rango de 12:56 a 14:51 según el ritmo de cada quien) · 1 811 palabras · 3 expositores · 16 diapositivas
 
 ## 1. Cómo usar este guion
 
@@ -15,42 +15,58 @@ Duración estimada: **13:33** (rango de 12:33 a 14:28 según el ritmo de cada qu
 | Diap. | Sección | Expositor | Palabras | Tiempo | Reloj al terminar |
 | --- | --- | --- | --- | --- | --- |
 | 1 a 2 | Contexto | 1 | 84 | 0:41 | 0:41 |
-| 3 | Los datos | 1 | 60 | 0:28 | 1:10 |
-| 4 | Limpieza y ruido | 1 | 126 | 0:58 | 2:08 |
-| 5 | Métricas nuevas | 1 | 51 | 0:24 | 2:32 |
-| 6 | P1 · Cuándo | 1 | 145 | 1:06 | 3:39 |
-| 7 | P2 · Días críticos | 1 | 140 | 1:04 | **4:43** |
-| 8 | P3 · Provincias y cantones | 2 | 132 | 1:00 | 5:44 |
-| 9 | P4 · Vehículos por provincia | 2 | 115 | 0:53 | 6:37 |
-| 10 | P5 · Zona y corredores | 2 | 129 | 0:59 | 7:36 |
-| 11 | P6 · Causas | 2 | 138 | 1:03 | **8:39** |
-| 12 | P7 · Tipo y vehículo | 3 | 124 | 0:57 | 9:36 |
-| 13 | P8 · Perfil de víctimas | 3 | 134 | 1:01 | 10:38 |
-| 14 | P9 · Atropellos | 3 | 130 | 0:59 | 11:38 |
-| 15 | P10 · Alta consecuencia | 3 | 115 | 0:53 | 12:31 |
-| 16 | Conclusiones | 3 | 135 | 1:02 | **13:33** |
+| 3 | Los datos | 1 | 62 | 0:29 | 1:10 |
+| 4 | Limpieza y ruido | 1 | 172 | 1:18 | 2:29 |
+| 5 | Métricas nuevas | 1 | 56 | 0:26 | 2:56 |
+| 6 | P1 · Cuándo | 1 | 145 | 1:06 | 4:02 |
+| 7 | P2 · Días críticos | 1 | 140 | 1:04 | **5:06** |
+| 8 | P3 · Provincias y cantones | 2 | 132 | 1:00 | 6:07 |
+| 9 | P4 · Vehículos por provincia | 2 | 115 | 0:53 | 7:00 |
+| 10 | P5 · Zona y corredores | 2 | 129 | 0:59 | 8:00 |
+| 11 | P6 · Causas | 2 | 138 | 1:03 | **9:03** |
+| 12 | P7 · Tipo y vehículo | 3 | 124 | 0:57 | 10:00 |
+| 13 | P8 · Perfil de víctimas | 3 | 134 | 1:01 | 11:02 |
+| 14 | P9 · Atropellos | 3 | 130 | 0:59 | 12:01 |
+| 15 | P10 · Alta consecuencia | 3 | 115 | 0:53 | 12:54 |
+| 16 | Conclusiones | 3 | 135 | 1:02 | **13:56** |
 
-**Por expositor:** el 1 dura 4:43, el 2 dura 3:56 y el 3 dura 4:53. Los cambios de expositor suman unos 5 a 10 segundos extra, así que el total real ronda 13:43.
+**Por expositor:** el 1 dura 5:06, el 2 dura 3:56 y el 3 dura 4:53. Los cambios de expositor suman unos 5 a 10 segundos extra, así que el total real ronda 14:06.
 
-**Relojes de control:** el expositor 1 debe terminar cerca de 4:45 y el 2 cerca de 8:40. Si en el cambio al expositor 3 ya van pasados de 9:00, activen los recortes. El expositor 2 tiene menos texto, así que puede dejar 2 a 3 segundos de silencio sobre cada mapa para que se lean.
+**Relojes de control:** el expositor 1 debe terminar cerca de 5:05 y el 2 cerca de 9:05. Si en el cambio al expositor 3 ya van pasados de 9:00, activen los recortes. El expositor 2 tiene menos texto, así que puede dejar 2 a 3 segundos de silencio sobre cada mapa para que se lean.
 
-## 3. Expositor 1: introducción, P1 y P2 (0:00 a 4:43)
+## 3. Expositor 1: introducción, P1 y P2 (0:00 a 5:06)
 
 ### &#91;Diap. 1 a 2\] Contexto (0:41)
 
-Buenas tardes. Somos \[nombres\] y les presentamos un análisis de los siniestros de tránsito en Ecuador entre enero y septiembre de 2026. **\[→ Diap. 2\]** Queremos describir cuándo, dónde y por qué ocurrieron los siniestros y a quién afectaron, e identificar qué variables explican mejor lo sucedido. Es un análisis retrospectivo: caracteriza los datos ya registrados, no predice dónde ocurrirá el próximo. Planteamos diez preguntas de negocio, ordenadas en ese mismo hilo, y cada una la resolvemos combinando varias técnicas de análisis, no con un solo número.
+Buenas tardes. Somos el grupo #9 conformado por Bruno Romero, Darwin Diaz y mi persona, David Sandoval y les presentamos un análisis de los siniestros de tránsito en Ecuador entre enero y septiembre de 2026. 
 
-### &#91;Diap. 3\] Los datos (0:28)
+**\[→ Diap. 2\]** Queremos describir cuándo, dónde y por qué ocurrieron los siniestros y a quién afectaron, e identificar qué variables explican mejor lo sucedido. Es un análisis retrospectivo: buscamos caracterizar los datos ya registrados, no predecir dónde ocurrirá el próximo. Planteamos diez preguntas de negocio, ordenadas en el hilo que vemos en pantalla, y cada una la resolvemos combinando varias técnicas de análisis.
 
-Trabajamos con 17 236 siniestros, con 1 863 fallecidos y más de 14 000 lesionados. Cada registro describe hasta 43 personas y 13 vehículos, en 374 columnas. El dataset tiene los cuatro tipos de datos que pide el proyecto: temporales, como fecha y hora; categóricos, como tipo y causa; continuos, como la edad; y espaciales, como provincia, cantón y coordenadas.
+### &#91;Diap. 3\] Los datos (0:29)
 
-### &#91;Diap. 4\] Limpieza y ruido (0:58)
+Trabajamos con los 17 236 siniestros registrados, uno por fila, con 1 863 fallecidos y más de 14 000 lesionados. Cada registro describe hasta 43 personas y 13 vehículos, en 374 columnas. El dataset contiene diferentes tipos de datos tales como: 
+- temporales, fecha y hora; 
+- categóricos, como tipo y causa; 
+- continuos, como la edad; 
+- y espaciales, como provincia, cantón y sus coordenadas.
 
-La limpieza tuvo cuatro pasos. Primero, estructura: pasamos la tabla de formato ancho a largo, con una fila por persona, 37 096 en total. Segundo, fechas, horas y texto: convertimos horas guardadas como texto y unificamos mayúsculas. Tercero, validación: no hay filas duplicadas, ninguna coordenada cae fuera de Ecuador y las víctimas coinciden con los participantes. Cuarto, los marcadores como «ND» o «no identificado» pasaron a datos nulos; no eliminamos ningún registro. Así medimos el ruido: el 8.96 % de los campos analíticos no sirve. Es solo 1.5 % en siniestros, pero 19 % en personas, sobre todo porque falta la edad en el 44 %. Y los campos de vía vacíos no son ruido: significan que el siniestro ocurrió fuera de la red vial estatal.
+### &#91;Diap. 4\] Limpieza y ruido (1:18)
 
-### &#91;Diap. 5\] Métricas nuevas (0:24)
+Antes de analizar, limpiamos los datos en cuatro pasos. 
 
-Creamos métricas nuevas apoyadas en la literatura. El número de víctimas y la letalidad, de la Organización Mundial de la Salud. La agrupación de causas en factor humano, vehículo y vía, de Haddon y de Sabey y Taylor. Y un índice de estacionalidad, de Hyndman. Con esto, pasamos a las preguntas.
+Primero, estructura: el Excel tenía una fila por siniestro, con la edad y el sexo de cada persona repartidos en muchas columnas; lo reorganizamos con una fila por persona, lo que dio 37 096 filas en total. 
+
+Segundo, fechas, horas y texto: corregimos horas escritas como texto y unificamos su formato. 
+
+Tercero, validación: no encontramos filas repetidas, coordenadas fuera de Ecuador ni víctimas que no coincidieran con las personas. 
+
+Cuarto, datos desconocidos: donde el dataset decía «no identificado» o «ND», o ponía −1 en la edad, dejamos el dato vacío para que no cuente como un valor real. No eliminamos ningún siniestro. 
+
+**\[→ Ruido\]** Ruido son los datos que faltan y no se pueden usar: 9 % de los campos que analizamos. Los más afectados son la edad, que falta en 44 %, el tipo de vehículo, el tipo de identificación, la condición de la víctima y el sexo. Como el análisis es retrospectivo, no rellenamos esos vacíos: usamos solo lo que realmente se registró.
+
+### &#91;Diap. 5\] Métricas nuevas (0:26)
+
+A partir de lo registrado, creamos métricas nuevas apoyadas en literatura. La definición de víctima y letalidad, de la OMS. La agrupación de causas en factor humano, vehículo y vía, de Haddon y de Sabey y Taylor. Y el índice de estacionalidad, de Hyndman. Con esto, pasamos a las preguntas.
 
 ### &#91;Diap. 6\] P1 · Cuándo ocurren (1:06)
 
@@ -72,7 +88,7 @@ Creamos métricas nuevas apoyadas en la literatura. El número de víctimas y la
 
 **Puente:** Ya sabemos cuándo. Mi compañero \[nombre\] les cuenta dónde.
 
-## 4. Expositor 2: P3, P4, P5 y P6 (4:43 a 8:39)
+## 4. Expositor 2: P3, P4, P5 y P6 (5:06 a 9:03)
 
 ### &#91;Diap. 8\] P3 · Provincias y cantones (1:00)
 
@@ -114,7 +130,7 @@ Creamos métricas nuevas apoyadas en la literatura. El número de víctimas y la
 
 **Puente:** Con cuándo, dónde y por qué claros, \[nombre\] continúa con qué siniestros y a quiénes afectan.
 
-## 5. Expositor 3: P7, P8, P9, P10 y conclusiones (8:39 a 13:33)
+## 5. Expositor 3: P7, P8, P9, P10 y conclusiones (9:03 a 13:56)
 
 ### &#91;Diap. 12\] P7 · Tipo de siniestro y vehículo (0:57)
 
@@ -165,7 +181,7 @@ Para cerrar. Cuándo: fines de semana, entre las 17 y las 20 horas, y feriados. 
 **Recortes, en este orden:**
 
 1. Saltar las 7 frases en cursiva (matiz de P1, matiz de P2, cantones de P3, alcance de P4, jerarquía de P5, señales de P6 y asociaciones de P7): ahorra unos 40 segundos. El matiz de P1 (solo nueve meses) conviene tenerlo como respuesta preparada si preguntan por el aumento mensual.
-2. En la diapositiva 4, nombrar solo los cuatro pasos sin el detalle de cada uno: ahorra unos 15 segundos.
+2. En la diapositiva 4, nombrar solo los cuatro pasos sin el detalle de cada uno: ahorra unos 55 segundos.
 
 **Si sobra tiempo:** no agreguen preguntas nuevas. Usen esos segundos para señalar con el puntero el punto del gráfico que mencionan (el domingo y las 19 h, el 1 de enero, Santo Domingo en el mapa de motos) y para dejar un silencio breve tras cada cambio de diapositiva.
 
