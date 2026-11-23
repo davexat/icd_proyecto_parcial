@@ -75,19 +75,28 @@ A partir de lo registrado, creamos métricas nuevas apoyadas en literatura. La d
 **Cómo:** Calculamos un índice de estacionalidad: los siniestros de cada mes, día u hora divididos entre su promedio; si pasa de uno, es temporada alta. Lo mostramos primero a nivel nacional y luego separado por zona urbana y rural.
 
 **Resultado:** El domingo es el día más cargado, con índice de casi 1.4, y el pico está entre las 17 y las 20 horas, con máximo a las 19.
-(sig) En ambas zonas es igual, pero el campo es más extremo: el domingo llega a 1.50 contra 1.31 en la ciudad, y a las 19 horas, a 1.86 contra 1.43. La ciudad es más pareja y tiene más actividad de madrugada. *Un matiz: son solo nueve meses, así que el alza de enero a agosto no prueba una estacionalidad anual.*
 
-**Puente:** ¿Hay días que se salen incluso de este patrón?
+(sig) En ambas zonas es casi igual, pero en el campo hay diferencia en los fines de semana: el domingo llega a más de 1.5 contra el 1.3 en la ciudad.
+
+(sig) Comparando por mes, vemos que ambas zonas tienen los mismos meses con índice mayor a 1, indicando que casi no hay diferencia entre estos grupos por mes.
+
+(sig) Comparando por horas vemos que hay una diferencia notable en el campo a las 19 horas, de más de 1.8 contra un 1.4. 
+
+Ahora bien, podríamos preguntarnos ¿Hay días que se salen incluso de este patrón? Lo que nos lleva a la siguiente pregunta:
 
 ### &#91;Diap. 7\] P2 · Días críticos (1:04)
 
 **Pregunta:** Pregunta dos: ¿qué días fueron críticos y qué tienen en común?
 
-**Cómo:** Medimos cuántas desviaciones se aparta cada día de lo habitual para su día de la semana: cero es normal y más de dos es crítico. Luego comparamos esos días con todos los demás.
+**Cómo:** Medimos cuántas desviaciones se aparta cada día de lo habitual para su día de la semana: cero es lo normal y más de dos es crítico. Luego comparamos esos días con todos los demás.
 
-**Resultado:** Cada punto es un día y los rojos son los críticos: 13 de 273. El más extremo es el 1 de enero, con 123 siniestros y 21 fallecidos. En común: 11 de los 13 caen entre junio y septiembre; casi uno de cada cuatro es feriado, frente a uno de cada quince en general; y la distracción domina en 77 %, contra 58 %. El día de la semana no los distingue. *Un matiz: el nivel diario sube de enero a agosto, lo que refuerza esos meses.*
+**Resultado:** Cada punto es un día y los rojos son los críticos un día se considera crítico si presenta alto índice de siniestros o alto índice de fallecidos: 13 de 273. El más extremo es el 1 de enero, con 123 siniestros y 21 fallecidos.
 
-**Puente:** Ya sabemos cuándo. Mi compañero \[nombre\] les cuenta dónde.
+En común: 11 de los 13 días críticos caen entre junio y septiembre.
+
+(sig) Los días críticos suelen ser entre lunes y viernes. La mayoría de días críticos se concentraron entre Junio y Septiembre. Aproximadamente 1 de cada 4 días críticos fueron feriados y finalmente la principal causa probable por la que ocurrieron los siniestros de esos días críticos fue la marcada como "Distracción".
+
+Ahora, ya sabemos cuándo ocurren. A continuación, mi compañero Darwin les contará dónde.
 
 ## 4. Expositor 2: P3, P4, P5 y P6 (5:06 a 9:03)
 
