@@ -36,7 +36,6 @@ Los resultados de abajo salen de ejecutar los 10 scripts (`pregunta_01.py` a `pr
 | Severidad en 3 niveles (sin víctimas / con lesionados / fatal) | AASHTO (2010), *Highway Safety Manual* |
 | Factor causal humano-vehículo-vía y 10 grupos de causa | Haddon (1968); Sabey y Taylor (1980) |
 | Usuario vulnerable (moto, bici, scooter, peatón) | Peden et al. (2004); WHO (2023) |
-| Celda de 2 km (puntos críticos) | Anderson (2009); Xie y Yan (2008) |
 | Índice de estacionalidad | Hyndman y Athanasopoulos (2021) |
 
 Franja horaria, fin de semana y feriado son convenciones del proyecto, sin referencia específica. El z-score de la pregunta 2 sigue el Ejemplo 1 del curso.
@@ -63,11 +62,11 @@ Franja horaria, fin de semana y feriado son convenciones del proyecto, sin refer
 - **Resultados:** Guayas (32,7 %) y Pichincha (20,3 %) suman el 53 %; el Top 5 de provincias, el 70 %. Ocho de 24 provincias (clase A) reúnen el 80 %. En cantones, 35 de 210 (17 %) reúnen el 80 %. Las provincias pequeñas son las más graves: Esmeraldas 25 % de siniestros con fallecidos, Zamora Chinchipe 23 %, Cañar 20 %.
 - **Conclusión:** hay **dos prioridades**: volumen (Guayas, Pichincha) y gravedad (provincias pequeñas, con menos casos pero más mortales).
 
-### P4. ¿Dónde están los puntos críticos y coinciden con las muertes?
-- **Técnicas:** cuadrícula de ~2 km, ranking de celdas, mapas de celdas (Folium).
-- **Gráficos:** `p04_densidad_facetado.png` (**mapas de Folium facetados** por cantón, con los siniestros fatales encima); `p04_mapa_nacional_severidad.png`.
-- **Resultados:** el 5 % de las celdas de 2 km concentra el 49 % de los siniestros y el 1 %, el 19 %. La celda más crítica está en Guayaquil (269 siniestros). Las 5 celdas principales reúnen el 25 % de los siniestros de Guayaquil, 17 % de Quito y 48 % de Santo Domingo.
-- **Conclusión:** los siniestros se concentran en **pocas celdas**, pero esas celdas son más de volumen que de letalidad (4,5 fallecidos por cada 100 siniestros frente a 10,8 nacional); los fatales también aparecen fuera de los núcleos.
+### P4. ¿En qué provincias pesan más las motos, los camiones y los buses?
+- **Técnicas:** porcentaje de siniestros con cada vehículo por provincia, ranking por porcentaje y por cantidad, mapas de burbujas (Folium).
+- **Gráficos:** `p04_vehiculos_por_provincia.png` (**mapas de Folium facetados**, uno por vehículo: tamaño = siniestros con ese vehículo, color = % de los siniestros de la provincia).
+- **Resultados:** las motos participan en el 32,8 % de los siniestros, los camiones en el 9,7 % y los buses en el 5,0 %. Motos: Santo Domingo 50,4 % y Los Ríos 46,5 % (Zamora Chinchipe 17,8 %, la más baja). Camiones: Cotopaxi 17,4 %, Cañar 16,6 % y Carchi 16,1 % (Santa Elena 5,8 %). Buses: Chimborazo 8,4 %, Imbabura 8,3 % y Pichincha 7,2 % (El Oro 2,1 %). Por cantidad mandan Guayas y Pichincha en los tres, con el 48 % al 55 % de los siniestros de cada vehículo.
+- **Conclusión:** el **dónde cambia según el vehículo** y por porcentaje destacan provincias más pequeñas que por cantidad. Muestra dónde participa cada vehículo, no cuál es más peligroso (eso es la P7); sin datos del parque automotor no se puede hablar de riesgo.
 
 ### P5. ¿Cómo influyen zona, tipo de vía y corredor?
 - **Técnicas:** comparación urbano/rural, ranking de corredores, faceta por franja horaria, heatmap.
@@ -110,7 +109,7 @@ Franja horaria, fin de semana y feriado son convenciones del proyecto, sin refer
 ## Conclusiones
 
 1. La siniestralidad es de **tarde-noche y fin de semana**; los días verdaderamente críticos son puntuales y coinciden con feriados (el 1 de enero fue el peor).
-2. Dos prioridades territoriales: **volumen** (Guayas, Pichincha y pocas celdas de 2 km en las ciudades) y **gravedad** (provincias pequeñas, carreteras rurales y madrugada).
+2. Dos prioridades territoriales: **volumen** (Guayas y Pichincha, en todos los tipos de vehículo) y **gravedad** (provincias pequeñas, carreteras rurales y madrugada).
 3. **Distracción y velocidad** son las causas dominantes y graves; el peatón, el adulto mayor y el motociclista son los más vulnerables.
 4. Los siniestros de alta consecuencia se asocian al **transporte de pasajeros**, al choque frontal y a las carreteras rurales.
 5. La **calidad del registro** limita las conclusiones: 43,9 % de las personas sin edad y 22,5 % de los vehículos sin identificar, sobre todo en ATM y CTE.
@@ -125,11 +124,9 @@ Franja horaria, fin de semana y feriado son convenciones del proyecto, sin refer
 ## Referencias
 
 - AASHTO (2010). *Highway Safety Manual* (1.ª ed.).
-- Anderson, T. K. (2009). Kernel density estimation and K-means clustering to profile road accident hotspots. *Accident Analysis & Prevention*, 41(3), 359-364.
 - Elvik, R., Høye, A., Vaa, T., Sørensen, M. (2009). *The Handbook of Road Safety Measures* (2.ª ed.). Emerald.
 - Haddon, W. (1968). The changing approach to the epidemiology, prevention, and amelioration of trauma. *American Journal of Public Health*, 58(8).
 - Hyndman, R. J., Athanasopoulos, G. (2021). *Forecasting: Principles and Practice* (3.ª ed.). OTexts.
 - Peden, M. et al. (2004). *World report on road traffic injury prevention*. WHO.
 - Sabey, B. E., Taylor, H. (1980). The known risks we run: the highway. TRRL Supplementary Report 567.
 - WHO (2023). *Global status report on road safety 2023*. ISBN 978-92-4-008651-7.
-- Xie, Z., Yan, J. (2008). Kernel density estimation of traffic accidents in a network space. *Computers, Environment and Urban Systems*, 32(5), 396-406.
